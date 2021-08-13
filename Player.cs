@@ -3,22 +3,23 @@ using System.Collections.Generic;
 
 namespace SuperChess
 {
+    enum PieceColor { Black, White, Green };
+    
     class Player
     {
-        private static int playerCount = 0;
-        private enum PlayerColor { Black, White, Green };
-        public int color;
+        public enum PlayerNumber { FirstPlayer, SecondPlayer, ThirdPlayer }
+        public static Dictionary<PlayerNumber, PieceColor> PieceColorByPlayer = new Dictionary<PlayerNumber, PieceColor>();
+       
         public string nickname;
         public ChessPiece[] pieces; // 16 pieces per player
-        public ChessPiece king; // I wasent sure what to do with the king...
+        public ChessPiece king;
 
 
-        Player(string nickname) // public
+        public Player(string nickname)
         {
             this.nickname = nickname;
             this.pieces = new ChessPiece[16];
-            playerCount++;
-            this.SetColor(playerCount);
+            InitPlayerColor();
         }
 
         ~Player()
@@ -26,25 +27,45 @@ namespace SuperChess
             this.pieces = null;
             GC.Collect();
         }
-
-        private void SetColor(int playerCount)
+        
+        private void InitPlayerColor()
         {
-            if(playerCount == 1) this.color = (int)PlayerColor.White;
-            if(playerCount == 2) this.color = (int)PlayerColor.Black;
-            else this.color = (int)PlayerColor.Green;
+            PieceColorByPlayer.Add(PlayerNumber.FirstPlayer,PieceColor.White);
+            PieceColorByPlayer.Add(PlayerNumber.SecondPlayer,PieceColor.Black);
+            PieceColorByPlayer.Add(PlayerNumber.ThirdPlayer,PieceColor.Green);
         }
 
         public void AddPiece(ChessPiece piece)
         {
             int pieces_count = this.pieces.Length;
-            this.pieces[pieces_count] = piece;
+
+            if(pieces_count == 16)
+                return;
+
+            // King - The Class
+            if(piece == King) // check if the piece is King Type
+            {
+                if(this.king == null) // check if theres already king
+                    this.king = piece;
+                else
+                    return;
+            }
+
+            for (int i = 0; i < pieces_count; i++)
+            {
+                if(this.pieces[i] == null)
+                    this.pieces[pieces_count] = piece;
+            }
         }
 
         public void RemovePiece(ChessPiece piece)
         {
             int pieces_count = this.pieces.Length;
 
-            for( int i = 0; i < pieces_count; i++ )
+             if(piece == King) // King - The Class
+                this.king = null;
+
+            for(int i = 0; i < pieces_count; i++)
                 if( this.pieces[i] == piece )
                     this.pieces[i] = null;
         }
