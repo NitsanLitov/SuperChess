@@ -40,17 +40,20 @@ namespace MovementBoard
 
         public override List<List<(char, int)>> Diagonal((char, int) currentLocation, int maxSteps)
         {
+            List<List<(char, int)>> locationsList = new List<List<(char, int)>>();
             (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
-            List<(char, int)> l1 = GetMovementOptions(movementLocation, maxSteps, 1, 1);
-            List<(char, int)> l2 = GetMovementOptions(movementLocation, maxSteps, -1, 1);
-            List<(char, int)> l3 = GetMovementOptions(movementLocation, maxSteps, -1, -1);
-            List<(char, int)> l4 = GetMovementOptions(movementLocation, maxSteps, 1, -1);
-            return new List<List<(char, int)>> { l1, l2, l3, l4 };
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, 1));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, 1));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, -1));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, -1));
+            
+            return locationsList;
         }
 
         public override List<(char, int)> Knight((char, int) currentLocation)
         {
             (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
+            
             List<(char, int)> locations = GetMovementOptions(movementLocation, 1, 1, 2);
             locations.AddRange(GetMovementOptions(movementLocation, 1, 1, -2));
             locations.AddRange(GetMovementOptions(movementLocation, 1, -1, 2));
@@ -75,6 +78,13 @@ namespace MovementBoard
             }
 
             throw new ArgumentOutOfRangeException("location", "Location wasn't in the movement board");
+        }
+
+        public override bool LocationInBorderLimits(int oldRow, int oldCol, int newRow, int newCol)
+        {
+            if (newRow >= this.maxNumber || newRow < 0) return false;
+            if (newCol >= (this.maxLetter - 'a' + 1) || newCol < 0) return false;
+            return true;
         }
 
         private void AddWhiteMovementBoard()

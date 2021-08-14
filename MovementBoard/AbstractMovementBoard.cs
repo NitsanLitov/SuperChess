@@ -24,11 +24,11 @@ namespace MovementBoard
         }
         public abstract void SetupMovementBoard();
 
-        public List<(char, int)> Up((char, int) currentLocation) { return this.Up(currentLocation, this.maxNumber - 1); }
-        public List<(char, int)> Down((char, int) currentLocation) { return this.Down(currentLocation, this.maxNumber - 1); }
-        public List<(char, int)> Right((char, int) currentLocation) { return this.Right(currentLocation, this.maxLetter - 1); }
-        public List<(char, int)> Left((char, int) currentLocation) { return this.Left(currentLocation, this.maxLetter - 1); }
-        public List<List<(char, int)>> Diagonal((char, int) currentLocation) { return this.Diagonal(currentLocation, this.maxNumber - 1); }
+        public List<(char, int)> Up((char, int) currentLocation) { return this.Up(currentLocation, -1); }
+        public List<(char, int)> Down((char, int) currentLocation) { return this.Down(currentLocation, -1); }
+        public List<(char, int)> Right((char, int) currentLocation) { return this.Right(currentLocation, -1); }
+        public List<(char, int)> Left((char, int) currentLocation) { return this.Left(currentLocation, -1); }
+        public List<List<(char, int)>> Diagonal((char, int) currentLocation) { return this.Diagonal(currentLocation, -1); }
 
         public abstract List<(char, int)> Up((char, int) currentLocation, int maxSteps);
         public abstract List<(char, int)> Down((char, int) currentLocation, int maxSteps);
@@ -38,12 +38,13 @@ namespace MovementBoard
         public abstract List<(char, int)> Knight((char, int) currentLocation);
 
         public abstract (int, int, ChessColor) ConvertToMovementLocation((char, int) location);
-        
-        protected List<(char, int)> GetMovementOptions((int, int, ChessColor) movementLocation, int maxSteps, int rowDiff, int colDiff)
+        public abstract bool LocationInBorderLimits(int oldRow, int oldCol, int newRow, int newCol);
+
+        protected List<(char, int)> GetMovementOptions((int, int, ChessColor) movementLocation, int maxSteps, int rowDiff, int colDiff, bool sensitiveMovement=true)
         {
             (char, int)[,] movementBoard = this.MovementBoardByChessColor[movementLocation.Item3];
 
-            if (movementLocation.Item3 != this.playerColor)
+            if (sensitiveMovement && movementLocation.Item3 != this.playerColor)
             {
                 rowDiff *= -1;
                 colDiff *= -1;
@@ -52,14 +53,14 @@ namespace MovementBoard
             List<(char, int)> locations = new List<(char, int)>();
             int newRow = movementLocation.Item1;
             int newCol = movementLocation.Item2;
-            for (int i = 0; i < maxSteps; i++)
+            
+            // maxSteps!=0 and not maxSteps>0 because if maxsteps is -1 it will run until out of border
+            while (maxSteps != 0)
             {
-                newRow += rowDiff;
-                if (newRow >= movementBoard.GetLength(0) || newRow < 0) { break; }
-                newCol += colDiff;
-                if (newCol >= movementBoard.GetLength(1) || newCol < 0) { break; }
-
+                if (!LocationInBorderLimits(newRow, newCol, newRow += rowDiff, newCol += colDiff)) { break; }
                 locations.Add(movementBoard[newRow, newCol]);
+
+                maxSteps--;
             }
             return locations;
         }
