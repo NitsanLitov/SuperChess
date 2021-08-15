@@ -50,7 +50,7 @@ namespace MovementBoard
             return locationsList;
         }
 
-        public override List<(char, int)> Knight((char, int) currentLocation)
+        public override List<List<(char, int)>> Knight((char, int) currentLocation)
         {
             (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
             
@@ -62,7 +62,7 @@ namespace MovementBoard
             locations.AddRange(GetMovementOptions(movementLocation, 1, 2, -1));
             locations.AddRange(GetMovementOptions(movementLocation, 1, -2, 1));
             locations.AddRange(GetMovementOptions(movementLocation, 1, -2, -1));
-            return locations;
+            return ConvertListToDoubleList(locations);
         }
 
         public override (int, int, ChessColor) ConvertToMovementLocation((char, int) location)

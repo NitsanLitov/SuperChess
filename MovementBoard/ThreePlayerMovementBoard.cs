@@ -104,7 +104,7 @@ namespace MovementBoard
             return new List<List<(char, int)>>();
         }
 
-        public override List<(char, int)> Knight((char, int) currentLocation)
+        public override List<List<(char, int)>> Knight((char, int) currentLocation)
         {
             (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
             List<(char, int)> locations = new List<(char, int)>();
@@ -121,7 +121,7 @@ namespace MovementBoard
                 movementLocation.Item2 += 8;
             }
 
-            return locations.Distinct().ToList();
+            return ConvertListToDoubleList(locations.Distinct().ToList());
         }
 
         public override (int, int, ChessColor) ConvertToMovementLocation((char, int) location)

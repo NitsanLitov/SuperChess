@@ -35,7 +35,14 @@ namespace MovementBoard
         public abstract List<(char, int)> Right((char, int) currentLocation, int maxSteps);
         public abstract List<(char, int)> Left((char, int) currentLocation, int maxSteps);
         public abstract List<List<(char, int)>> Diagonal((char, int) currentLocation, int maxSteps);
-        public abstract List<(char, int)> Knight((char, int) currentLocation);
+        public abstract List<List<(char, int)>> Knight((char, int) currentLocation);
+        public List<List<(char, int)>> ConvertListToDoubleList(List<(char, int)> locations)
+        {
+            List<List<(char, int)>> finalLocations = new List<List<(char, int)>>();
+            foreach ((char, int) location in locations) finalLocations.Add(new List<(char, int)>{location});
+
+            return finalLocations;
+        }
 
         public abstract (int, int, ChessColor) ConvertToMovementLocation((char, int) location);
         public abstract bool LocationInBorderLimits(int oldRow, int oldCol, int newRow, int newCol);
