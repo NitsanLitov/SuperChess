@@ -1,5 +1,3 @@
-import Board from './Board.js';
+import Game from './Game.js';
 
-const board = new Board({
-    selector: '#board',
-});
+const game = new Game();

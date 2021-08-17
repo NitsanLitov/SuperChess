@@ -1,5 +1,4 @@
 import Square from './Square.js';
-import Client from './Client.js';
 
 const colors = [
     '#5d8aa8',
@@ -19,16 +18,23 @@ const colors = [
 ];
 
 export default class Board {
-    constructor({ selector }) {
+    constructor({
+        selector,
+        playerColor,
+        startingPiecesByLocation,
+        players
+    }) {
         this.squares = [];
-        this.client = new Client("127.0.0.1", 54321);
         this.element = document.querySelector(selector);
         this.element.classList.add('board');
-        this.init();
-        this.startGame();
+        this.playerColor = playerColor;
+        if (players === 2) {
+            this.initTwoPlayers();
+        }
+        this.updatePiecesLocations(startingPiecesByLocation);
     }
 
-    init() {
+    initTwoPlayers() {
         const size = '90vmin';
         this.element.style.width = size;
         this.element.style.height = size;
@@ -52,13 +58,6 @@ export default class Board {
             this.element.appendChild(square.element);
             return square;
         });
-    }
-
-    startGame() {
-        const { playerColor, piecesByLocation } = this.client.start();
-        this.playerColor = playerColor;
-
-        this.updatePiecesLocations(piecesByLocation);
     }
 
     getSquare(letter, number) {

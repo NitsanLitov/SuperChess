@@ -1,10 +1,10 @@
 export default class Client {
     constructor({ ip, port }) {}
 
-    start() {
+    startGame() {
         // gets starting places and player color
         const result = this.connect();
-        return { playerColor: result.color, piecesByLocation: result.piecesByLocation };
+        return { playerColor: result.color, startingPiecesByLocation: result.piecesByLocation, players: 2 };
     }
 
     connect() {
