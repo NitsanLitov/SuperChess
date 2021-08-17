@@ -1,4 +1,5 @@
 import Square from './Square.js';
+import Client from './Client.js';
 
 const colors = [
     '#5d8aa8',
@@ -18,20 +19,30 @@ const colors = [
 ];
 
 export default class Board {
-    constructor({
-        selector,
-        playerColor,
-        startingPiecesByLocation,
-        players
-    }) {
+    constructor({ selector }) {
+        this.client = new Client("127.0.0.1", 54321);
         this.squares = [];
+        this.movementOptions = {};
+        this.movementSquares = [];
+        this.movingLocation = "";
         this.element = document.querySelector(selector);
         this.element.classList.add('board');
+    }
+
+    async startGame() {
+        const { playerColor, startingPiecesByLocation, players } = this.client.startGame();
         this.playerColor = playerColor;
+
         if (players === 2) {
             this.initTwoPlayers();
         }
         this.updatePiecesLocations(startingPiecesByLocation);
+
+        //while (true) {
+        const { piecesByLocationDiff, movementOptions } = await this.client.getMovementOptions();
+        this.updatePiecesLocations(piecesByLocationDiff);
+        this.setMovementOptions(movementOptions);
+        //}
     }
 
     initTwoPlayers() {
@@ -60,12 +71,16 @@ export default class Board {
         });
     }
 
-    getSquare(letter, number) {
-        return this.squaresByLocation.get(`${letter.toLowerCase()}${number}`);
+    getSquareByLocationString(location) {
+        return this.squaresByLocation.get(location);
     }
 
-    getPieceByLocation(letter, number) {
+    getPieceByLocationTuple(letter, number) {
         return this.piecesByLocation.get(`${letter.toLowerCase()}${number}`);
+    }
+
+    getPieceByLocationString(location) {
+        return this.piecesByLocation.get(location);
     }
 
     updateAllSquares() {
@@ -75,7 +90,41 @@ export default class Board {
     updatePiecesLocations(piecesByLocation) {
         for (const [location, piece] of Object.entries(piecesByLocation)) {
             this.piecesByLocation.set(location, piece);
-            this.squaresByLocation.get(location).update();
+            this.getSquareByLocationString(location).update();
         }
+    }
+
+    setMovementOptions(movementOptions) {
+        console.log("set movement options");
+        this.movementOptions = movementOptions;
+    }
+
+    getMovementOptionsByLocationString(locationString) {
+        if (locationString in this.movementOptions) return this.movementOptions[locationString];
+        return [];
+    }
+
+    colorMovementOptions(letter, number) {
+        this.movingLocation = `${letter.toLowerCase()}${number}`;
+        this.movementSquares = this.getMovementOptionsByLocationString(this.movingLocation);
+        this.updateAllSquares()
+    }
+
+    unColorMovementOptions(letter, number) {
+        this.setMovementOptions({});
+        this.movingLocation = '';
+        this.movementSquares = [];
+        this.updateAllSquares()
+    }
+
+    isMovementSquare(letter, number) {
+        return this.movementSquares.includes(`${letter.toLowerCase()}${number}`)
+    }
+
+    movePiece(movementSquareLetter, movementSquareNumber) {
+        const { piecesByLocationDiff } = this.client.movePiece(this.movingLocation, `${movementSquareLetter.toLowerCase()}${movementSquareNumber}`, this.getPieceByLocationString(this.movingLocation));
+
+        this.updatePiecesLocations(piecesByLocationDiff);
+        this.unColorMovementOptions();
     }
 }

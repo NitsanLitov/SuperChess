@@ -1,3 +1,4 @@
-import Game from './Game.js';
+import Board from './Board.js';
 
-const game = new Game();
+const game = new Board({ selector: '#board' });
+game.startGame();

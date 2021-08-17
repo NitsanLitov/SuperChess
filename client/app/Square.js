@@ -5,6 +5,7 @@ export default class Square {
         this.number = number;
         this.board = board;
         this.letter = letter;
+        this.isMovementSquare = false;
         this.element = document.createElement('div');
         this.element.classList.add('square');
         if (isBlack) {
@@ -12,21 +13,29 @@ export default class Square {
         }
         this.element.setAttribute('number', number);
         this.element.setAttribute('letter', letter);
+        this.element.onclick = this.onClick.bind(this);
         this.update();
     }
 
     update() {
         this.element.innerHTML = '';
-        const current = this.board.getPieceByLocation(this.letter, this.number);
-        if (current) {
-            const imageUrl = Pieces[`${current.color}${current.type}`];
+        const currentPiece = this.board.getPieceByLocationTuple(this.letter, this.number);
+        if (currentPiece) {
+            const imageUrl = Pieces[`${currentPiece.color}${currentPiece.type}`];
             if (imageUrl) {
                 const image = new Image();
                 image.src = imageUrl;
                 this.element.append(image);
             } else {
-                this.element.textContent = current.type;
+                this.element.textContent = currentPiece.type;
             }
+        }
+
+        this.isMovementSquare = this.board.isMovementSquare(this.letter, this.number);
+        if (this.isMovementSquare) {
+            this.element.classList.add('movement');
+        } else {
+            this.element.classList.remove('movement');
         }
 
         if (this.number === 1) {
@@ -42,5 +51,11 @@ export default class Square {
             label.textContent = this.number;
             this.element.append(label);
         }
+    }
+
+    onClick() {
+        if (this.isMovementSquare) {
+            this.board.movePiece(this.letter, this.number);
+        } else this.board.colorMovementOptions(this.letter, this.number);
     }
 }

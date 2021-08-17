@@ -7,6 +7,27 @@ export default class Client {
         return { playerColor: result.color, startingPiecesByLocation: result.piecesByLocation, players: 2 };
     }
 
+    movePiece(oldLocation, newLocation, pieceForTestingOnly) {
+        let piecesByLocationDiff = new Map();
+        piecesByLocationDiff[oldLocation] = {};
+        piecesByLocationDiff[newLocation] = pieceForTestingOnly;
+
+        return { piecesByLocationDiff };
+    }
+
+    async getMovementOptions() {
+        await this.sleep(5000)
+        let piecesByLocationDiff = new Map();
+        piecesByLocationDiff['e7'] = {};
+        piecesByLocationDiff['e5'] = { color: 'b', type: 'pawn' };
+
+        return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'], 'b1': ['a3', 'c3'] } };
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     connect() {
         // should connect to server and get data
 

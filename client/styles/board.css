@@ -19,6 +19,15 @@
     color: white;
 }
 
+.square.movement {
+    background: #ee916c;
+}
+
+.square.black.movement {
+    background: #f04501;
+    color: white;
+}
+
 .square img {
     width: 85%;
     z-index: 999;
