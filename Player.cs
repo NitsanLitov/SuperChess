@@ -8,7 +8,7 @@ namespace Players
 
     static class PlayerColor
     {
-        public static Dictionary<PlayerNumber, PieceColor> PieceColorByPlayer = new Dictionary<PlayerNumber, PieceColor>()
+        private static Dictionary<PlayerNumber, PieceColor> PieceColorByPlayer = new Dictionary<PlayerNumber, PieceColor>()
         {
             {PlayerNumber.FirstPlayer, PieceColor.White},
             {PlayerNumber.SecondPlayer, PieceColor.Black},
