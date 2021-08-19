@@ -138,7 +138,7 @@ export default class Board {
     }
 
     isMovingSquare(letter, number) {
-        return this.movingLocation == `${letter.toLowerCase()}${number}`;
+        return this.movingLocation === `${letter.toLowerCase()}${number}`;
     }
 
     movePiece(movementSquareLetter, movementSquareNumber) {
