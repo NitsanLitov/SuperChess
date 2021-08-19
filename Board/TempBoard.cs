@@ -6,6 +6,7 @@ namespace Board
     class TempBoard
     {
         public ChessPiece[,] piecesLocation;
+        public List<ChessPiece> firstMovePieces;
         Dictionary<ChessColor, List<ChessPiece>> chessPiecesByColor;
         Board board;
         bool savedState;
@@ -20,8 +21,12 @@ namespace Board
         {
             this.piecesLocation = this.board.piecesLocation.Clone() as ChessPiece[,];
             this.chessPiecesByColor = new Dictionary<ChessColor, List<ChessPiece>>(this.board.chessPiecesByColor);
-            foreach (ChessColor color in this.chessPiecesByColor.Keys) this.chessPiecesByColor[color] = new List<ChessPiece>(this.chessPiecesByColor[color]);
-
+            foreach (ChessColor color in this.chessPiecesByColor.Keys)
+            {
+                this.chessPiecesByColor[color] = new List<ChessPiece>(this.chessPiecesByColor[color]);
+                this.firstMovePieces = this.chessPiecesByColor[color].FindAll(p => p.firstMove);
+            }
+            
             this.savedState = true;
         }
 
@@ -36,7 +41,7 @@ namespace Board
                     if (this.piecesLocation[piece.location.Item2 - 1, piece.location.Item1 - 'a'] != piece)
                     {
                         UpdatePieceLocation(piece);
-                        // Maybe update first move
+                        if (this.firstMovePieces.Contains(piece) && !piece.firstMove) piece.firstMove = true;
                     }
                 }
             }

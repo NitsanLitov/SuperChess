@@ -10,6 +10,7 @@ namespace Board
     {
         public (char, int) location;
         public ChessColor color;
+        public bool firstMove = true;
         public Board board;
 
         public bool specialMovement(ChessPiece piece) {return true;}
