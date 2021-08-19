@@ -1,5 +1,7 @@
 export default class Client {
-    constructor({ ip, port }) {}
+    constructor({ ip, port }) {
+        this.testingCount = 0
+    }
 
     startGame() {
         // gets starting places and player color
@@ -18,10 +20,31 @@ export default class Client {
     async getMovementOptions() {
         await this.sleep(5000)
         let piecesByLocationDiff = new Map();
-        piecesByLocationDiff['e7'] = {};
-        piecesByLocationDiff['e5'] = { color: 'b', type: 'pawn' };
+        this.testingCount += 1;
+        if (this.testingCount === 1) {
+            piecesByLocationDiff['e7'] = {};
+            piecesByLocationDiff['e5'] = { color: 'b', type: 'pawn' };
 
-        return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'], 'b1': ['a3', 'c3'] } };
+            return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'], 'b1': ['a3', 'c3'] } };
+        }
+        if (this.testingCount === 2) {
+            piecesByLocationDiff['d7'] = {};
+            piecesByLocationDiff['d5'] = { color: 'b', type: 'pawn' };
+
+            return { piecesByLocationDiff, movementOptions: {} };
+        }
+        if (this.testingCount === 3) {
+            return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'], 'c3': ['e4', 'b3', 'a4', 'b5', 'd5'] } };
+        }
+        if (this.testingCount === 4) {
+            piecesByLocationDiff['b8'] = {};
+            piecesByLocationDiff['c6'] = { color: 'b', type: 'knight' };
+
+            return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'] } };
+        }
+        if (this.testingCount === 5) {
+            return { piecesByLocationDiff, movementOptions: { 'a3': ['a4'] } };
+        }
     }
 
     sleep(ms) {

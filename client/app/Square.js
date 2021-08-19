@@ -1,4 +1,4 @@
-import Pieces from './Pieces.js';
+import PieceImage from './PieceImage.js';
 
 export default class Square {
     constructor({ board, number, letter, isBlack }) {
@@ -21,7 +21,7 @@ export default class Square {
         this.element.innerHTML = '';
         const currentPiece = this.board.getPieceByLocationTuple(this.letter, this.number);
         if (currentPiece) {
-            const imageUrl = Pieces[`${currentPiece.color}${currentPiece.type}`];
+            const imageUrl = PieceImage(currentPiece);
             if (imageUrl) {
                 const image = new Image();
                 image.src = imageUrl;
@@ -32,6 +32,14 @@ export default class Square {
         }
 
         this.isMovementSquare = this.board.isMovementSquare(this.letter, this.number);
+        this.isMovingSquare = this.board.isMovingSquare(this.letter, this.number);
+
+        if (this.isMovingSquare) {
+            this.element.classList.add('moving');
+        } else {
+            this.element.classList.remove('moving');
+        }
+
         if (this.isMovementSquare) {
             this.element.classList.add('movement');
         } else {

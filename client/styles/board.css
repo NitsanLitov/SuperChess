@@ -1,3 +1,45 @@
+.gameBoard {
+    background: white;
+    display: grid;
+}
+
+.gameData {
+    border: 0.75vmin solid black;
+    font-size: 3vmin;
+    background: rgb(231, 231, 231);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.turnData {
+    font-size: 3vmin;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 5%;
+}
+
+.turnData.positive {
+    color: #56BC58;
+}
+
+.turnData.negative {
+    color: #f04501;
+}
+
+.moveData {
+    font-size: 3vmin;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 5%;
+}
+
+.square img {
+    width: 85%;
+    z-index: 999;
+}
+
 .board {
     border: 0.75vmin solid black;
     background: white;
@@ -25,7 +67,14 @@
 
 .square.black.movement {
     background: #f04501;
-    color: white;
+}
+
+.square.moving {
+    background: #fff8cf;
+}
+
+.square.black.moving {
+    background: #56bc5865;
 }
 
 .square img {

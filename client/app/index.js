@@ -1,4 +1,4 @@
 import Board from './Board.js';
 
-const game = new Board({ selector: '#board' });
-game.startGame();
+const board = new Board({ selector: '#gameBoard' });
+board.startGame();
