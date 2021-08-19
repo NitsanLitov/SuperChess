@@ -64,6 +64,12 @@ export default class Square {
     onClick() {
         if (this.isMovementSquare) {
             this.board.movePiece(this.letter, this.number);
-        } else this.board.colorMovementOptions(this.letter, this.number);
+            return;
+        }
+        if (this.isMovingSquare) {
+            this.board.unColorMovementOptions();
+            return;
+        }
+        this.board.colorMovementOptions(this.letter, this.number);
     }
 }

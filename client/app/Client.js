@@ -10,40 +10,34 @@ export default class Client {
     }
 
     movePiece(oldLocation, newLocation, pieceForTestingOnly) {
-        let piecesByLocationDiff = new Map();
-        piecesByLocationDiff[oldLocation] = {};
-        piecesByLocationDiff[newLocation] = pieceForTestingOnly;
+        let movedPieces = [];
+        movedPieces.push([oldLocation, newLocation, pieceForTestingOnly]);
 
-        return { piecesByLocationDiff };
+        return { movedPieces };
     }
 
     async getMovementOptions() {
         await this.sleep(5000)
-        let piecesByLocationDiff = new Map();
+        let movedPieces = [];
         this.testingCount += 1;
         if (this.testingCount === 1) {
-            piecesByLocationDiff['e7'] = {};
-            piecesByLocationDiff['e5'] = { color: 'b', type: 'pawn' };
-
-            return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'], 'b1': ['a3', 'c3'] } };
+            movedPieces.push(['e7', 'e5', { color: 'b', type: 'pawn' }]);
+            return { movedPieces, movementOptions: { 'a2': ['a3', 'a4'], 'b1': ['a3', 'c3'] } };
         }
         if (this.testingCount === 2) {
-            piecesByLocationDiff['d7'] = {};
-            piecesByLocationDiff['d5'] = { color: 'b', type: 'pawn' };
-
-            return { piecesByLocationDiff, movementOptions: {} };
+            movedPieces.push(['d7', 'd5', { color: 'b', type: 'pawn' }]);
+            return { movedPieces, movementOptions: {} };
         }
         if (this.testingCount === 3) {
-            return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'], 'c3': ['e4', 'b3', 'a4', 'b5', 'd5'] } };
+            return { movedPieces, movementOptions: { 'a2': ['a3', 'a4'], 'c3': ['e4', 'b3', 'a4', 'b5', 'd5'] } };
         }
         if (this.testingCount === 4) {
-            piecesByLocationDiff['b8'] = {};
-            piecesByLocationDiff['c6'] = { color: 'b', type: 'knight' };
-
-            return { piecesByLocationDiff, movementOptions: { 'a2': ['a3', 'a4'] } };
+            movedPieces.push(['b8', 'c6', { color: 'b', type: 'knight' }]);
+            movedPieces.push(['f8', 'a3', { color: 'b', type: 'bishop' }]);
+            return { movedPieces, movementOptions: { 'a2': ['a3', 'a4'] } };
         }
         if (this.testingCount === 5) {
-            return { piecesByLocationDiff, movementOptions: { 'a3': ['a4'] } };
+            return { movedPieces, movementOptions: { 'a3': ['a4'] } };
         }
     }
 

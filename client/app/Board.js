@@ -2,23 +2,6 @@ import Square from './Square.js';
 import Client from './Client.js';
 import GameData from './GameData.js';
 
-const colors = [
-    '#5d8aa8',
-    '#f0f8ff',
-    '#e32636',
-    '#efdecd',
-    '#e52b50',
-    '#ffbf00',
-    '#ff033e',
-    '#9966cc',
-    '#a4c639',
-    '#f2f3f4',
-    '#cd9575',
-    '#915c83',
-    '#faebd7',
-    '#008000',
-];
-
 export default class Board {
     constructor({ selector }) {
         this.client = new Client("127.0.0.1", 54321);
@@ -38,19 +21,20 @@ export default class Board {
         if (players === 2) {
             this.initTwoPlayers();
         }
-        this.updatePiecesLocations(startingPiecesByLocation);
+        this.setStartingPiecesLocations(startingPiecesByLocation);
 
         this.startNextTurn();
     }
 
     async startNextTurn() {
+        this.setMovementOptions({});
         this.unColorMovementOptions();
-        let piecesByLocationDiff, movementOptions;
+        let movedPieces, movementOptions;
         do {
             console.log("waiting...")
             const result = await this.client.getMovementOptions();
-            [piecesByLocationDiff, movementOptions] = [result.piecesByLocationDiff, result.movementOptions];
-            this.updatePiecesLocations(piecesByLocationDiff);
+            [movedPieces, movementOptions] = [result.movedPieces, result.movementOptions];
+            this.updatePiecesLocations(movedPieces);
         }
         while (Object.keys(movementOptions).length === 0);
         this.setMovementOptions(movementOptions);
@@ -107,7 +91,19 @@ export default class Board {
         this.squares.forEach((square) => square.update());
     }
 
-    updatePiecesLocations(piecesByLocation) {
+    updatePiecesLocations(movedPieces) {
+        movedPieces.forEach(movedPiece => {
+            const [oldLocation, newLocation, piece] = movedPiece;
+            this.gameData.updateLastMove(oldLocation, newLocation, piece)
+
+            this.piecesByLocation.set(oldLocation, null);
+            this.piecesByLocation.set(newLocation, piece);
+            this.getSquareByLocationString(oldLocation).update();
+            this.getSquareByLocationString(newLocation).update();
+        });
+    }
+
+    setStartingPiecesLocations(piecesByLocation) {
         for (const [location, piece] of Object.entries(piecesByLocation)) {
             this.piecesByLocation.set(location, piece);
             this.getSquareByLocationString(location).update();
@@ -132,7 +128,6 @@ export default class Board {
     }
 
     unColorMovementOptions() {
-        this.setMovementOptions({});
         this.movingLocation = '';
         this.movementSquares = [];
         this.updateAllSquares()
@@ -148,11 +143,13 @@ export default class Board {
 
     movePiece(movementSquareLetter, movementSquareNumber) {
         const newLocation = `${movementSquareLetter.toLowerCase()}${movementSquareNumber}`
-        const { piecesByLocationDiff } = this.client.movePiece(this.movingLocation, newLocation, this.getPieceByLocationString(this.movingLocation));
-        this.gameData.updateLastMove(this.movingLocation, newLocation, this.getPieceByLocationString(this.movingLocation))
+        const { movedPieces } = this.client.movePiece(this.movingLocation, newLocation, this.getPieceByLocationString(this.movingLocation));
 
         this.gameData.updateTurn(false);
-        this.updatePiecesLocations(piecesByLocationDiff);
+
+        // ToDo: Supposed to be in GetMovementOptions
+        this.updatePiecesLocations(movedPieces);
+
         this.startNextTurn();
     }
 }
