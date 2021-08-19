@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace Players
 {
-    enum PieceColor { White, Black, Green };
-    enum PlayerNumber { FirstPlayer, SecondPlayer, ThirdPlayer };
+    public enum ChessColor { White, Black, Green };
+    public enum PlayerNumber { FirstPlayer, SecondPlayer, ThirdPlayer };
 
     static class PlayerColor
     {
-        private static Dictionary<PlayerNumber, PieceColor> PieceColorByPlayer = new Dictionary<PlayerNumber, PieceColor>()
+        private static Dictionary<PlayerNumber, ChessColor> ChessColorByPlayer = new Dictionary<PlayerNumber, ChessColor>()
         {
-            {PlayerNumber.FirstPlayer, PieceColor.White},
-            {PlayerNumber.SecondPlayer, PieceColor.Black},
-            {PlayerNumber.ThirdPlayer, PieceColor.Green}
+            {PlayerNumber.FirstPlayer, ChessColor.White},
+            {PlayerNumber.SecondPlayer, ChessColor.Black},
+            {PlayerNumber.ThirdPlayer, ChessColor.Green}
         };
 
-        public static PieceColor GetColor(PlayerNumber playerNumber)
+        public static ChessColor GetColor(PlayerNumber playerNumber)
         {
-            return PieceColorByPlayer[playerNumber];
+            return ChessColorByPlayer[playerNumber];
         }
     }
 }
