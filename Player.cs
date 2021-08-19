@@ -1,43 +1,66 @@
 using System;
 using System.Collections.Generic;
 
-namespace SuperChess
+namespace Players
 {
-    enum PieceColor { Black, White, Green };
+    enum PieceColor { White, Black, Green };
+    enum PlayerNumber { FirstPlayer, SecondPlayer, ThirdPlayer };
+
+    static class PlayerColor
+    {
+        public static Dictionary<PlayerNumber, PieceColor> PieceColorByPlayer = new Dictionary<PlayerNumber, PieceColor>()
+        {
+            {PlayerNumber.FirstPlayer, PieceColor.White},
+            {PlayerNumber.SecondPlayer, PieceColor.Black},
+            {PlayerNumber.ThirdPlayer, PieceColor.Green}
+        };
+
+        public static PieceColor GetColor(PlayerNumber playerNumber)
+        {
+            return PieceColorByPlayer[playerNumber];
+        }
+    }
 
     class Player
     {
-        public enum PlayerNumber { FirstPlayer, SecondPlayer, ThirdPlayer }
-        public static Dictionary<PlayerNumber, PieceColor> PieceColorByPlayer = new Dictionary<PlayerNumber, PieceColor>();
+        private PlayerNumber playerNumber;
+        private PieceColor color;
 
-        public string nickname;
-        public int number_Of_Wins;
-        public int number_Of_loses;
-       
+        public int numberOfWins;
+        public int numberOfloses;
 
-        public Player(string nickname)
+        public Player(string nickname, PlayerNumber playerNumber)
         {
-            this.nickname = nickname;
-            this.number_Of_Wins = 0;
-            this.number_Of_loses = 0;
-            InitPlayerColor();
+            this.Nickname = nickname;
+            this.PlayerNumber = playerNumber;
+            
+            this.numberOfWins = 0;
+            this.numberOfloses = 0;
         }
 
-        private void InitPlayerColor()
+        public PieceColor Color { get { return this.color; } }
+
+        public string Nickname {get; set;}
+
+        public PlayerNumber PlayerNumber
         {
-            PieceColorByPlayer.Add(PlayerNumber.FirstPlayer, PieceColor.White);
-            PieceColorByPlayer.Add(PlayerNumber.SecondPlayer, PieceColor.Black);
-            PieceColorByPlayer.Add(PlayerNumber.ThirdPlayer, PieceColor.Green);
+            get { return this.playerNumber; }
+            set
+            {
+                this.playerNumber = value;
+                this.color = PlayerColor.GetColor(value);
+            }
         }
-    
+
         public void AddWin()
         {
-            number_Of_Wins++;
+            numberOfWins++;
         }
 
         public void AddLose()
         {
-            number_Of_loses++;
+            numberOfloses++;
         }
+
     }
 }
