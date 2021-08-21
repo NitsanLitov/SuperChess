@@ -5,7 +5,7 @@ namespace Players
     class Player
     {
         private PlayerNumber playerNumber;
-        private PieceColor color;
+        private ChessColor color;
 
         public int numberOfWins;
         public int numberOfloses;
@@ -19,7 +19,7 @@ namespace Players
             this.numberOfloses = 0;
         }
 
-        public PieceColor Color { get { return this.color; } }
+        public ChessColor Color { get { return this.color; } }
 
         public string Nickname {get; set;}
 
@@ -33,15 +33,9 @@ namespace Players
             }
         }
 
-        public void AddWin()
-        {
-            numberOfWins++;
-        }
+        public void AddWin() { numberOfWins++; }
 
-        public void AddLose()
-        {
-            numberOfloses++;
-        }
+        public void AddLose() { numberOfloses++; }
 
     }
 }
