@@ -54,18 +54,19 @@ namespace MovementBoard
         {
             (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
             
-            List<(char, int)> locations = GetMovementOptions(movementLocation, 1, 1, 2);
-            locations.AddRange(GetMovementOptions(movementLocation, 1, 1, -2));
-            locations.AddRange(GetMovementOptions(movementLocation, 1, -1, 2));
-            locations.AddRange(GetMovementOptions(movementLocation, 1, -1, -2));
-            locations.AddRange(GetMovementOptions(movementLocation, 1, 2, 1));
-            locations.AddRange(GetMovementOptions(movementLocation, 1, 2, -1));
-            locations.AddRange(GetMovementOptions(movementLocation, 1, -2, 1));
-            locations.AddRange(GetMovementOptions(movementLocation, 1, -2, -1));
-            return ConvertListToDoubleList(locations);
+            List<List<(char, int)>> locations = new List<List<(char, int)>>();
+            locations.Add(GetMovementOptions(movementLocation, 1, 1, 2));
+            locations.Add(GetMovementOptions(movementLocation, 1, 1, -2));
+            locations.Add(GetMovementOptions(movementLocation, 1, -1, 2));
+            locations.Add(GetMovementOptions(movementLocation, 1, -1, -2));
+            locations.Add(GetMovementOptions(movementLocation, 1, 2, 1));
+            locations.Add(GetMovementOptions(movementLocation, 1, 2, -1));
+            locations.Add(GetMovementOptions(movementLocation, 1, -2, 1));
+            locations.Add(GetMovementOptions(movementLocation, 1, -2, -1));
+            return locations;
         }
 
-        public override (int, int, ChessColor) ConvertToMovementLocation((char, int) location)
+        protected override (int, int, ChessColor) ConvertToMovementLocation((char, int) location)
         {
             ChessColor movementChessColor = this.MovementChessColorByNumber[location.Item2 - 1];
             (char, int)[,] movementBoard = this.MovementBoardByChessColor[movementChessColor];
@@ -80,26 +81,26 @@ namespace MovementBoard
             throw new ArgumentOutOfRangeException("location", "Location wasn't in the movement board");
         }
 
-        public override bool LocationInBorderLimits(int oldRow, int oldCol, int newRow, int newCol)
+        protected override bool LocationInBorderLimits(int oldRow, int oldCol, int newRow, int newCol)
         {
-            if (newRow >= this.maxNumber || newRow < 0) return false;
-            if (newCol >= (this.maxLetter - 'a' + 1) || newCol < 0) return false;
+            if (newRow >= this.MaxNumber || newRow < 0) return false;
+            if (newCol >= (this.MaxLetter - 'a' + 1) || newCol < 0) return false;
             return true;
         }
 
         private void AddWhiteMovementBoard()
         {
-            (char, int)[,] whiteMovementBoard = new (char, int)[this.maxNumber, this.maxLetter - 'a' + 1];
-            for (int number = 0; number < this.maxNumber; number++)
+            (char, int)[,] whiteMovementBoard = new (char, int)[this.MaxNumber, this.MaxLetter - 'a' + 1];
+            for (int number = 0; number < this.MaxNumber; number++)
             {
-                for (char letter = 'a'; letter <= this.maxLetter; letter++)
+                for (char letter = 'a'; letter <= this.MaxLetter; letter++)
                 {
                     whiteMovementBoard[number, letter - 'a'] = (letter,number + 1);
                 }
             }
             this.MovementBoardByChessColor.Add(ChessColor.White, whiteMovementBoard);
 
-            for (int number = 0; number < this.maxNumber; number++)
+            for (int number = 0; number < this.MaxNumber; number++)
             {
                 this.MovementChessColorByNumber[number] = ChessColor.White;
             }

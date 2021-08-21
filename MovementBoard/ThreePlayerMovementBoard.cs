@@ -124,7 +124,15 @@ namespace MovementBoard
             return ConvertListToDoubleList(locations.Distinct().ToList());
         }
 
-        public override (int, int, ChessColor) ConvertToMovementLocation((char, int) location)
+        private List<List<(char, int)>> ConvertListToDoubleList(List<(char, int)> locations)
+        {
+            List<List<(char, int)>> finalLocations = new List<List<(char, int)>>();
+            foreach ((char, int) location in locations) finalLocations.Add(new List<(char, int)>{location});
+
+            return finalLocations;
+        }
+
+        protected override (int, int, ChessColor) ConvertToMovementLocation((char, int) location)
         {
             ChessColor movementChessColor = this.MovementChessColorByNumber[location.Item2 - 1];
             (char, int)[,] movementBoard = this.MovementBoardByChessColor[movementChessColor];
@@ -139,7 +147,7 @@ namespace MovementBoard
             throw new ArgumentOutOfRangeException("location", "Location wasn't in the movement board");
         }
 
-        public override bool LocationInBorderLimits(int oldRow, int oldCol, int newRow, int newCol)
+        protected override bool LocationInBorderLimits(int oldRow, int oldCol, int newRow, int newCol)
         {
             if (newRow >= 8 || newRow < 0) return false;
             if (newCol >= 16 || newCol < 0) return false;
