@@ -58,15 +58,16 @@ export default class Board {
         this.piecesByLocation = new Map();
 
         this.squares = Array.from({ length: 64 }, (_, index) => {
-            const number = 8 - Math.floor(index / 8);
+            const number = this.playerColor === this.client.Colors.WHITE ? 8 - Math.floor(index / 8) : Math.floor(index / 8) + 1;
             const column = index % 8;
-            const letter = String.fromCharCode(('A'.charCodeAt(0) + column));
+            const letter = String.fromCharCode(this.playerColor === this.client.Colors.WHITE ? ('A'.charCodeAt(0) + column) : ('H'.charCodeAt(0) - column));
             const isBlack = !(number % 2 === column % 2);
             const square = new Square({
                 board: this,
                 number,
                 letter,
-                isBlack
+                isBlack,
+                index
             });
             this.squaresByLocation.set(`${letter.toLowerCase()}${number}`, square);
             this.piecesByLocation.set(`${letter.toLowerCase()}${number}`, null);

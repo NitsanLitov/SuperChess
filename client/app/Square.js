@@ -1,10 +1,11 @@
 import PieceImage from './PieceImage.js';
 
 export default class Square {
-    constructor({ board, number, letter, isBlack }) {
+    constructor({ board, number, letter, isBlack, index }) {
         this.number = number;
         this.board = board;
         this.letter = letter;
+        this.index = index;
         this.isMovementSquare = false;
         this.element = document.createElement('div');
         this.element.classList.add('square');
@@ -46,14 +47,14 @@ export default class Square {
             this.element.classList.remove('movement');
         }
 
-        if (this.number === 1) {
+        if (Math.floor(this.index / 8) === 7) {
             const label = document.createElement('span');
             label.classList.add('letter-label');
             label.textContent = this.letter;
             this.element.append(label);
         }
 
-        if (this.letter === 'A') {
+        if (this.index % 8 === 0) {
             const label = document.createElement('span');
             label.classList.add('number-label');
             label.textContent = this.number;

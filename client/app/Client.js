@@ -1,6 +1,12 @@
 export default class Client {
+
     constructor({ ip, port }) {
         this.testingCount = 0
+        this.Colors = {
+            WHITE: "w",
+            BLACK: "b",
+            GREEN: "g"
+        }
     }
 
     startGame() {
@@ -84,7 +90,7 @@ export default class Client {
         piecesByLocation['g2'] = { color: 'w', type: 'pawn' };
         piecesByLocation['h2'] = { color: 'w', type: 'pawn' };
         return {
-            color: 'w',
+            color: this.Colors.BLACK,
             piecesByLocation
         };
     }
