@@ -10,47 +10,52 @@ namespace GameManager
 {
     class GameManager
     {
+        const string CHECKMATE = "checkmate";
+        const string PAT = "pat";
+
         public Player[] players;
         private Board board;
         private Server server;
         private Dictionary<string, Player> EndGameOptions;
 
-        public GameManager(Server server, Board board, Player[] players)
+        public GameManager(Server server, Player[] players)
         {
             this.players = players;
-            this.board = board;
             this.server = server;
+            this.board = new Board(players.Length);
 
             this.EndGameOptions = new Dictionary<string, Player>();
         }
 
         void StartGame()
         {
-            // server - update all that a piece moved
-            // server - Update the movement of specific player
-            bool is_running = true;
-            while (is_running)
+            bool gameInProgress = true;
+
+            while (gameInProgress)
             {
                 foreach (Player p in players)
                 {
-                    Dictionary<(char, int), List<(char, int)>> movements = board.GetColorMovementOptions(p.Color); //piece location -> all the movement options
+                    Dictionary<(char, int), List<(char, int)>> movements = this.board.GetColorMovementOptions(p.Color);
                     if (movements.Keys.Count == 0)
                     {
-                        if (board.IsKingThreatened(p)) // checkmate
-                            this.EndGameOptions["checkmate"] = p;
+                        // ToDo: when there is more then 2 players state which player won
+                        if (this.board.IsKingThreatened(p.Color))
+                            this.EndGameOptions[CHECKMATE] = p;
+                        else
+                            this.EndGameOptions[PAT] = null;
 
                         this.server.EndGame(EndGameOptions);
-                        is_running = false;
+                        gameInProgress = false;
                         break;
                     }
-                    this.server.UpdateMovementsOptions(p, movements); // update the movement of ea player
+                    this.server.UpdateMovementsOptions(p, movements);
 
-                    (ChessPiece piece, (char, int) newLocation) = server.GetMovedPiece(p);
+                    (ChessPiece piece, (char, int) newLocation) = this.server.GetMovedPiece(p);
                     this.board.Move(piece, newLocation);
 
                     this.server.NotifyMovementToAll();
                 }
-                if (!is_running) break; 
+                if (!gameInProgress) break;
             }
         }
     }
