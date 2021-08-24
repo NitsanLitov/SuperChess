@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 
@@ -23,7 +25,7 @@ namespace Communication
             catch (SocketException e)
             {
                 this.HandleException(e);
-                throw e;
+                throw;
             }
         }
 
@@ -36,8 +38,25 @@ namespace Communication
             catch (SocketException e)
             {
                 this.HandleException(e);
-                throw e;
+                throw;
             }
+        }
+
+        public void SendMovements()
+        {
+            this.DisposeOfDisconnectedClients();
+
+            foreach (TcpClient client in this.clients)
+            {
+                this.Send(client, "{\"message\":\"welcome!\"}");
+            }
+        }
+
+        public string GetMovement()
+        {
+            this.DisposeOfDisconnectedClients();
+            
+            return this.Read(this.clients[this.clients.Count-1]);
         }
 
         private string Read(TcpClient client)
@@ -59,8 +78,8 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleException(e);
-                throw e;
+                this.HandleException(e, client);
+                throw;
             }
         }
 
@@ -75,8 +94,8 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleException(e);
-                throw e;
+                this.HandleException(e, client);
+                throw;
             }
         }
 
@@ -84,14 +103,39 @@ namespace Communication
         {
             try
             {
-                this.clients.Add(this.server.AcceptTcpClient());
-                Console.WriteLine("Connected!");
+                for (int i = 0; i < numClient; i++)
+                {
+                    Console.WriteLine("asd!");
+                    this.clients.Add(this.server.AcceptTcpClient());
+                    Console.WriteLine("Connected!");
+                }
             }
             catch (SocketException e)
             {
                 this.HandleException(e);
-                throw e;
+                throw;
             }
+        }
+
+        private void DisposeOfDisconnectedClients()
+        {
+            foreach (TcpClient client in new List<TcpClient>(this.clients))
+            {
+                if (!ClientConnected(client))
+                {
+                    this.CloseClient(client);
+                }
+            }
+        }
+
+        public bool ClientConnected(TcpClient client)
+        {
+            var connection = IPGlobalProperties.GetIPGlobalProperties()
+                .GetActiveTcpConnections()
+                .FirstOrDefault(x => x.LocalEndPoint.Equals(client.Client.LocalEndPoint));
+            TcpState state = connection != null ? connection.State : TcpState.Unknown;
+
+            return state == TcpState.Established;
         }
 
         public void Close()
@@ -102,19 +146,39 @@ namespace Communication
                 {
                     client.Close();
                 }
-                this.server.Stop();
             }
             catch (SocketException e)
             {
                 this.HandleException(e);
-                throw e;
+                throw;
+            }
+            finally
+            {
+                this.server.Stop();
             }
         }
 
-        private void HandleException(SocketException e)
+        public void CloseClient(TcpClient client)
+        {
+            try
+            {
+                client.Close();
+            }
+            catch (SocketException e)
+            {
+                this.HandleException(e);
+            }
+            this.clients.Remove(client);
+            Console.WriteLine("deleted");
+        }
+
+        private void HandleException(SocketException e, TcpClient client=null)
         {
             Console.WriteLine("SocketException: {0}", e);
-            this.Close();
+            if (client is TcpClient)
+            {
+                this.CloseClient(client);
+            }
         }
     }
 }
