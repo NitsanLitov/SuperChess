@@ -1,23 +1,26 @@
 var net = require('net');
 
-var client = new net.Socket();
-
 function connect(read_callback) {
+    var client = new net.Socket();
     client.connect(3030, '127.0.0.1', function() {
         console.log('Connected');
     });
 
+    client.on('error', function(e) {
+        console.log("handled error");
+        console.log(e);
+    });
+
     client.on('data', function(data) {
         console.log('Received: ' + data);
-        read_callback(data)
-            // client.destroy();
+        read_callback(JSON.parse(data))
     });
+
+    return client
 }
 
-function send(data) {
-    client.write('Hello, server! Love, Client.');
+function sendJson(client, json) {
+    return client.write(JSON.stringify(json));
 }
 
-client.on('close', function() {
-    console.log('Connection closed');
-});
+module.exports = { connect, sendJson }
