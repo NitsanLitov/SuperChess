@@ -108,6 +108,11 @@ namespace ChessBoard
             return this.locationBoard[location.Item2 - 1, location.Item1 - 'a'];
         }
 
+        public void SetPieceByLocation(ChessPiece piece, (char, int) location)
+        {
+            this.locationBoard[location.Item2 - 1, location.Item1 - 'a'] = piece;
+        }
+
         public void Move((char, int) oldLocation, (char, int) newLocation)
         {
             GetPieceByLocation(oldLocation).Move(newLocation);
