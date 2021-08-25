@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Players;
 using ChessBoard;
 using GameServer;
-using ChessPieces;
 
 namespace GameManager
 {
