@@ -8,18 +8,17 @@ namespace ChessBoard
 {
     class Board
     {
-        ChessPiece[,] locationBoard;
-        List<Type> firstRowPiecesOrder = new List<Type> { typeof(Rook), typeof(Knight), typeof(Bishop), typeof(Queen), typeof(King), typeof(Bishop), typeof(Knight), typeof(Rook) };
-        List<Type> secondRowPiecesOrder = new List<Type> { typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn) };
+        private ChessPiece[,] locationBoard;
+        private List<Type> firstRowPiecesOrder = new List<Type> { typeof(Rook), typeof(Knight), typeof(Bishop), typeof(Queen), typeof(King), typeof(Bishop), typeof(Knight), typeof(Rook) };
+        private List<Type> secondRowPiecesOrder = new List<Type> { typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn), typeof(Pawn) };
+        private string playerNumberErrorMessage = "Chess only supports 2 or 3 players";
 
-        Dictionary<ChessColor, List<ChessPiece>> ChessPiecesByColor;
-        Dictionary<ChessColor, King> KingByColor = new Dictionary<ChessColor, King>();
-
-        string playerNumberErrorMessage = "Chess only supports 2 or 3 players";
+        public Dictionary<ChessColor, List<ChessPiece>> chessPiecesByColor;
+        public Dictionary<ChessColor, King> kingByColor = new Dictionary<ChessColor, King>();
 
         public Board(int numberOfPlayers)
         {
-            this.ChessPiecesByColor = new Dictionary<ChessColor, List<ChessPiece>>();
+            this.chessPiecesByColor = new Dictionary<ChessColor, List<ChessPiece>>();
             switch (numberOfPlayers)
             {
                 case 2:
@@ -63,8 +62,8 @@ namespace ChessBoard
         private void CreateChessPieces(MovementBoard movementBoard)
         {
             ChessColor color = movementBoard.PlayerColor;
-            ChessPiecesByColor[color] = new List<ChessPiece>();
-            List<ChessPiece> chessPieces = ChessPiecesByColor[color];
+            chessPiecesByColor[color] = new List<ChessPiece>();
+            List<ChessPiece> chessPieces = chessPiecesByColor[color];
 
             for (int row = 0; row < 2; row++)
             {
@@ -77,7 +76,7 @@ namespace ChessBoard
 
                     if (piece is King)
                     {
-                        this.KingByColor[color] = (King)piece;
+                        this.kingByColor[color] = (King)piece;
                     }
                 }
             }
@@ -86,7 +85,7 @@ namespace ChessBoard
         public Dictionary<ChessPiece, List<(char, int)>> GetColorMovementOption(ChessColor color)
         {
             Dictionary<ChessPiece, List<(char, int)>> colorMovementOption = new Dictionary<ChessPiece, List<(char, int)>>();
-            foreach (ChessPiece piece in this.ChessPiecesByColor[color])
+            foreach (ChessPiece piece in this.chessPiecesByColor[color])
             {
                 colorMovementOption[piece] = piece.GetMovementOption();
             }
@@ -98,7 +97,7 @@ namespace ChessBoard
             Dictionary<ChessPiece, List<(char, int)>> colorMovementOption = this.GetColorMovementOption(color);
             foreach (List<(char, int)> movementOptions in colorMovementOption.Values)
             {
-                if (movementOptions.Contains(this.KingByColor[color].location)) return true;
+                if (movementOptions.Contains(this.kingByColor[color].location)) return true;
             }
             return false;
         }
