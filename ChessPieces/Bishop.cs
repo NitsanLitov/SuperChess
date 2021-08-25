@@ -5,7 +5,6 @@ using ChessBoard;
 using Movement;
 using Players;
 
-
 namespace ChessBoard
 {
     class Bishop : ChessPiece
@@ -20,7 +19,7 @@ namespace ChessBoard
             foreach (List<(char,int)> direction in diagMovementOptions)
                 movementOptions.AddRange(this.ProcessMoves(direction));
                 
-            this.movementOptions = movementOptions;
+            this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;
         }
     }

@@ -5,7 +5,6 @@ using ChessBoard;
 using Movement;
 using Players;
 
-
 namespace ChessBoard
 {
     class King : ChessPiece
@@ -19,7 +18,12 @@ namespace ChessBoard
             movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location, 1)));
             movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location, 1)));
 
-            this.movementOptions = movementOptions;
+            List<List<(char, int)>> diagMovementOptions = this.movementBoard.Diagonal(this.location, 1);
+
+            foreach (List<(char,int)> direction in diagMovementOptions)
+                movementOptions.AddRange(this.ProcessMoves(direction));
+
+            this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;
         }
     }

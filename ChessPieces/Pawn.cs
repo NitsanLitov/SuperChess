@@ -5,7 +5,6 @@ using ChessBoard;
 using Movement;
 using Players;
 
-
 namespace ChessBoard
 {
     class Pawn : ChessPiece
@@ -15,7 +14,7 @@ namespace ChessBoard
         public override List<(char, int)> GetMovementOptions()
         {
             List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location, this.isFirstMove ? 2 : 1));
-            this.movementOptions = movementOptions;
+            this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;
         }
     }

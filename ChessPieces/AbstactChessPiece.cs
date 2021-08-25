@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using ChessBoard;
 using Movement;
-using Players; // for the ChessColor
+using Players;
 
 namespace ChessBoard
 {
@@ -14,7 +14,7 @@ namespace ChessBoard
         public ChessColor color;
         public Board board;
         public MovementBoard movementBoard;
-        protected List<(char, int)> movementOptions;
+        protected List<(char, int)> movementOptions = new List<(char, int)>();
 
         public ChessPiece((char, int) location, ChessColor color, Board board, MovementBoard movementBoard)
         {
@@ -41,26 +41,30 @@ namespace ChessBoard
             this.board.SetPieceByLocation(this, newLocation);
             this.board.SetPieceByLocation(null, this.location);
             this.location = newLocation;
+
+            this.movementOptions.Clear();
+            if (this.isFirstMove)
+                this.isFirstMove = false;
         }
 
-        protected List<(char, int)> ProcessMoves(List<(char, int)> moves, bool canTake = true)
+        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canTake = true)
         {
-            List<(char, int)> movesOptions = new List<(char, int)>();
-            foreach ((char, int) move in moves)
+            List<(char, int)> finalMovementOptions = new List<(char, int)>();
+            foreach ((char, int) movement in movementOptions)
             {
-                ChessPiece tempPiece = this.board.GetPieceByLocation(move);
-                bool kingWillBeThreatended = this.board.KingWillBeThreatened(tempPiece, move);
+                ChessPiece otherPiece = this.board.GetPieceByLocation(movement);
+                bool kingWillBeThreatended = this.board.KingWillBeThreatened(this, movement);
 
-                if (tempPiece != null)
+                if (otherPiece != null)
                 {
-                    if (!kingWillBeThreatended && canTake && tempPiece.color != this.color)
-                        movesOptions.Add(move);
+                    if (!kingWillBeThreatended && canTake && otherPiece.color != this.color)
+                        finalMovementOptions.Add(movement);
                     break;
                 }
                 if (!kingWillBeThreatended)
-                    movesOptions.Add(move);
+                    finalMovementOptions.Add(movement);
             }
-            return movesOptions;
+            return finalMovementOptions;
         }
     }
 }
