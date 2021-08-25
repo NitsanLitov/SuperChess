@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Players;
 
-namespace MovementBoard
+namespace Movement
 {
     class ThreePlayerMovementBoard : MovementBoard
     {
