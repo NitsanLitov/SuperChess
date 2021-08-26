@@ -18,7 +18,7 @@ namespace ChessBoard
             List<List<(char, int)>> diagMovementOptions = this.movementBoard.DiagonalUp(this.location, 1);
 
             foreach (List<(char,int)> direction in diagMovementOptions)
-                movementOptions.AddRange(this.ProcessMoves(direction));
+                movementOptions.AddRange(this.ProcessMoves(direction, true, true));
 
             this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;
