@@ -5,6 +5,7 @@ using ChessBoard;
 using Movement;
 using Players;
 
+
 namespace ChessBoard
 {
     class Queen : ChessPiece

@@ -32,12 +32,32 @@ namespace MovementBoard
         public List<(char, int)> Right((char, int) currentLocation) { return this.Right(currentLocation, -1); }
         public List<(char, int)> Left((char, int) currentLocation) { return this.Left(currentLocation, -1); }
         public List<List<(char, int)>> Diagonal((char, int) currentLocation) { return this.Diagonal(currentLocation, -1); }
+        public List<List<(char, int)>> DiagonalUp((char, int) currentLocation) { return this.DiagonalUp(currentLocation, -1); }
 
         public abstract List<(char, int)> Up((char, int) currentLocation, int maxSteps);
         public abstract List<(char, int)> Down((char, int) currentLocation, int maxSteps);
         public abstract List<(char, int)> Right((char, int) currentLocation, int maxSteps);
         public abstract List<(char, int)> Left((char, int) currentLocation, int maxSteps);
-        public abstract List<List<(char, int)>> Diagonal((char, int) currentLocation, int maxSteps);
+        public List<List<(char, int)>> Diagonal((char, int) currentLocation, int maxSteps)
+        {
+            (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
+
+            List<List<(char, int)>> locationsList = this.DiagonalUp(movementLocation, maxSteps);
+            locationsList.AddRange(this.DiagonalDown(movementLocation, maxSteps));
+            
+            return locationsList;
+        }
+        public List<List<(char, int)>> DiagonalUp((char, int) currentLocation, int maxSteps)
+        {
+            (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
+
+            if (movementLocation.Item3 != this.PlayerColor)
+                return this.DiagonalDown(movementLocation, maxSteps);
+            
+            return this.DiagonalUp(movementLocation, maxSteps);
+        }
+        protected abstract List<List<(char, int)>> DiagonalUp((int, int, ChessColor) movementLocation, int maxSteps);
+        protected abstract List<List<(char, int)>> DiagonalDown((int, int, ChessColor) movementLocation, int maxSteps);
         public abstract List<List<(char, int)>> Knight((char, int) currentLocation);
 
         protected abstract (int, int, ChessColor) ConvertToMovementLocation((char, int) location);
