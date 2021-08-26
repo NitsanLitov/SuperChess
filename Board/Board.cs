@@ -87,7 +87,7 @@ namespace ChessBoard
             Dictionary<ChessPiece, List<(char, int)>> colorMovementOption = new Dictionary<ChessPiece, List<(char, int)>>();
             foreach (ChessPiece piece in this.chessPiecesByColor[color])
             {
-                colorMovementOption[piece] = piece.GetMovementOption();
+                colorMovementOption[piece] = piece.GetMovementOptions();
             }
             return colorMovementOption;
         }
@@ -115,6 +115,11 @@ namespace ChessBoard
         public void Move((char, int) oldLocation, (char, int) newLocation)
         {
             GetPieceByLocation(oldLocation).Move(newLocation);
+        }
+
+        public bool KingWillBeThreatened(ChessPiece piece, (char, int) location)
+        {
+            return false;
         }
     }
 }
