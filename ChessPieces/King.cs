@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Movement;
@@ -8,6 +9,7 @@ namespace ChessBoard
 {
     class King : ChessPiece
     {
+        protected Dictionary<(char, int), (Rook, string)> castlingMovementOptions;
         public King((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
 
         public override List<(char, int)> GetMovementOptions()
@@ -24,37 +26,63 @@ namespace ChessBoard
 
             if (this.isFirstMove && !this.board.IsKingThreatened(this.color))
             {
-                List<(char, int)> rightCastle = GetCastling(this.movementBoard.Right(this.location));
-                List<(char, int)> leftCastle = GetCastling(this.movementBoard.Left(this.location));
+                this.castlingMovementOptions = new Dictionary<(char, int), (Rook, string)>();
+
+                this.AddCastlingMovement(this.movementBoard.Right(this.location), "right");
+                this.AddCastlingMovement(this.movementBoard.Left(this.location), "left");
                 
-                if (rightCastle != null && !this.board.KingWillBeThreatened(this, rightCastle[0])) movementOptions.AddRange(rightCastle);
-                if (leftCastle != null && !this.board.KingWillBeThreatened(this, leftCastle[0])) movementOptions.AddRange(leftCastle);
+                movementOptions.AddRange(castlingMovementOptions.Keys.ToList());
             }
 
             this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;
         }
 
-        private List<(char, int)> GetCastling(List<(char, int)> movementOptions)
+        protected override void MovePieceOnBoardLocation((char, int) newLocation)
+        {            
+            base.MovePieceOnBoardLocation(newLocation);
+            
+            if (!this.castlingMovementOptions.Keys.Contains(newLocation))
+                return;
+
+            (Rook rook, string kingDirection) = this.castlingMovementOptions[newLocation];
+
+            (char, int) rookNewLocation;
+            if (kingDirection == "right")
+                rookNewLocation = this.movementBoard.Left(newLocation, 1)[0];
+            else
+                rookNewLocation = this.movementBoard.Right(newLocation, 1)[0];
+            
+            this.board.SetPieceByLocation(rook, rookNewLocation);
+            this.board.SetPieceByLocation(null, rook.location);
+            rook.location = rookNewLocation;
+
+            this.castlingMovementOptions.Clear();
+        }
+
+        private void AddCastlingMovement(List<(char, int)> movementOptions, string direction)
         {
-            if (movementOptions.Count < 2) return null;
+            if (movementOptions.Count < 2) return;
 
             // validate no pieces between
             for (int i = 0; i < movementOptions.Count - 1; i++)
             {
                 (char, int) location = movementOptions[i];
                 if (this.board.GetPieceByLocation(location) != null)
-                    return null;
+                    return;
             }
 
             // validate piece is rook and it haven't moved
             (char, int) otherPieceLocation = movementOptions[movementOptions.Count - 1];
             ChessPiece otherPiece = this.board.GetPieceByLocation(otherPieceLocation);
             if (!(otherPiece is Rook) || !otherPiece.isFirstMove)
-                return null;
+                return;
+
+            if (this.board.KingWillBeThreatened(this, movementOptions[1]))
+                return;
 
             // return step 2 movement
-            return new List<(char, int)>() { movementOptions[1] };
+            castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
         }
     }
 }

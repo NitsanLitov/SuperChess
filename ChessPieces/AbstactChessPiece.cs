@@ -13,7 +13,7 @@ namespace ChessBoard
         public ChessColor color;
         public Board board;
         public MovementBoard movementBoard;
-        protected List<(char, int)> movementOptions = new List<(char, int)>();
+        protected List<(char, int)> movementOptions;
 
         public ChessPiece((char, int) location, ChessColor color, Board board, MovementBoard movementBoard)
         {
@@ -22,6 +22,7 @@ namespace ChessBoard
             this.color = color;
             this.board = board;
             this.movementBoard = movementBoard;
+            this.movementOptions = new List<(char, int)>();
 
             this.board.SetPieceByLocation(this, this.location);
         }
@@ -37,13 +38,19 @@ namespace ChessBoard
             if (piece != null)
                 this.board.chessPiecesByColor[piece.color].Remove(piece);
 
-            this.board.SetPieceByLocation(this, newLocation);
-            this.board.SetPieceByLocation(null, this.location);
-            this.location = newLocation;
+            this.MovePieceOnBoardLocation(newLocation);
 
             this.movementOptions.Clear();
             if (this.isFirstMove)
                 this.isFirstMove = false;
+        }
+
+        protected virtual void MovePieceOnBoardLocation((char, int) newLocation)
+        {
+            this.board.SetPieceByLocation(this, newLocation);
+            this.board.SetPieceByLocation(null, this.location);
+            
+            this.location = newLocation;
         }
 
         protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canTake = true)
