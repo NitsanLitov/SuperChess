@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-using ChessBoard;
 using Movement;
 using Players;
 
