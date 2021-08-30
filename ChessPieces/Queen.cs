@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Movement;
 using Players;
 
+
 namespace ChessBoard
 {
     class Queen : ChessPiece

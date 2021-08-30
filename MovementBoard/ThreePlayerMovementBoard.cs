@@ -4,11 +4,13 @@ using System.Collections.Generic;
 
 using Players;
 
-namespace MovementBoard
+namespace Movement
 {
     class ThreePlayerMovementBoard : MovementBoard
     {
-        public ThreePlayerMovementBoard(ChessColor playerColor) : base(playerColor, 'l', 12) { }
+        public const int maxNumber = 12;
+        public const char maxLetter = 'l';
+        public ThreePlayerMovementBoard(ChessColor playerColor) : base(playerColor, maxLetter, maxNumber) { }
 
         public override void SetupMovementBoard()
         {
@@ -43,12 +45,9 @@ namespace MovementBoard
             return GetMovementOptions(movementLocation, maxSteps, 0, -1);
         }
 
-        public override List<List<(char, int)>> Diagonal((char, int) currentLocation, int maxSteps)
+        protected override List<List<(char, int)>> DiagonalUp((int, int, ChessColor) movementLocation, int maxSteps)
         {
-            (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
             List<List<(char, int)>> locationsList = new List<List<(char, int)>>();
-            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, 1, false));
-            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, -1, false));
 
             if (movementLocation.Item2 < 4)
             {
@@ -102,6 +101,15 @@ namespace MovementBoard
                 }
             }
             return new List<List<(char, int)>>();
+        }
+
+        protected override List<List<(char, int)>> DiagonalDown((int, int, ChessColor) movementLocation, int maxSteps)
+        {
+            List<List<(char, int)>> locationsList = new List<List<(char, int)>>();
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, 1, false));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, -1, false));
+
+            return locationsList;
         }
 
         public override List<List<(char, int)>> Knight((char, int) currentLocation)

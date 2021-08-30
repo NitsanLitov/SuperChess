@@ -3,15 +3,18 @@ using System.Collections.Generic;
 
 using Players;
 
-namespace MovementBoard
+namespace Movement
 {
     class TwoPlayerMovementBoard : MovementBoard
     {
-        public TwoPlayerMovementBoard(ChessColor playerColor) : base(playerColor, 'h', 8) { }
+        public const int maxNumber = 8;
+        public const char maxLetter = 'h';
+        public TwoPlayerMovementBoard(ChessColor playerColor) : base(playerColor, maxLetter, maxNumber) { }
 
         public override void SetupMovementBoard()
         {
             AddWhiteMovementBoard();
+            AddBlackMovementBoard();
         }
 
         public override List<(char, int)> Up((char, int) currentLocation, int maxSteps)
@@ -38,14 +41,20 @@ namespace MovementBoard
             return GetMovementOptions(movementLocation, maxSteps, 0, -1);
         }
 
-        public override List<List<(char, int)>> Diagonal((char, int) currentLocation, int maxSteps)
+        protected override List<List<(char, int)>> DiagonalUp((int, int, ChessColor) movementLocation, int maxSteps)
         {
             List<List<(char, int)>> locationsList = new List<List<(char, int)>>();
-            (int, int, ChessColor) movementLocation = ConvertToMovementLocation(currentLocation);
             locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, 1));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, -1));
+            
+            return locationsList;
+        }
+
+        protected override List<List<(char, int)>> DiagonalDown((int, int, ChessColor) movementLocation, int maxSteps)
+        {
+            List<List<(char, int)>> locationsList = new List<List<(char, int)>>();
             locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, 1));
             locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, -1));
-            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, -1));
             
             return locationsList;
         }
@@ -104,6 +113,20 @@ namespace MovementBoard
             {
                 this.MovementChessColorByNumber[number] = ChessColor.White;
             }
+        }
+
+        // Used only for getting starting locations
+        private void AddBlackMovementBoard()
+        {
+            (char, int)[,] blackMovementBoard = new (char, int)[this.MaxNumber, this.MaxLetter - 'a' + 1];
+            for (int number = this.MaxNumber; number >= 1; number--)
+            {
+                for (char letter = this.MaxLetter; letter >= 'a'; letter--)
+                {
+                    blackMovementBoard[8 - number, this.MaxLetter - letter] = (letter,number);
+                }
+            }
+            this.MovementBoardByChessColor.Add(ChessColor.Black, blackMovementBoard);
         }
     }
 }
