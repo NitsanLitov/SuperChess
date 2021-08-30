@@ -4,11 +4,13 @@ using System.Collections.Generic;
 
 using Players;
 
-namespace MovementBoard
+namespace Movement
 {
     class ThreePlayerMovementBoard : MovementBoard
     {
-        public ThreePlayerMovementBoard(ChessColor playerColor) : base(playerColor, 'l', 12) { }
+        public const int maxNumber = 12;
+        public const char maxLetter = 'l';
+        public ThreePlayerMovementBoard(ChessColor playerColor) : base(playerColor, maxLetter, maxNumber) { }
 
         public override void SetupMovementBoard()
         {

@@ -34,7 +34,7 @@ namespace GameManager
             {
                 foreach (Player p in players)
                 {
-                    Dictionary<(char, int), List<(char, int)>> movements = this.board.GetColorMovementOptions(p.Color);
+                    Dictionary<ChessPiece, List<(char, int)>> movements = this.board.GetColorMovementOptions(p.Color);
                     if (movements.Keys.Count == 0)
                     {
                         // ToDo: when there is more then 2 players state which player won
@@ -49,8 +49,8 @@ namespace GameManager
                     }
                     this.server.UpdateMovementsOptions(p, movements);
 
-                    (ChessPiece piece, (char, int) newLocation) = this.server.GetMovedPiece(p);
-                    this.board.Move(piece, newLocation);
+                    ((char, int) oldLocation, (char, int) newLocation) = this.server.GetMovedPiece(p);
+                    this.board.Move(oldLocation, newLocation);
 
                     this.server.NotifyMovementToAll();
                 }
