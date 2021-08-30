@@ -47,7 +47,7 @@ namespace ChessBoard
                 this.isFirstMove = false;
         }
 
-        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canTake = true)
+        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canTake = true, bool canOnlyTake = false)
         {
             List<(char, int)> finalMovementOptions = new List<(char, int)>();
             foreach ((char, int) movement in movementOptions)
@@ -61,6 +61,10 @@ namespace ChessBoard
                         finalMovementOptions.Add(movement);
                     break;
                 }
+                
+                if (canOnlyTake)
+                    continue;
+
                 if (!kingWillBeThreatended)
                     finalMovementOptions.Add(movement);
             }

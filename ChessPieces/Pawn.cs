@@ -13,7 +13,13 @@ namespace ChessBoard
 
         public override List<(char, int)> GetMovementOptions()
         {
-            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location, this.isFirstMove ? 2 : 1));
+            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location, this.isFirstMove ? 2 : 1), false);
+
+            List<List<(char, int)>> diagMovementOptions = this.movementBoard.DiagonalUp(this.location, 1);
+
+            foreach (List<(char,int)> direction in diagMovementOptions)
+                movementOptions.AddRange(this.ProcessMoves(direction, true, true));
+
             this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;
         }
