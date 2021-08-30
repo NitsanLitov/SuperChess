@@ -78,7 +78,7 @@ namespace ChessBoard
             if (!(otherPiece is Rook) || !otherPiece.isFirstMove)
                 return;
 
-            if (this.board.KingWillBeThreatened(this, movementOptions[1]))
+            if (this.board.KingWillBeThreatened(this, movementOptions[0]) || this.board.KingWillBeThreatened(this, movementOptions[1]))
                 return;
 
             // return step 2 movement
