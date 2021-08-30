@@ -7,7 +7,9 @@ namespace Movement
 {
     class TwoPlayerMovementBoard : MovementBoard
     {
-        public TwoPlayerMovementBoard(ChessColor playerColor) : base(playerColor, 'h', 8) { }
+        public const int maxNumber = 8;
+        public const char maxLetter = 'h';
+        public TwoPlayerMovementBoard(ChessColor playerColor) : base(playerColor, maxLetter, maxNumber) { }
 
         public override void SetupMovementBoard()
         {

@@ -24,8 +24,8 @@ namespace Movement
         public abstract void SetupMovementBoard();
 
         public ChessColor PlayerColor { get; set; }
-        public int MaxNumber { get; }
-        public char MaxLetter { get; }
+        public int MaxNumber { get { return this.maxNumber; } }
+        public char MaxLetter { get { return this.maxLetter; } }
 
         public List<(char, int)> Up((char, int) currentLocation) { return this.Up(currentLocation, -1); }
         public List<(char, int)> Down((char, int) currentLocation) { return this.Down(currentLocation, -1); }
