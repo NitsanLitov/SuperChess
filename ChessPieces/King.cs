@@ -38,7 +38,7 @@ namespace ChessBoard
             return movementOptions;
         }
 
-        protected override void MovePieceOnBoardLocation((char, int) newLocation)
+        protected internal override void MovePieceOnBoardLocation((char, int) newLocation)
         {            
             base.MovePieceOnBoardLocation(newLocation);
             
@@ -53,9 +53,7 @@ namespace ChessBoard
             else
                 rookNewLocation = this.movementBoard.Right(newLocation, 1)[0];
             
-            this.board.SetPieceByLocation(rook, rookNewLocation);
-            this.board.SetPieceByLocation(null, rook.location);
-            rook.location = rookNewLocation;
+            rook.MovePieceOnBoardLocation(rookNewLocation);
 
             this.castlingMovementOptions.Clear();
         }
@@ -78,11 +76,14 @@ namespace ChessBoard
             if (!(otherPiece is Rook) || !otherPiece.isFirstMove)
                 return;
 
-            if (this.board.KingWillBeThreatened(this, movementOptions[0]) || this.board.KingWillBeThreatened(this, movementOptions[1]))
-                return;
+            // validate no king threats in between
+            if (this.board.KingWillBeThreatened(this, movementOptions[0])) return;
 
-            // return step 2 movement
-            castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
+            // add step 2 movement (before the second KingWillBeThreatened so the castling move will be possible at move function)
+            this.castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
+
+            // if king will be threatened after castling, remove option
+            if (this.board.KingWillBeThreatened(this, movementOptions[1])) this.castlingMovementOptions.Remove(movementOptions[1]);
         }
     }
 }

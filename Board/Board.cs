@@ -61,19 +61,16 @@ namespace ChessBoard
             GetPieceByLocation(oldLocation).Move(newLocation);
         }
 
-        public void TempMove(ChessPiece piece, (char, int) newLocation)
+        private void ForceMove(ChessPiece piece, (char, int) newLocation)
         {
-
+            piece.ForceMove(newLocation);
         }
 
         public bool KingWillBeThreatened(ChessPiece piece, (char, int) newLocation)
         {
             tempBoard.Save();
 
-            // piece location is updated&isfirstmove
-            // pieces may be removed from pieces list - but not deleted forever or updated to be killed
-            // piecelocation is updated
-            TempMove(piece, newLocation);
+            this.ForceMove(piece, newLocation);
             bool kingWillBeThreatened = IsKingThreatened(piece.color);
 
             tempBoard.Reverse();

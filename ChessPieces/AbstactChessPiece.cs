@@ -28,11 +28,18 @@ namespace ChessBoard
         }
 
         public abstract List<(char, int)> GetMovementOptions();
+        
         public void Move((char, int) newLocation)
         {
             if (!this.movementOptions.Contains(newLocation))
                 throw new ArgumentException("This move is illegal");
-
+            
+            this.ForceMove(newLocation);
+        }
+        
+        // For KingWillBeThreatened usuge only
+        public void ForceMove((char, int) newLocation)
+        {
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
             if (piece != null)
@@ -41,16 +48,17 @@ namespace ChessBoard
             this.MovePieceOnBoardLocation(newLocation);
 
             this.movementOptions.Clear();
-            if (this.isFirstMove)
-                this.isFirstMove = false;
         }
 
-        protected virtual void MovePieceOnBoardLocation((char, int) newLocation)
+        protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation)
         {
             this.board.SetPieceByLocation(this, newLocation);
             this.board.SetPieceByLocation(null, this.location);
             
             this.location = newLocation;
+            
+            if (this.isFirstMove)
+                this.isFirstMove = false;
         }
       
         protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canTake = true, bool canOnlyTake = false)
