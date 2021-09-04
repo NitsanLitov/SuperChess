@@ -1,70 +1,79 @@
 using System;
 using System.Collections.Generic;
 
-namespace Board
+using Players;
+
+namespace ChessBoard
 {
     class TempBoard
     {
-        public ChessPiece[,] piecesLocation;
-        public List<ChessPiece> firstMovePieces;
-        Dictionary<ChessColor, List<ChessPiece>> chessPiecesByColor;
         Board board;
         bool savedState;
+
+        public ChessPiece[,] locationBoard;
+        public List<ChessPiece> firstMovePieces;
+        Dictionary<ChessColor, List<ChessPiece>> chessPiecesByColor;
+        Dictionary<ChessPiece, (char, int)> chessPiecesLocation;
 
         public TempBoard(Board board)
         {
             this.board = board;
-            this.savedState = false;
+            this.SetSavedState(false);
         }
 
         public void Save()
         {
-            this.piecesLocation = this.board.piecesLocation.Clone() as ChessPiece[,];
+            this.locationBoard = this.board.LocationBoard.Clone() as ChessPiece[,];
             this.chessPiecesByColor = new Dictionary<ChessColor, List<ChessPiece>>(this.board.chessPiecesByColor);
             foreach (ChessColor color in this.chessPiecesByColor.Keys)
             {
                 this.chessPiecesByColor[color] = new List<ChessPiece>(this.chessPiecesByColor[color]);
-                this.firstMovePieces = this.chessPiecesByColor[color].FindAll(p => p.firstMove);
+                
+                foreach (ChessPiece piece in this.chessPiecesByColor[color])
+                {
+                    this.chessPiecesLocation[piece] = piece.location;
+                    if (piece.isFirstMove)
+                    {
+                        this.firstMovePieces.Add(piece);
+                    }
+                }
             }
             
-            this.savedState = true;
+            this.SetSavedState(true);
         }
 
         public void Reverse()
         {
-            if (!this.savedState || this.piecesLocation == null || this.chessPiecesByColor == null) throw new NoDataSavedException();
+            if (!this.savedState || this.locationBoard == null || this.chessPiecesByColor == null || this.chessPiecesByColor == null) throw new NoDataSavedException();
 
             foreach (ChessColor color in this.chessPiecesByColor.Keys)
             {
                 foreach (ChessPiece piece in this.chessPiecesByColor[color])
                 {
-                    if (this.piecesLocation[piece.location.Item2 - 1, piece.location.Item1 - 'a'] != piece)
-                    {
-                        UpdatePieceLocation(piece);
-                        if (this.firstMovePieces.Contains(piece) && !piece.firstMove) piece.firstMove = true;
-                    }
+                    if (piece.location != this.chessPiecesLocation[piece]) piece.location = this.chessPiecesLocation[piece];
+                        
+                    if (this.firstMovePieces.Contains(piece) && !piece.isFirstMove) piece.isFirstMove = true;
                 }
             }
-            this.board.piecesLocation = this.piecesLocation;
+            this.board.LocationBoard = this.locationBoard;
             this.board.chessPiecesByColor = this.chessPiecesByColor;
 
-            this.piecesLocation = null;
-            this.chessPiecesByColor = null;
-            this.savedState = false;
+            this.SetSavedState(false);
         }
 
-        public void UpdatePieceLocation(ChessPiece piece)
+        private void SetSavedState(bool savedState)
         {
-            for (int i = 0; i < this.piecesLocation.GetLength(0); i++)
+            if (savedState)
             {
-                for (int j = 0; j < this.piecesLocation.GetLength(1); j++)
-                {
-                    if (this.piecesLocation[i, j] == piece)
-                    {
-                        piece.location = ((char)('a' + j), i - 1);
-                        return;
-                    }
-                }
+                this.savedState = true;
+            }
+            else
+            {
+                this.locationBoard = null;
+                this.chessPiecesByColor = null;
+                this.firstMovePieces = null;
+                this.chessPiecesLocation = null;
+                this.savedState = false;
             }
         }
     }
