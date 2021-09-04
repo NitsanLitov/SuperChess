@@ -27,7 +27,7 @@ namespace ChessBoard
             this.board.SetPieceByLocation(this, this.location);
         }
 
-        public abstract List<(char, int)> GetMovementOptions();
+        public abstract List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing);
         
         public void Move((char, int) newLocation)
         {
@@ -61,13 +61,13 @@ namespace ChessBoard
                 this.isFirstMove = false;
         }
       
-        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canTake = true, bool canOnlyTake = false)
+        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canPieceTakeOpponentKing, bool canTake = true, bool canOnlyTake = false)
         {
             List<(char, int)> finalMovementOptions = new List<(char, int)>();
             foreach ((char, int) movement in movementOptions)
             {
                 ChessPiece otherPiece = this.board.GetPieceByLocation(movement);
-                bool kingWillBeThreatended = this.board.KingWillBeThreatened(this, movement);
+                bool kingWillBeThreatended = !canPieceTakeOpponentKing && this.board.KingWillBeThreatened(this, movement);
 
                 if (otherPiece != null)
                 {

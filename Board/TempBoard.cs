@@ -25,6 +25,9 @@ namespace ChessBoard
         {
             this.locationBoard = this.board.LocationBoard.Clone() as ChessPiece[,];
             this.chessPiecesByColor = new Dictionary<ChessColor, List<ChessPiece>>(this.board.chessPiecesByColor);
+            this.chessPiecesLocation = new Dictionary<ChessPiece, (char, int)>();
+            this.firstMovePieces = new List<ChessPiece>();
+
             foreach (ChessColor color in this.chessPiecesByColor.Keys)
             {
                 this.chessPiecesByColor[color] = new List<ChessPiece>(this.chessPiecesByColor[color]);
