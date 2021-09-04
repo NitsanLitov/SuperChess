@@ -10,13 +10,13 @@ namespace ChessBoard
     {
         public Bishop((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
 
-        public override List<(char, int)> GetMovementOptions()
+        public override List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing)
         {
             List<(char, int)> movementOptions = new List<(char, int)>();
             List<List<(char, int)>> diagMovementOptions = this.movementBoard.Diagonal(this.location);
 
             foreach (List<(char,int)> direction in diagMovementOptions)
-                movementOptions.AddRange(this.ProcessMoves(direction));
+                movementOptions.AddRange(this.ProcessMoves(direction, canPieceTakeOpponentKing));
                 
             this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;

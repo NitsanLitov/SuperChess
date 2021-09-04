@@ -12,19 +12,19 @@ namespace ChessBoard
         protected Dictionary<(char, int), (Rook, string)> castlingMovementOptions;
         public King((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
 
-        public override List<(char, int)> GetMovementOptions()
+        public override List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing)
         {
-            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location, 1));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Down(this.location, 1)));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location, 1)));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location, 1)));
+            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location, 1), canPieceTakeOpponentKing);
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Down(this.location, 1), canPieceTakeOpponentKing));
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location, 1), canPieceTakeOpponentKing));
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location, 1), canPieceTakeOpponentKing));
 
             List<List<(char, int)>> diagMovementOptions = this.movementBoard.Diagonal(this.location, 1);
 
             foreach (List<(char, int)> direction in diagMovementOptions)
-                movementOptions.AddRange(this.ProcessMoves(direction));
+                movementOptions.AddRange(this.ProcessMoves(direction, canPieceTakeOpponentKing));
 
-            if (this.isFirstMove && !this.board.IsKingThreatened(this.color))
+            if (!canPieceTakeOpponentKing && this.isFirstMove && !this.board.IsKingThreatened(this.color))
             {
                 this.castlingMovementOptions = new Dictionary<(char, int), (Rook, string)>();
 

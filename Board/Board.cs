@@ -28,17 +28,22 @@ namespace ChessBoard
 
         public Dictionary<ChessPiece, List<(char, int)>> GetColorMovementOptions(ChessColor color)
         {
+            return this.GetColorMovementOptions(color, false);
+        }
+
+        private Dictionary<ChessPiece, List<(char, int)>> GetColorMovementOptions(ChessColor color, bool canPieceTakeOpponentKing)
+        {
             Dictionary<ChessPiece, List<(char, int)>> colorMovementOption = new Dictionary<ChessPiece, List<(char, int)>>();
             foreach (ChessPiece piece in this.chessPiecesByColor[color])
             {
-                colorMovementOption[piece] = piece.GetMovementOptions();
+                colorMovementOption[piece] = piece.GetMovementOptions(canPieceTakeOpponentKing);
             }
             return colorMovementOption;
         }
 
         public bool IsKingThreatened(ChessColor color)
         {
-            Dictionary<ChessPiece, List<(char, int)>> colorMovementOption = this.GetColorMovementOptions(color);
+            Dictionary<ChessPiece, List<(char, int)>> colorMovementOption = this.GetColorMovementOptions(color, true);
             foreach (List<(char, int)> movementOptions in colorMovementOption.Values)
             {
                 if (movementOptions.Contains(this.kingByColor[color].location)) return true;
