@@ -42,7 +42,7 @@ namespace ChessBoard
         {            
             base.MovePieceOnBoardLocation(newLocation);
             
-            if (!this.castlingMovementOptions.Keys.Contains(newLocation))
+            if (this.castlingMovementOptions == null || !this.castlingMovementOptions.Keys.Contains(newLocation))
                 return;
 
             (Rook rook, string kingDirection) = this.castlingMovementOptions[newLocation];
