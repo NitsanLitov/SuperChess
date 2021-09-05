@@ -37,6 +37,7 @@ namespace ChessBoard
             foreach (ChessPiece piece in new List<ChessPiece>(this.chessPiecesByColor[color]))
             {
                 colorMovementOption[piece] = piece.GetMovementOptions(canPieceTakeOpponentKing);
+                
             }
             return colorMovementOption;
         }
