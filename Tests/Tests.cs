@@ -14,13 +14,76 @@ namespace Test
             PrintBoard(CreateTwoPlayerBoard());
         }
 
-        public static void CheckMovement()
+        public static void CheckBlackPawnMovement()
         {
             Board board = CreateTwoPlayerBoard();
             PrintBoard(board);
 
-            Dictionary<ChessPiece, List<(char, int)>> options = board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer));
             PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            board.Move(('g', 7), ('g', 5));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            
+            board.Move(('g', 2), ('g', 4));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            
+            board.Move(('h', 7), ('h', 5));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            
+            board.Move(('h', 5), ('g', 4));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+        }
+
+        public static void CheckWhitePawnMovement()
+        {
+            Board board = CreateTwoPlayerBoard();
+            PrintBoard(board);
+
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            board.Move(('d', 2), ('d', 4));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            
+            board.Move(('d', 4), ('d', 5));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            
+            board.Move(('e', 7), ('e', 6));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
+
+            
+            board.Move(('d', 5), ('e', 6));
+            PrintBoard(board);
+            
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
         }
 
         private static void PrintBoard(Board board)
@@ -30,7 +93,7 @@ namespace Test
                 if (number != 0) Console.Write($"{number}   ");
                 else Console.Write("    ");
                 
-                for (char letter = 'a'; letter < 'h'; letter++)
+                for (char letter = 'a'; letter <= 'h'; letter++)
                 {
                     if (number == 0)
                     {
@@ -82,10 +145,9 @@ namespace Test
                     Console.Write($"{letter}{number} ");
                 }
                 // Console.WriteLine();
-                Console.Write("  ");
+                Console.Write(" || ");
             }
-            // Console.WriteLine();
-            Console.Write("  ");
+            Console.WriteLine();
         }
     }
 }
