@@ -2,12 +2,24 @@ using System;
 using System.Collections.Generic;
 
 using Players;
+using Movement;
 using ChessBoard;
 
 namespace Test
 {
     static class TestHelper
     {
+        public static void MovePiece(ChessPiece piece, (char, int) newLocation)
+        {
+            piece.board.SetPieceByLocation(piece, newLocation);
+            piece.board.SetPieceByLocation(null, piece.location);
+            
+            piece.location = newLocation;
+            
+            if (piece.isFirstMove)
+                piece.isFirstMove = false;
+        }
+        
         public static void PrintBoard(Board board)
         {
             for (int number = 8; number >= 0; number--)

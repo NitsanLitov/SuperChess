@@ -8,9 +8,10 @@ namespace SuperChess
     {
         static void Main(string[] args)
         {
-            GeneralTests.ShowBasicBoard();
-            PawnTests.CheckWhiteMovement();
-            PawnTests.CheckBlackMovement();
+            // GeneralTests.ShowBasicBoard();
+            // PawnTests.CheckWhiteMovement();
+            // PawnTests.CheckBlackMovement();
+            RookTests.CheckWhiteMovement();
         }
     }
 }
