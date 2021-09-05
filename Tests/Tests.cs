@@ -81,9 +81,11 @@ namespace Test
                 {
                     Console.Write($"{letter}{number} ");
                 }
-                Console.WriteLine();
+                // Console.WriteLine();
+                Console.Write("  ");
             }
-            Console.WriteLine();
+            // Console.WriteLine();
+            Console.Write("  ");
         }
     }
 }
