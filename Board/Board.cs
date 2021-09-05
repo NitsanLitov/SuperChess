@@ -36,8 +36,8 @@ namespace ChessBoard
             Dictionary<ChessPiece, List<(char, int)>> colorMovementOption = new Dictionary<ChessPiece, List<(char, int)>>();
             foreach (ChessPiece piece in new List<ChessPiece>(this.chessPiecesByColor[color]))
             {
-                colorMovementOption[piece] = piece.GetMovementOptions(canPieceTakeOpponentKing);
-                
+                List<(char, int)> movementOptions = piece.GetMovementOptions(canPieceTakeOpponentKing);
+                if (movementOptions.Count != 0) colorMovementOption[piece] = movementOptions;
             }
             return colorMovementOption;
         }
