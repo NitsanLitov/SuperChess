@@ -52,8 +52,8 @@ namespace ChessBoard
 
         protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation)
         {
-            this.board.SetPieceByLocation(this, newLocation);
             this.board.SetPieceByLocation(null, this.location);
+            this.board.SetPieceByLocation(this, newLocation);
             
             this.location = newLocation;
             

@@ -11,7 +11,8 @@ namespace SuperChess
             // GeneralTests.ShowBasicBoard();
             // PawnTests.CheckWhiteMovement();
             // PawnTests.CheckBlackMovement();
-            RookTests.CheckWhiteMovement();
+            // RookTests.CheckWhiteMovement();
+            // RookTests.CheckBlackMovement();
         }
     }
 }

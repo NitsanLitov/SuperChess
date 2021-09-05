@@ -7,12 +7,15 @@ using ChessBoard;
 
 namespace Test
 {
+    public enum FirstPiecesNumber { LeftRook, LeftKnight, LeftBishop, Queen, King, RightBishop, RightKnight, RightRook, Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8 };
+    public enum SecondPiecesNumber { LeftRook, LeftKnight, LeftBishop, King, Queen, RightBishop, RightKnight, RightRook, Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8 };
+
     static class TestHelper
     {
         public static void MovePiece(ChessPiece piece, (char, int) newLocation)
         {
-            piece.board.SetPieceByLocation(piece, newLocation);
             piece.board.SetPieceByLocation(null, piece.location);
+            piece.board.SetPieceByLocation(piece, newLocation);
             
             piece.location = newLocation;
             
@@ -82,6 +85,14 @@ namespace Test
                 Console.Write(" || ");
             }
             Console.WriteLine();
+        }
+
+        public static void PrintAll(Board board)
+        {
+            PrintBoard(board);
+
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
+            PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
         }
     }
 }
