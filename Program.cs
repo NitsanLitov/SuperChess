@@ -14,9 +14,12 @@ namespace SuperChess
             // RookTests.CheckWhiteMovement();
             // RookTests.CheckBlackMovement();
             // TakingTests.ValidateDeadPieceCantMove();
+            // QueenTests.CheckWhiteMovement();
+            // QueenTests.CheckBlackMovement();
 
 
-            // queen basic movement
+            
+            
             // king basic movement
             // bishop basic movement
             // knight basic movement
