@@ -1,11 +1,19 @@
-using Players;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using ChessBoard;
 
-namespace Test
+// Assert.AreEqual
+// Assert.AreSame
+// Assert.IsFalse
+// Assert.IsNotNull
+
+namespace ChessMovementTest
 {
-    static class PawnTests
+    [TestClass]
+    public class PawnTest
     {
-        public static void CheckBlackMovement()
+        [TestMethod]
+        public void TestBlackPawn()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
             TestHelper.PrintAll(board);
@@ -22,8 +30,9 @@ namespace Test
             board.Move(('h', 5), ('g', 4));
             TestHelper.PrintAll(board);
         }
-
-        public static void CheckWhiteMovement()
+        
+        [TestMethod]
+        public void TestWhitePawn()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
             TestHelper.PrintAll(board);

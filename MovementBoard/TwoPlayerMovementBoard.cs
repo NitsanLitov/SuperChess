@@ -5,7 +5,7 @@ using Players;
 
 namespace Movement
 {
-    class TwoPlayerMovementBoard : MovementBoard
+    public class TwoPlayerMovementBoard : MovementBoard
     {
         public const int maxNumber = 8;
         public const char maxLetter = 'h';

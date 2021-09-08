@@ -6,7 +6,7 @@ namespace Players
     public enum ChessColor { White, Black, Green };
     public enum PlayerNumber { FirstPlayer, SecondPlayer, ThirdPlayer };
 
-    static class PlayerColor
+    public static class PlayerColor
     {
         private static Dictionary<PlayerNumber, ChessColor> ChessColorByPlayer = new Dictionary<PlayerNumber, ChessColor>()
         {

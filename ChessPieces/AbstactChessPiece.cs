@@ -6,7 +6,7 @@ using Players;
 
 namespace ChessBoard
 {
-    abstract class ChessPiece
+    public abstract class ChessPiece
     {
         public bool isFirstMove;
         public (char, int) location;

@@ -18,8 +18,8 @@ namespace SuperChess
             // QueenTests.CheckBlackMovement();
 
 
-            
-            
+
+
             // create board kill piece function that removes from list and places null instead. when moving piece if not null throw exception.
 
 
