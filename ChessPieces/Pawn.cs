@@ -6,7 +6,7 @@ using Players;
 
 namespace ChessBoard
 {
-    class Pawn : ChessPiece
+    public class Pawn : ChessPiece
     {
         private ((char, int), (char, int)) enPassantMove;
 

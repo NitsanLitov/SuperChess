@@ -5,7 +5,7 @@ using Players;
 
 namespace ChessBoard
 {
-    class Board
+    public class Board
     {
         public Dictionary<ChessColor, List<ChessPiece>> chessPiecesByColor;
         public Dictionary<ChessColor, King> kingByColor = new Dictionary<ChessColor, King>();

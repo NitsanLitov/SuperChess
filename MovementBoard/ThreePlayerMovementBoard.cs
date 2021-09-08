@@ -6,7 +6,7 @@ using Players;
 
 namespace Movement
 {
-    class ThreePlayerMovementBoard : MovementBoard
+    public class ThreePlayerMovementBoard : MovementBoard
     {
         public const int maxNumber = 12;
         public const char maxLetter = 'l';

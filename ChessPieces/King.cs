@@ -7,7 +7,7 @@ using Players;
 
 namespace ChessBoard
 {
-    class King : ChessPiece
+    public class King : ChessPiece
     {
         protected Dictionary<(char, int), (Rook, string)> castlingMovementOptions;
         public King((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
