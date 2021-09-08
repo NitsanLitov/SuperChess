@@ -89,5 +89,11 @@ namespace ChessBoard
             tempBoard.Reverse();
             return kingWillBeThreatened;
         }
+
+        public void TakePiece(ChessPiece piece)
+        {
+            this.chessPiecesByColor[piece.color].Remove(piece);
+            this.SetPieceByLocation(null, piece.location);
+        }
     }
 }

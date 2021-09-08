@@ -28,11 +28,11 @@ namespace ChessBoard
         }
 
         public abstract List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing);
-        
+
         public void Move((char, int) newLocation)
         {
             if (!this.movementOptions.Contains(newLocation))
-                throw new ArgumentException("This move is illegal");
+                throw new IllegalMoveException("This move is illegal");
             
             this.ForceMove(newLocation);
         }
@@ -43,7 +43,7 @@ namespace ChessBoard
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
             if (piece != null)
-                this.board.chessPiecesByColor[piece.color].Remove(piece);
+                this.board.TakePiece(piece);
 
             this.MovePieceOnBoardLocation(newLocation);
 
@@ -52,6 +52,11 @@ namespace ChessBoard
 
         protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation)
         {
+            ChessPiece piece = this.board.GetPieceByLocation(newLocation);
+            
+            if (piece != null)
+                throw new IllegalMoveException("new location isn't empty");
+            
             this.board.SetPieceByLocation(this, newLocation);
             this.board.SetPieceByLocation(null, this.location);
             
@@ -84,5 +89,12 @@ namespace ChessBoard
             }
             return finalMovementOptions;
         }
+    }
+
+    public class IllegalMoveException : Exception
+    {
+        public IllegalMoveException() : base() { }
+        public IllegalMoveException(string message) : base(message) { }
+        public IllegalMoveException(string message, Exception inner) : base(message, inner) { }
     }
 }
