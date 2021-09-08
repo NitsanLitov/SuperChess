@@ -47,7 +47,7 @@ namespace ChessBoard
 
         public void Reverse()
         {
-            if (!this.savedState || this.locationBoard == null || this.chessPiecesByColor == null || this.chessPiecesByColor == null) throw new NoDataSavedException();
+            if (!this.savedState || this.locationBoard == null || this.chessPiecesByColor == null || this.chessPiecesLocation == null) throw new NoDataSavedException();
 
             foreach (ChessColor color in this.chessPiecesByColor.Keys)
             {
