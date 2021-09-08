@@ -20,6 +20,11 @@ namespace SuperChess
 
             
             
+            // create board kill piece function that removes from list and places null instead. when moving piece if not null throw exception.
+
+
+
+
             // king basic movement
             // bishop basic movement
             // knight basic movement
