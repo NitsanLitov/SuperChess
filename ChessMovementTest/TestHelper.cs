@@ -11,17 +11,6 @@ namespace ChessMovementTest
 
     static class TestHelper
     {
-        public static void MovePiece(ChessPiece piece, (char, int) newLocation)
-        {
-            piece.board.SetPieceByLocation(null, piece.location);
-            piece.board.SetPieceByLocation(piece, newLocation);
-            
-            piece.location = newLocation;
-            
-            if (piece.isFirstMove)
-                piece.isFirstMove = false;
-        }
-        
         public static void PrintBoard(Board board)
         {
             for (int number = 8; number >= 0; number--)

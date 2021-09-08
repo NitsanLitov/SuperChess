@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Test;
+// using Test;
 
 namespace SuperChess
 {

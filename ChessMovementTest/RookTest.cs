@@ -19,16 +19,14 @@ namespace ChessMovementTest
             List<ChessPiece> firstPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.FirstPlayer)];
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
             
-            TestHelper.MovePiece(firstPieces[(int)FirstPiecesNumber.RightRook], ('d', 4));
+            firstPieces[(int)FirstPiecesNumber.RightRook].ForceMove(('d', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(firstPieces[(int)FirstPiecesNumber.RightBishop], ('g', 4));
+            firstPieces[(int)FirstPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(secondPieces[(int)SecondPiecesNumber.RightBishop], ('g', 4));
+            secondPieces[(int)SecondPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
-            // TestHelper.MovePiece(firstPieces[7], ('d', 4));
-            // TestHelper.PrintAll(board);
         }
         
         [TestMethod]
@@ -40,16 +38,14 @@ namespace ChessMovementTest
             List<ChessPiece> firstPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.FirstPlayer)];
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
             
-            TestHelper.MovePiece(secondPieces[(int)SecondPiecesNumber.RightRook], ('d', 4));
+            secondPieces[(int)SecondPiecesNumber.RightRook].ForceMove(('d', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(firstPieces[(int)FirstPiecesNumber.RightBishop], ('g', 4));
+            firstPieces[(int)FirstPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(secondPieces[(int)SecondPiecesNumber.RightBishop], ('g', 4));
+            secondPieces[(int)SecondPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
-            // TestHelper.MovePiece(firstPieces[7], ('d', 4));
-            // TestHelper.PrintAll(board);
         }
     }
 }

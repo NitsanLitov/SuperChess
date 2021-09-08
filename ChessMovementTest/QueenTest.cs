@@ -17,14 +17,14 @@ namespace ChessMovementTest
 
             List<ChessPiece> firstPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.FirstPlayer)];
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
-            
-            TestHelper.MovePiece(firstPieces[(int)FirstPiecesNumber.Queen], ('d', 4));
+                        
+            firstPieces[(int)FirstPiecesNumber.Queen].ForceMove(('d', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(firstPieces[(int)FirstPiecesNumber.RightBishop], ('g', 4));
+            firstPieces[(int)FirstPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(secondPieces[(int)SecondPiecesNumber.RightBishop], ('g', 4));
+            secondPieces[(int)SecondPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
 
             board.Move(('f', 7), ('f', 6));
@@ -43,13 +43,13 @@ namespace ChessMovementTest
             List<ChessPiece> firstPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.FirstPlayer)];
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
             
-            TestHelper.MovePiece(secondPieces[(int)SecondPiecesNumber.Queen], ('d', 4));
+            secondPieces[(int)SecondPiecesNumber.Queen].ForceMove(('d', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(secondPieces[(int)SecondPiecesNumber.RightBishop], ('g', 4));
+            secondPieces[(int)SecondPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             
-            TestHelper.MovePiece(firstPieces[(int)FirstPiecesNumber.RightBishop], ('g', 4));
+            firstPieces[(int)FirstPiecesNumber.RightBishop].ForceMove(('g', 4));
             TestHelper.PrintAll(board);
 
             board.Move(('e', 2), ('e', 3));
