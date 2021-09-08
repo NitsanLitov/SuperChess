@@ -14,7 +14,7 @@ namespace ChessBoard
         {
             List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location), canPieceTakeOpponentKing);
             movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Down(this.location), canPieceTakeOpponentKing));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location), canPieceTakeOpponentKing));
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location, 2), canPieceTakeOpponentKing));
             movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location), canPieceTakeOpponentKing));
             
             this.movementOptions = new List<(char, int)>(movementOptions);
