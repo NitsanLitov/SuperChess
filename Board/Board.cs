@@ -9,6 +9,7 @@ namespace ChessBoard
     {
         public Dictionary<ChessColor, List<ChessPiece>> chessPiecesByColor;
         public Dictionary<ChessColor, King> kingByColor = new Dictionary<ChessColor, King>();
+        public EnPassantPawn enPassantPawn;
         private int numberOfPlayers;
 
         public TempBoard tempBoard;
@@ -45,7 +46,7 @@ namespace ChessBoard
         public bool IsKingThreatened(ChessColor color)
         {
             (char, int) kingLocation = this.kingByColor[color].location;
-            
+
             foreach (ChessColor opponentColor in this.chessPiecesByColor.Keys)
             {
                 if (opponentColor == color) continue;
@@ -71,7 +72,15 @@ namespace ChessBoard
 
         public void Move((char, int) oldLocation, (char, int) newLocation)
         {
+            EnPassantPawn oldEnPassantPawn = this.enPassantPawn;
             GetPieceByLocation(oldLocation).Move(newLocation);
+
+            if (oldEnPassantPawn != null && this.enPassantPawn != null)
+            {
+                SetPieceByLocation(null, oldEnPassantPawn.location);
+                if (oldEnPassantPawn == this.enPassantPawn)
+                    this.enPassantPawn = null;
+            }
         }
 
         private void ForceMove(ChessPiece piece, (char, int) newLocation)
@@ -88,12 +97,6 @@ namespace ChessBoard
 
             tempBoard.Reverse();
             return kingWillBeThreatened;
-        }
-
-        public void TakePiece(ChessPiece piece)
-        {
-            this.chessPiecesByColor[piece.color].Remove(piece);
-            this.SetPieceByLocation(null, piece.location);
         }
     }
 }
