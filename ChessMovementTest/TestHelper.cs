@@ -81,5 +81,39 @@ namespace ChessMovementTest
             PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.SecondPlayer)));
             PrintMovementOptions(board.GetColorMovementOptions(PlayerColor.GetColor(PlayerNumber.FirstPlayer)));
         }
+
+        public static void ValidateMovementResults(ChessPiece piece, string movements)
+        {
+            Dictionary<ChessPiece, List<(char, int)>> result = piece.board.GetColorMovementOptions(piece.color);
+
+            if (!result.ContainsKey(piece))
+            {
+                if (movements == "") return;
+                throw new MovementOptionsException($"piece shows no options for movement");
+            }
+
+            List<(char, int)> resultMovementOptions = result[piece];
+
+            foreach (string movement in movements.Split(' '))
+            {
+                if (movement == "") continue;
+
+                (char, int) location = (movement[0], (int)(movement[1] - '0'));
+                if (!resultMovementOptions.Contains(location))
+                    throw new MovementOptionsException($"the llegal move {movement} isn't an option");
+                else
+                    resultMovementOptions.Remove(location);
+            }
+
+            if (resultMovementOptions.Count != 0)
+                throw new MovementOptionsException($"too many movement options {resultMovementOptions[0]}, etc...");
+        }
+    }
+
+    public class MovementOptionsException : Exception
+    {
+        public MovementOptionsException() : base() { }
+        public MovementOptionsException(string message) : base(message) { }
+        public MovementOptionsException(string message, Exception inner) : base(message, inner) { }
     }
 }
