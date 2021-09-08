@@ -5,7 +5,7 @@ using Players;
 
 namespace Movement
 {
-    class TwoPlayerMovementBoard : MovementBoard
+    public class TwoPlayerMovementBoard : MovementBoard
     {
         public const int maxNumber = 8;
         public const char maxLetter = 'h';
@@ -44,8 +44,8 @@ namespace Movement
         protected override List<List<(char, int)>> DiagonalUp((int, int, ChessColor) movementLocation, int maxSteps)
         {
             List<List<(char, int)>> locationsList = new List<List<(char, int)>>();
-            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, 1));
-            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, -1));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, 1, false));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, 1, -1, false));
             
             return locationsList;
         }
@@ -53,8 +53,8 @@ namespace Movement
         protected override List<List<(char, int)>> DiagonalDown((int, int, ChessColor) movementLocation, int maxSteps)
         {
             List<List<(char, int)>> locationsList = new List<List<(char, int)>>();
-            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, 1));
-            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, -1));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, 1, false));
+            locationsList.Add(GetMovementOptions(movementLocation, maxSteps, -1, -1, false));
             
             return locationsList;
         }

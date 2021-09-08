@@ -6,7 +6,7 @@ using Players;
 
 namespace ChessBoard
 {
-    abstract class ChessPiece
+    public abstract class ChessPiece
     {
         public bool isFirstMove;
         public (char, int) location;
@@ -55,8 +55,8 @@ namespace ChessBoard
             if (this.board.GetPieceByLocation(newLocation) != null)
                 throw new IllegalMoveException("new location isn't empty");
             
-            this.board.SetPieceByLocation(this, newLocation);
             this.board.SetPieceByLocation(null, this.location);
+            this.board.SetPieceByLocation(this, newLocation);
             
             this.location = newLocation;
             

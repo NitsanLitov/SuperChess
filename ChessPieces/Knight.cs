@@ -6,7 +6,7 @@ using Players;
 
 namespace ChessBoard
 {
-    class Knight : ChessPiece
+    public class Knight : ChessPiece
     {
         public Knight((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
 

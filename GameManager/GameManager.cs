@@ -7,7 +7,7 @@ using GameServer;
 
 namespace GameManager
 {
-    class GameManager
+    public class GameManager
     {
         const string CHECKMATE = "checkmate";
         const string PAT = "pat";

@@ -5,7 +5,7 @@ using Players;
 
 namespace Movement
 {
-    abstract class MovementBoard
+    public abstract class MovementBoard
     {
         protected Dictionary<ChessColor, (char, int)[,]> MovementBoardByChessColor;
         protected ChessColor[] MovementChessColorByNumber;

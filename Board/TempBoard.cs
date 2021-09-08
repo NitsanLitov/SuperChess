@@ -5,7 +5,7 @@ using Players;
 
 namespace ChessBoard
 {
-    class TempBoard
+    public class TempBoard
     {
         Board board;
         bool savedState;
