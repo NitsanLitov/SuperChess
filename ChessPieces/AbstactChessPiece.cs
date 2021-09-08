@@ -52,9 +52,7 @@ namespace ChessBoard
 
         protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation)
         {
-            ChessPiece piece = this.board.GetPieceByLocation(newLocation);
-            
-            if (piece != null)
+            if (this.board.GetPieceByLocation(newLocation) != null)
                 throw new IllegalMoveException("new location isn't empty");
             
             this.board.SetPieceByLocation(this, newLocation);
