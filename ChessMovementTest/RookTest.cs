@@ -9,7 +9,7 @@ namespace ChessMovementTest
 {
     [TestClass]
     public class RookTest
-    {   
+    {
         [TestMethod]
         public void TestWhiteRook()
         {
