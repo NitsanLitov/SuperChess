@@ -43,7 +43,7 @@ namespace ChessBoard
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
             if (piece != null)
-                this.board.TakePiece(piece);
+                piece.Dispose();
 
             this.MovePieceOnBoardLocation(newLocation);
 
@@ -72,7 +72,7 @@ namespace ChessBoard
                 ChessPiece otherPiece = this.board.GetPieceByLocation(movement);
                 bool kingWillBeThreatended = !canPieceTakeOpponentKing && this.board.KingWillBeThreatened(this, movement);
 
-                if (otherPiece != null)
+                if (otherPiece != null && (this is Pawn || otherPiece is not EnPassantPawn))
                 {
                     if (!kingWillBeThreatended && canTake && otherPiece.color != this.color)
                         finalMovementOptions.Add(movement);
@@ -86,6 +86,12 @@ namespace ChessBoard
                     finalMovementOptions.Add(movement);
             }
             return finalMovementOptions;
+        }
+        
+        public virtual void Dispose()
+        {
+            this.board.chessPiecesByColor[this.color].Remove(this);
+            this.board.SetPieceByLocation(null, this.location);
         }
     }
 

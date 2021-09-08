@@ -12,6 +12,7 @@ namespace ChessBoard
 
         public ChessPiece[,] locationBoard;
         public List<ChessPiece> firstMovePieces;
+        public EnPassantPawn enPassantPawn;
         Dictionary<ChessColor, List<ChessPiece>> chessPiecesByColor;
         Dictionary<ChessPiece, (char, int)> chessPiecesLocation;
 
@@ -23,6 +24,7 @@ namespace ChessBoard
 
         public void Save()
         {
+            this.enPassantPawn = this.board.enPassantPawn;
             this.locationBoard = this.board.LocationBoard.Clone() as ChessPiece[,];
             this.chessPiecesByColor = new Dictionary<ChessColor, List<ChessPiece>>(this.board.chessPiecesByColor);
             this.chessPiecesLocation = new Dictionary<ChessPiece, (char, int)>();
@@ -60,6 +62,7 @@ namespace ChessBoard
             }
             this.board.LocationBoard = this.locationBoard;
             this.board.chessPiecesByColor = this.chessPiecesByColor;
+            this.board.enPassantPawn = this.enPassantPawn;
 
             this.SetSavedState(false);
         }
@@ -76,6 +79,7 @@ namespace ChessBoard
                 this.chessPiecesByColor = null;
                 this.firstMovePieces = null;
                 this.chessPiecesLocation = null;
+                this.enPassantPawn = null;
                 this.savedState = false;
             }
         }
