@@ -37,7 +37,7 @@ namespace ChessBoard
             if (newLocation != this.enPassantMove.Item2) return;
 
             EnPassantPawn enPassantPawn = new EnPassantPawn(this.enPassantMove.Item1, this.color, this.board, this.movementBoard, this);
-            this.board.enPassantPawn = enPassantPawn;            
+            this.board.enPassantPawn = enPassantPawn;
             this.enPassantMove = default;
         }
     }

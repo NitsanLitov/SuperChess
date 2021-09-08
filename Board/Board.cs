@@ -18,6 +18,7 @@ namespace ChessBoard
         {
             this.numberOfPlayers = numberOfPlayers;
             this.tempBoard = new TempBoard(this);
+            this.enPassantPawn = null;
 
             this.chessPiecesByColor = new Dictionary<ChessColor, List<ChessPiece>>();
             PiecesSetup.Setup(this);
