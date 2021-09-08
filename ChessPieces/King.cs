@@ -12,19 +12,19 @@ namespace ChessBoard
         protected Dictionary<(char, int), (Rook, string)> castlingMovementOptions;
         public King((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
 
-        public override List<(char, int)> GetMovementOptions()
+        public override List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing)
         {
-            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location, 1));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Down(this.location, 1)));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location, 1)));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location, 1)));
+            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location, 1), canPieceTakeOpponentKing);
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Down(this.location, 1), canPieceTakeOpponentKing));
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location, 1), canPieceTakeOpponentKing));
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location, 1), canPieceTakeOpponentKing));
 
             List<List<(char, int)>> diagMovementOptions = this.movementBoard.Diagonal(this.location, 1);
 
             foreach (List<(char, int)> direction in diagMovementOptions)
-                movementOptions.AddRange(this.ProcessMoves(direction));
+                movementOptions.AddRange(this.ProcessMoves(direction, canPieceTakeOpponentKing));
 
-            if (this.isFirstMove && !this.board.IsKingThreatened(this.color))
+            if (!canPieceTakeOpponentKing && this.isFirstMove && !this.board.IsKingThreatened(this.color))
             {
                 this.castlingMovementOptions = new Dictionary<(char, int), (Rook, string)>();
 
@@ -38,11 +38,11 @@ namespace ChessBoard
             return movementOptions;
         }
 
-        protected override void MovePieceOnBoardLocation((char, int) newLocation)
+        protected internal override void MovePieceOnBoardLocation((char, int) newLocation)
         {            
             base.MovePieceOnBoardLocation(newLocation);
             
-            if (!this.castlingMovementOptions.Keys.Contains(newLocation))
+            if (this.castlingMovementOptions == null || !this.castlingMovementOptions.Keys.Contains(newLocation))
                 return;
 
             (Rook rook, string kingDirection) = this.castlingMovementOptions[newLocation];
@@ -53,9 +53,7 @@ namespace ChessBoard
             else
                 rookNewLocation = this.movementBoard.Right(newLocation, 1)[0];
             
-            this.board.SetPieceByLocation(rook, rookNewLocation);
-            this.board.SetPieceByLocation(null, rook.location);
-            rook.location = rookNewLocation;
+            rook.MovePieceOnBoardLocation(rookNewLocation);
 
             this.castlingMovementOptions.Clear();
         }
@@ -78,11 +76,14 @@ namespace ChessBoard
             if (!(otherPiece is Rook) || !otherPiece.isFirstMove)
                 return;
 
-            if (this.board.KingWillBeThreatened(this, movementOptions[0]) || this.board.KingWillBeThreatened(this, movementOptions[1]))
-                return;
+            // validate no king threats in between
+            if (this.board.KingWillBeThreatened(this, movementOptions[0])) return;
 
-            // return step 2 movement
-            castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
+            // add step 2 movement (before the second KingWillBeThreatened so the castling move will be possible at move function)
+            this.castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
+
+            // if king will be threatened after castling, remove option
+            if (this.board.KingWillBeThreatened(this, movementOptions[1])) this.castlingMovementOptions.Remove(movementOptions[1]);
         }
     }
 }

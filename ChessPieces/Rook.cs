@@ -10,12 +10,12 @@ namespace ChessBoard
     {
         public Rook((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
 
-        public override List<(char, int)> GetMovementOptions()
+        public override List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing)
         {
-            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Down(this.location)));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location)));
-            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location)));
+            List<(char, int)> movementOptions = this.ProcessMoves(this.movementBoard.Up(this.location), canPieceTakeOpponentKing);
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Down(this.location), canPieceTakeOpponentKing));
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Left(this.location), canPieceTakeOpponentKing));
+            movementOptions.AddRange(this.ProcessMoves(this.movementBoard.Right(this.location), canPieceTakeOpponentKing));
             
             this.movementOptions = new List<(char, int)>(movementOptions);
             return movementOptions;

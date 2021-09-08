@@ -27,12 +27,19 @@ namespace ChessBoard
             this.board.SetPieceByLocation(this, this.location);
         }
 
-        public abstract List<(char, int)> GetMovementOptions();
+        public abstract List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing);
+        
         public void Move((char, int) newLocation)
         {
             if (!this.movementOptions.Contains(newLocation))
                 throw new ArgumentException("This move is illegal");
-
+            
+            this.ForceMove(newLocation);
+        }
+        
+        // For KingWillBeThreatened usuge only
+        public void ForceMove((char, int) newLocation)
+        {
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
             if (piece != null)
@@ -41,25 +48,26 @@ namespace ChessBoard
             this.MovePieceOnBoardLocation(newLocation);
 
             this.movementOptions.Clear();
-            if (this.isFirstMove)
-                this.isFirstMove = false;
         }
 
-        protected virtual void MovePieceOnBoardLocation((char, int) newLocation)
+        protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation)
         {
             this.board.SetPieceByLocation(this, newLocation);
             this.board.SetPieceByLocation(null, this.location);
             
             this.location = newLocation;
+            
+            if (this.isFirstMove)
+                this.isFirstMove = false;
         }
       
-        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canTake = true, bool canOnlyTake = false)
+        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canPieceTakeOpponentKing, bool canTake = true, bool canOnlyTake = false)
         {
             List<(char, int)> finalMovementOptions = new List<(char, int)>();
             foreach ((char, int) movement in movementOptions)
             {
                 ChessPiece otherPiece = this.board.GetPieceByLocation(movement);
-                bool kingWillBeThreatended = this.board.KingWillBeThreatened(this, movement);
+                bool kingWillBeThreatended = !canPieceTakeOpponentKing && this.board.KingWillBeThreatened(this, movement);
 
                 if (otherPiece != null)
                 {

@@ -28,20 +28,7 @@ namespace ChessBoard
 
         static private string playerNumberErrorMessage = "Chess only supports 2 or 3 players";
 
-        static public ChessPiece[,] CreateLocationBoard(Board board)
-        {
-            switch (board.NumberOfPlayers)
-            {
-                case 2:
-                    return new ChessPiece[TwoPlayerMovementBoard.maxNumber, TwoPlayerMovementBoard.maxLetter];
-                case 3:
-                    return new ChessPiece[ThreePlayerMovementBoard.maxNumber, ThreePlayerMovementBoard.maxLetter];
-                default:
-                    throw new ArgumentException(playerNumberErrorMessage);
-            }
-        }
-
-        static public void SetupPlayerBoard(Board board)
+        static public void Setup(Board board)
         {
             List<PlayerNumber> playerNumbers;
             Type movementType;
@@ -49,10 +36,12 @@ namespace ChessBoard
             switch (board.NumberOfPlayers)
             {
                 case 2:
+                    board.LocationBoard =  new ChessPiece[TwoPlayerMovementBoard.maxNumber, TwoPlayerMovementBoard.maxLetter];
                     playerNumbers = new List<PlayerNumber>() { PlayerNumber.FirstPlayer, PlayerNumber.SecondPlayer };
                     movementType = typeof(TwoPlayerMovementBoard);
                     break;
                 case 3:
+                    board.LocationBoard =  new ChessPiece[ThreePlayerMovementBoard.maxNumber, ThreePlayerMovementBoard.maxLetter];
                     playerNumbers = new List<PlayerNumber>() { PlayerNumber.FirstPlayer, PlayerNumber.SecondPlayer, PlayerNumber.ThirdPlayer };
                     movementType = typeof(ThreePlayerMovementBoard);
                     break;
