@@ -108,6 +108,11 @@ namespace ChessMovementTest
             if (resultMovementOptions.Count != 0)
                 throw new MovementOptionsException($"too many movement options {resultMovementOptions[0]}, etc...");
         }
+
+        public static bool PieceExists(ChessPiece piece, PlayerNumber playerNumber, Board board)
+        {
+            return board.chessPiecesByColor[PlayerColor.GetColor(playerNumber)].Contains(piece);
+        }
     }
 
     class MovementOptionsException : Exception
