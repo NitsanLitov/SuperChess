@@ -24,46 +24,52 @@ namespace ChessBoard
             this.movementBoard = movementBoard;
             this.movementOptions = new List<(char, int)>();
 
+            if (this.board.GetPieceByLocation(this.location) != null)
+                throw new IllegalMoveException("new location isn't empty");
+
             this.board.SetPieceByLocation(this, this.location);
         }
 
         public abstract List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing);
 
-        public void Move((char, int) newLocation)
+        public void Move((char, int) newLocation, Type newChessPieceType = null)
         {
             if (!this.movementOptions.Contains(newLocation))
                 throw new IllegalMoveException("This move is illegal");
-            
-            this.ForceMove(newLocation);
+
+            this.ForceMove(newLocation, newChessPieceType);
         }
-        
+
         // For KingWillBeThreatened usuge only
-        public void ForceMove((char, int) newLocation)
+        public void ForceMove((char, int) newLocation, Type newChessPieceType = null)
         {
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
             if (piece != null)
                 piece.Dispose();
 
-            this.MovePieceOnBoardLocation(newLocation);
+            this.MovePieceOnBoardLocation(newLocation, newChessPieceType);
 
             this.movementOptions.Clear();
         }
 
-        protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation)
+        protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {
+            if (newChessPieceType != null)
+                throw new PawnPromotionException("Can't promote a piece");
+
             if (this.board.GetPieceByLocation(newLocation) != null)
                 throw new IllegalMoveException("new location isn't empty");
-            
+
             this.board.SetPieceByLocation(null, this.location);
             this.board.SetPieceByLocation(this, newLocation);
-            
+
             this.location = newLocation;
-            
+
             if (this.isFirstMove)
                 this.isFirstMove = false;
         }
-      
+
         protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canPieceTakeOpponentKing, bool canTake = true, bool canOnlyTake = false)
         {
             List<(char, int)> finalMovementOptions = new List<(char, int)>();
@@ -78,7 +84,7 @@ namespace ChessBoard
                         finalMovementOptions.Add(movement);
                     break;
                 }
-                
+
                 if (canOnlyTake)
                     continue;
 
@@ -87,7 +93,7 @@ namespace ChessBoard
             }
             return finalMovementOptions;
         }
-        
+
         public virtual void Dispose()
         {
             this.board.chessPiecesByColor[this.color].Remove(this);
