@@ -8,7 +8,7 @@ namespace ChessMovementTest
 {
     [TestClass]
     public class QueenTest
-    {   
+    {
         [TestMethod]
         public void TestWhiteQueen()
         {

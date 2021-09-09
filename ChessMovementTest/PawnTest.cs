@@ -41,11 +41,6 @@ namespace ChessMovementTest
             TestHelper.ValidateMovementResults(wPawn4, "d6 e6");
             TestHelper.ValidateMovementResults(bPawn4, "e5 d5");
             
-            // board.Move(('d', 5), ('e', 6));
-            // TestHelper.PrintAll(board);
-            // TestHelper.ValidateMovementResults(wPawn4, "d7 e7 f7");
-            // TestHelper.ValidateMovementResults(bPawn4, "");
-            
             board.Move(('d', 5), ('d', 6));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wPawn4, "c7");
