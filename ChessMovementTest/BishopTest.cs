@@ -99,7 +99,6 @@ namespace ChessMovementTest
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bLeftBishop, "a5 a3 c5 d6 e7 f8 c3 d2");
             TestHelper.ValidateMovementResults(bRightBishop, "c8 d7 e6 f5 h5 h3 f3 e2");
-            throw new Exception();
         }
     }
 }
