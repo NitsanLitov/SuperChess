@@ -73,8 +73,6 @@ namespace ChessMovementTest
             board.Move(('b', 5), ('c', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "b4 b5 c5 d5 d4");
-
-            throw new Exception();
         }
     }
 }
