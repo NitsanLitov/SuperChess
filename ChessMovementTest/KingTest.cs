@@ -46,26 +46,35 @@ namespace ChessMovementTest
             Board board = TestHelper.CreateTwoPlayerBoard();
 
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
-            ChessPiece wKing = secondPieces[(int)SecondPiecesNumber.King];
+            ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
 
-            TestHelper.ValidateMovementResults(wKing, "");
+            TestHelper.ValidateMovementResults(bKing, "");
 
-            //black king
             board.Move(('d', 7), ('d', 6));
             TestHelper.PrintAll(board);
-            TestHelper.ValidateMovementResults(wKing, "d7");
+            TestHelper.ValidateMovementResults(bKing, "d7");
 
             board.Move(('e', 8), ('d', 7));
             TestHelper.PrintAll(board);
-            TestHelper.ValidateMovementResults(wKing, "c6 e6 e8");
+            TestHelper.ValidateMovementResults(bKing, "c6 e6 e8");
 
             board.Move(('d', 7), ('c', 6));
             TestHelper.PrintAll(board);
-            TestHelper.ValidateMovementResults(wKing, "b6 d7 b5 c5 d5");
+            TestHelper.ValidateMovementResults(bKing, "b6 d7 b5 c5 d5");
             
             board.Move(('c', 6), ('b', 5));
             TestHelper.PrintAll(board);
-            TestHelper.ValidateMovementResults(wKing, "a6 b6 c6 a5 c5 a4 b4 c4");
+            TestHelper.ValidateMovementResults(bKing, "a6 b6 c6 a5 c5 a4 b4 c4");
+            
+            board.Move(('c', 2), ('c', 4));
+            TestHelper.PrintAll(board);
+            TestHelper.ValidateMovementResults(bKing, "a5 a6 b6 c6 c5 c4 b4");
+            
+            board.Move(('b', 5), ('c', 4));
+            TestHelper.PrintAll(board);
+            TestHelper.ValidateMovementResults(bKing, "b4 b5 c5 d5 d4");
+
+            throw new Exception();
         }
     }
 }
