@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperChess", "SuperChess.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessMovementTest", "ChessMovementTest\ChessMovementTest.csproj", "{ABFC8EC6-4B48-492B-A21B-F4F50F6D8DB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessTakingTest", "ChessTakingTest\ChessTakingTest.csproj", "{72F0BBD5-160C-438D-8C89-B78E10A8DA14}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
