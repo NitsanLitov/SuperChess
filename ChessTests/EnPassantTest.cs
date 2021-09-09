@@ -1,14 +1,13 @@
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using System.Collections.Generic;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using ChessBoard;
 using Players;
 
-namespace ChessMovementTest
+namespace ChessTests
 {
-    [TestClass]
+    [TestClass, TestCategory("Movement")]
     public class EnPassantTest
     {
         private void EnPassantBuildup(Board board)
@@ -65,7 +64,7 @@ namespace ChessMovementTest
             AssertEnPassantPawn(('h', 6), false, board);
         }
         
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("EnPassant")]
         public void TestBlackEnPassant()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -89,7 +88,7 @@ namespace ChessMovementTest
             AssertEnPassantPawn(('h', 6), false, board);
         }
         
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("EnPassant")]
         public void TestBlackEnPassantPassingTurn()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -113,7 +112,7 @@ namespace ChessMovementTest
             AssertEnPassantPawn(('h', 6), false, board);
         }
         
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("EnPassant")]
         public void TestEnPassantDoesntActivateOneStep()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -138,7 +137,7 @@ namespace ChessMovementTest
             AssertEnPassantPawn(('e', 6), false, board);
         }
         
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("EnPassant")]
         public void TestDoubleTakeEnPassant()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -213,7 +212,7 @@ namespace ChessMovementTest
             AssertEnPassantPawn(('d', 6), false, board);
         }
         
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("EnPassant")]
         public void TestEnPassantInvisibleToOtherPieces()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
