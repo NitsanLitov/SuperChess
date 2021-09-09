@@ -71,10 +71,10 @@ namespace ChessBoard
             this.LocationBoard[location.Item2 - 1, location.Item1 - 'a'] = piece;
         }
 
-        public void Move((char, int) oldLocation, (char, int) newLocation)
+        public void Move((char, int) oldLocation, (char, int) newLocation, Type newChessPieceType = null)
         {
             EnPassantPawn oldEnPassantPawn = this.enPassantPawn;
-            GetPieceByLocation(oldLocation).Move(newLocation);
+            GetPieceByLocation(oldLocation).Move(newLocation, newChessPieceType);
 
             if (oldEnPassantPawn != null && this.enPassantPawn != null)
             {
