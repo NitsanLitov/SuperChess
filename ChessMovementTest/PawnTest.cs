@@ -30,17 +30,17 @@ namespace ChessMovementTest
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wPawn4, "d5");
             TestHelper.ValidateMovementResults(bPawn4, "e6 e5");
-            
+
             board.Move(('d', 4), ('d', 5));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wPawn4, "d6");
             TestHelper.ValidateMovementResults(bPawn4, "e6 e5");
-            
+
             board.Move(('e', 7), ('e', 6));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wPawn4, "d6 e6");
             TestHelper.ValidateMovementResults(bPawn4, "e5 d5");
-            
+
             board.Move(('d', 5), ('d', 6));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wPawn4, "c7");
@@ -69,19 +69,19 @@ namespace ChessMovementTest
             TestHelper.ValidateMovementResults(bPawn2, "g4");
             TestHelper.ValidateMovementResults(wPawn7, "g3 g4");
             TestHelper.ValidateMovementResults(bPawn1, "h6 h5");
-            
+
             board.Move(('g', 2), ('g', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bPawn2, "");
             TestHelper.ValidateMovementResults(wPawn7, "");
             TestHelper.ValidateMovementResults(bPawn1, "h6 h5");
-            
+
             board.Move(('h', 7), ('h', 5));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bPawn2, "");
             TestHelper.ValidateMovementResults(wPawn7, "h5");
             TestHelper.ValidateMovementResults(bPawn1, "h4 g4");
-            
+
             board.Move(('h', 5), ('g', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bPawn2, "");
