@@ -10,7 +10,7 @@ namespace ChessTests
     [TestClass]
     public class KingTest
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("King")]
         public void TestWhiteKing()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -39,7 +39,7 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(wKing, "a3 b3 c3 a4 c4 a5 b5 c5");
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("King")]
         public void TestBlackKing()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();

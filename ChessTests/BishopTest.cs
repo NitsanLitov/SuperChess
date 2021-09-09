@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using ChessBoard;
 using Players;
 
-namespace ChessMovementTest
+namespace ChessTests
 {
-    [TestClass]
+    [TestClass, TestCategory("Movement"), TestCategory("Bishop")]
     public class BishopTest
     {
         [TestMethod]
@@ -56,7 +56,7 @@ namespace ChessMovementTest
             TestHelper.ValidateMovementResults(wRightBishop, "a4 a6 c4 d3 e2 f1 c6 d7");
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("Bishop")]
         public void TestBlackBishop()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -69,7 +69,6 @@ namespace ChessMovementTest
             TestHelper.ValidateMovementResults(bRightBishop, "");
             TestHelper.PrintAll(board);
 
-            //black bishop
             board.Move(('b', 7), ('b', 6));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bLeftBishop, "");
