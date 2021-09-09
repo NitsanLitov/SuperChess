@@ -1,17 +1,16 @@
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using System.Collections.Generic;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using ChessBoard;
 using Players;
 
-namespace ChessMovementTest
+namespace ChessTests
 {
     [TestClass]
     public class PawnTest
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("Pawn")]
         public void TestWhitePawn()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -47,7 +46,7 @@ namespace ChessMovementTest
             TestHelper.ValidateMovementResults(bPawn4, "e5");
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("Pawn")]
         public void TestBlackPawn()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
