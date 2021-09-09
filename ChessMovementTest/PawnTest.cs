@@ -95,22 +95,21 @@ namespace ChessMovementTest
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             ChessPiece wPawn2 = firstPieces[(int)FirstPiecesNumber.Pawn2];
-            ChessPiece bKnight = secondPieces[(int)SecondPiecesNumber.RightKnight];
+            ChessPiece bRightKnight = secondPieces[(int)SecondPiecesNumber.RightKnight];
             ChessPiece bPawn7 = secondPieces[(int)SecondPiecesNumber.Pawn7];
 
             TestHelper.PrintAll(board);
             Assert.IsTrue(firstPieces.FindAll(p => p.GetType() == newPieceType).Count == startingNumber, $"First player should only have {startingNumber} {newPieceType}");
             TestHelper.ValidateMovementResults(bPawn7, "b5 b6");
             TestHelper.ValidateMovementResults(wPawn2, "b3 b4");
-            TestHelper.ValidateMovementResults(bKnight, "c6 a6");
+            TestHelper.ValidateMovementResults(bRightKnight, "c6 a6");
 
-            bKnight.Dispose();
+            bRightKnight.Dispose();
             bPawn7.Dispose();
             TestHelper.PrintAll(board);
             Assert.IsTrue(firstPieces.FindAll(p => p.GetType() == newPieceType).Count == startingNumber, $"First player should only have {startingNumber} {newPieceType}");
-            Assert.IsFalse(TestHelper.PieceExists(bKnight, PlayerNumber.SecondPlayer, board), $"second player knight shouldn't be on board");
+            Assert.IsFalse(TestHelper.PieceExists(bRightKnight, PlayerNumber.SecondPlayer, board), $"second player knight shouldn't be on board");
             Assert.IsFalse(TestHelper.PieceExists(bPawn7, PlayerNumber.SecondPlayer, board), $"second player pawn7 shouldn't be on board");
-            TestHelper.ValidateMovementResults(wPawn2, "b3 b4");
 
             board.Move(('b', 2), ('b', 4));
             TestHelper.PrintAll(board);
