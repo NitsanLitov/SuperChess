@@ -8,10 +8,10 @@ using Players;
 
 namespace ChessTests
 {
-    [TestClass, TestCategory("Movement"), TestCategory("Bishop")]
+    [TestClass]
     public class BishopTest
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("Bishop")]
         public void TestWhiteBishop()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
