@@ -38,7 +38,7 @@ namespace ChessBoard
             return movementOptions;
         }
 
-        protected internal override void MovePieceOnBoardLocation((char, int) newLocation)
+        protected internal override void MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {            
             base.MovePieceOnBoardLocation(newLocation);
             

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using Players;
 using ChessBoard;
 
-namespace ChessMovementTest
+namespace ChessTests
 {
-    public enum FirstPiecesNumber { LeftRook, LeftKnight, LeftBishop, Queen, King, RightBishop, RightKnight, RightRook, Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8 };
-    public enum SecondPiecesNumber { LeftRook, LeftKnight, LeftBishop, King, Queen, RightBishop, RightKnight, RightRook, Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8 };
+    enum FirstPiecesNumber { LeftRook, LeftKnight, LeftBishop, Queen, King, RightBishop, RightKnight, RightRook, Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8 };
+    enum SecondPiecesNumber { LeftRook, LeftKnight, LeftBishop, King, Queen, RightBishop, RightKnight, RightRook, Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8 };
 
     static class TestHelper
     {
@@ -108,9 +108,14 @@ namespace ChessMovementTest
             if (resultMovementOptions.Count != 0)
                 throw new MovementOptionsException($"too many movement options {resultMovementOptions[0]}, etc...");
         }
+
+        public static bool PieceExists(ChessPiece piece, PlayerNumber playerNumber, Board board)
+        {
+            return board.chessPiecesByColor[PlayerColor.GetColor(playerNumber)].Contains(piece);
+        }
     }
 
-    public class MovementOptionsException : Exception
+    class MovementOptionsException : Exception
     {
         public MovementOptionsException() : base() { }
         public MovementOptionsException(string message) : base(message) { }
