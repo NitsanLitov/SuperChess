@@ -256,9 +256,6 @@ namespace ChessTests
             AssertEnPassantPawn(('c', 6), false, board);
             TestHelper.ValidateMovementResults(wPawn4, "d6");
             TestHelper.ValidateMovementResults(queen, "b7 c7 c8 d7 a6 b6 d6 e6 f6 g6 h6 b5 a4 c5");
-
-
-            //throw new Exception();
         }
 
         private void AssertEnPassantPawn((char, int) location, bool shouldExist, Board board)
