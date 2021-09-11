@@ -100,13 +100,13 @@ namespace ChessTests
 
                 (char, int) location = (movement[0], (int)(movement[1] - '0'));
                 if (!resultMovementOptions.Contains(location))
-                    throw new MovementOptionsException($"the llegal move {movement} isn't an option");
+                    throw new MovementOptionsException($"the llegal move {movement} isn't an option for {piece.GetType()}");
                 else
                     resultMovementOptions.Remove(location);
             }
 
             if (resultMovementOptions.Count != 0)
-                throw new MovementOptionsException($"too many movement options {resultMovementOptions[0]}, etc...");
+                throw new MovementOptionsException($"too many movement options for {piece.GetType()}: {resultMovementOptions[0]}, etc...");
         }
 
         public static bool PieceExists(ChessPiece piece, PlayerNumber playerNumber, Board board)
