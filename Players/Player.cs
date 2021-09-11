@@ -2,7 +2,7 @@ using System;
 
 namespace Players
 {
-    class Player
+    public class Player
     {
         private PlayerNumber playerNumber;
         private ChessColor color;
@@ -36,6 +36,5 @@ namespace Players
         public void AddWin() { numberOfWins++; }
 
         public void AddLose() { numberOfloses++; }
-
     }
 }
