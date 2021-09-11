@@ -1,0 +1,110 @@
+using System;
+using System.Collections.Generic;
+
+using Movement;
+using Players;
+
+namespace ChessBoard
+{
+    public abstract class ChessPiece
+    {
+        public bool isFirstMove;
+        public (char, int) location;
+        public ChessColor color;
+        public Board board;
+        public MovementBoard movementBoard;
+        protected List<(char, int)> movementOptions;
+
+        public ChessPiece((char, int) location, ChessColor color, Board board, MovementBoard movementBoard)
+        {
+            this.isFirstMove = true;
+            this.location = location;
+            this.color = color;
+            this.board = board;
+            this.movementBoard = movementBoard;
+            this.movementOptions = new List<(char, int)>();
+
+            if (this.board.GetPieceByLocation(this.location) != null)
+                throw new IllegalMoveException("new location isn't empty");
+
+            this.board.SetPieceByLocation(this, this.location);
+        }
+
+        public abstract List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing);
+
+        public void Move((char, int) newLocation, Type newChessPieceType = null)
+        {
+            if (!this.movementOptions.Contains(newLocation))
+                throw new IllegalMoveException("This move is illegal");
+
+            this.ForceMove(newLocation, newChessPieceType);
+        }
+
+        // For KingWillBeThreatened usuge only
+        public void ForceMove((char, int) newLocation, Type newChessPieceType = null)
+        {
+            ChessPiece piece = this.board.GetPieceByLocation(newLocation);
+
+            if (piece != null)
+                piece.Dispose();
+
+            this.MovePieceOnBoardLocation(newLocation, newChessPieceType);
+
+            this.movementOptions.Clear();
+        }
+
+        protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
+        {
+            if (newChessPieceType != null)
+                throw new PawnPromotionException("Can't promote a piece");
+
+            if (this.board.GetPieceByLocation(newLocation) != null)
+                throw new IllegalMoveException("new location isn't empty");
+
+            this.board.SetPieceByLocation(null, this.location);
+            this.board.SetPieceByLocation(this, newLocation);
+
+            this.location = newLocation;
+
+            if (this.isFirstMove)
+                this.isFirstMove = false;
+        }
+
+        protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canPieceTakeOpponentKing, bool canTake = true, bool canOnlyTake = false)
+        {
+            List<(char, int)> finalMovementOptions = new List<(char, int)>();
+            foreach ((char, int) movement in movementOptions)
+            {
+                ChessPiece otherPiece = this.board.GetPieceByLocation(movement);
+                bool kingWillBeThreatended = !canPieceTakeOpponentKing && this.board.KingWillBeThreatened(this, movement);
+
+                if (otherPiece != null && (this is Pawn || otherPiece is not EnPassantPawn))
+                {
+                    if (!kingWillBeThreatended && canTake && otherPiece.color != this.color)
+                        finalMovementOptions.Add(movement);
+                    break;
+                }
+
+                if (canOnlyTake)
+                    continue;
+
+                if (!kingWillBeThreatended)
+                    finalMovementOptions.Add(movement);
+            }
+            return finalMovementOptions;
+        }
+
+        public virtual void Dispose()
+        {
+            this.board.chessPiecesByColor[this.color].Remove(this);
+            this.board.SetPieceByLocation(null, this.location);
+        }
+    }
+
+    public class IllegalMoveException : Exception
+    {
+        public IllegalMoveException() : base() { }
+        public IllegalMoveException(string message) : base(message) { }
+        public IllegalMoveException(string message, Exception inner) : base(message, inner) { }
+    }
+}
