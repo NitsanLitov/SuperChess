@@ -82,8 +82,8 @@ namespace ChessBoard
             // add step 2 movement (before the second KingWillBeThreatened so the castling move will be possible at move function)
             this.castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
 
-            // if king will be threatened after castling, remove option
-            if (this.board.KingWillBeThreatened(this, movementOptions[1])) this.castlingMovementOptions.Remove(movementOptions[1]);
+            // if king will not be threatened after castling, readd option
+            if (!this.board.KingWillBeThreatened(this, movementOptions[1])) this.castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
         }
     }
 }
