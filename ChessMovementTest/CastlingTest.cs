@@ -228,7 +228,7 @@ namespace ChessMovementTest
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
             ChessPiece bRightRook = secondPieces[(int)SecondPiecesNumber.LeftRook];
-            
+
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
             TestHelper.ValidateMovementResults(bRightRook, "");
