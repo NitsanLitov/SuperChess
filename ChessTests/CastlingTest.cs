@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using ChessBoard;
 using Players;
 
-namespace ChessMovementTest
+namespace ChessTests
 {
     [TestClass]
     public class CastlingTest
