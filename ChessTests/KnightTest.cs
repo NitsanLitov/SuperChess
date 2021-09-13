@@ -1,17 +1,16 @@
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using System.Collections.Generic;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using ChessBoard;
 using Players;
 
-namespace ChessMovementTest
+namespace ChessTests
 {
     [TestClass]
     public class KnightTest
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("Knight")]
         public void TestWhiteKnight()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -56,7 +55,7 @@ namespace ChessMovementTest
             TestHelper.ValidateMovementResults(wRightKnight, "h8 h6 g5 e5 d6 d8");
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Movement"), TestCategory("Knight")]
         public void TestBlackKnight()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();

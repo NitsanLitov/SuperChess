@@ -10,7 +10,7 @@ namespace ChessBoard
     {
         private Pawn originalPawn;
 
-        public EnPassantPawn((char, int) location, ChessColor color, Board board, MovementBoard movementBoard, Pawn originalPawn) : base(location, color, board, movementBoard)
+        public EnPassantPawn((char, int) location, Pawn originalPawn) : base(location, originalPawn.color, originalPawn.board, originalPawn.movementBoard)
         {
             this.originalPawn = originalPawn;
         }
