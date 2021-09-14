@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -8,11 +9,12 @@ namespace Communication
 {
     public class ChessServer
     {
+        private List<GameServer> games;
         private TcpListener server;
 
         public ChessServer(int port, string ip)
         {
-            // this.clients = new List<TcpClient>();
+            this.games = new List<GameServer>();
             try
             {
                 this.server = new TcpListener(IPAddress.Parse(ip), port);
@@ -28,6 +30,7 @@ namespace Communication
         {
             try
             {
+                Console.WriteLine("Starting Server...");
                 this.server.Start();
             }
             catch (SocketException e)
@@ -37,47 +40,27 @@ namespace Communication
             }
         }
 
-        // public void SendMovements()
-        // {
-        //     this.DisposeOfDisconnectedClients();
-
-        //     foreach (TcpClient client in this.clients)
-        //     {
-        //         this.Send(client, "{\"message\":\"welcome!\"}");
-        //     }
-        // }
-
-        // public string GetMovement()
-        // {
-        //     this.DisposeOfDisconnectedClients();
-            
-        //     return this.Read(this.clients[this.clients.Count-1]);
-        // }
-
-        // public void AcceptClients(int numClient)
-        // {
-        //     try
-        //     {
-        //         for (int i = 0; i < numClient; i++)
-        //         {
-        //             Console.WriteLine("asd!");
-        //             this.clients.Add(this.server.AcceptTcpClient());
-        //             Console.WriteLine("Connected!");
-        //         }
-        //     }
-        //     catch (SocketException e)
-        //     {
-        //         this.HandleException(e);
-        //         throw;
-        //     }
-        // }
-
-        public void AcceptGame()
+        public void AcceptGames()
         {
             try
             {
-                Console.WriteLine("waiting...");
-                new GameServer(this, this.server.AcceptTcpClient());
+                while (true) { this.AcceptGame(); }
+            }
+            catch (SocketException e)
+            {
+                this.HandleException(e);
+            }
+        }
+
+        private void AcceptGame()
+        {
+            try
+            {
+                Console.WriteLine("Waiting for new client...");
+                TcpClient client = this.server.AcceptTcpClient();
+                Thread game = new Thread(this.StartGame);
+                game.Start(client);
+
                 Console.WriteLine("Connected!");
             }
             catch (SocketException e)
@@ -87,60 +70,32 @@ namespace Communication
             }
         }
 
-        // private void DisposeOfDisconnectedClients()
-        // {
-        //     foreach (TcpClient client in new List<TcpClient>(this.clients))
-        //     {
-        //         if (!ClientConnected(client))
-        //         {
-        //             this.CloseClient(client);
-        //         }
-        //     }
-        // }
+        private void StartGame(object clientObj)
+        {
+            if (clientObj is not TcpClient) throw new ArgumentException("expected TcpClient as asn argument");
 
-        // public bool ClientConnected(TcpClient client)
-        // {
-        //     var connection = IPGlobalProperties.GetIPGlobalProperties()
-        //         .GetActiveTcpConnections()
-        //         .FirstOrDefault(x => x.LocalEndPoint.Equals(client.Client.LocalEndPoint));
-        //     TcpState state = connection != null ? connection.State : TcpState.Unknown;
-
-        //     return state == TcpState.Established;
-        // }
+            TcpClient client = clientObj as TcpClient;
+            GameServer game = new GameServer(this, client);
+            this.games.Add(game);
+            Console.WriteLine("Starting Game, may the odds be in your favor!");
+            game.Start();
+        }
 
         public void Close()
         {
-            try
+            foreach (GameServer game in this.games)
             {
-                // foreach (TcpClient client in this.clients)
-                // {
-                //     client.Close();
-                // }
+                try
+                {
+                    game.Stop();
+                }
+                catch (SocketException e)
+                {
+                    this.HandleException(e);
+                }
             }
-            catch (SocketException e)
-            {
-                this.HandleException(e);
-                throw;
-            }
-            finally
-            {
-                this.server.Stop();
-            }
+            this.server.Stop();
         }
-
-        // public void CloseClient(TcpClient client)
-        // {
-        //     try
-        //     {
-        //         client.Close();
-        //     }
-        //     catch (SocketException e)
-        //     {
-        //         this.HandleException(e);
-        //     }
-        //     this.clients.Remove(client);
-        //     Console.WriteLine("deleted");
-        // }
 
         private void HandleException(SocketException e)
         {

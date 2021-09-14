@@ -15,7 +15,7 @@ namespace Communication
     public class GameServer
     {
         private ChessServer server;
-        private TcpClient client;
+        public TcpClient client;
         private GameManager.GameManager gameManager;
 
         const string START_GAME_CATEGORY = "Start";
@@ -28,13 +28,33 @@ namespace Communication
         {
             this.server = server;
             this.client = client;
+        }
 
+        public void Start()
+        {
             RecievedMessage message = this.Read();
             ValidateMessageCategory(message, START_GAME_CATEGORY);
             StartData startData = JsonSerializer.Deserialize<StartData>(message.DataStr);
 
             this.gameManager = new GameManager.GameManager(this, startData.Nicknames);
+
             this.gameManager.StartGame();
+        }
+
+        public void Stop()
+        {
+            this.CloseClient();
+            this.gameManager = null;
+        }
+
+        public bool ClientConnected(TcpClient client)
+        {
+            var connection = IPGlobalProperties.GetIPGlobalProperties()
+                .GetActiveTcpConnections()
+                .FirstOrDefault(x => x.LocalEndPoint.Equals(client.Client.LocalEndPoint));
+            TcpState state = connection != null ? connection.State : TcpState.Unknown;
+
+            return state == TcpState.Established;
         }
 
         public void UpdateMovementOptions(string nickname, Dictionary<ChessPiece, List<(char, int)>> movementOptions)
@@ -69,6 +89,7 @@ namespace Communication
             ValidateMessageCategory(message, MOVED_PIECE_CATEGORY);
             MovedPieceData movedPieceData = JsonSerializer.Deserialize<MovedPieceData>(message.DataStr);
 
+            // instead while until nickname is the right choise... send error message containing the error
             if (movedPieceData.Nickname != nickname) throw new BadNicknameException(nickname, movedPieceData.Nickname);
 
             return (movedPieceData.OldLocationTuple, movedPieceData.NewLocationTuple);
@@ -76,6 +97,8 @@ namespace Communication
 
         private RecievedMessage Read()
         {
+            if (!this.ClientConnected(this.client)) { this.Stop(); throw new ClientDisconnectedException(); }
+
             Console.WriteLine("Reading");
             try
             {
@@ -95,7 +118,7 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleException(e, this.client);
+                this.HandleException(e);
                 throw;
             }
         }
@@ -122,6 +145,8 @@ namespace Communication
 
         private void Send(string data)
         {
+            if (!this.ClientConnected(this.client)) { this.Stop(); throw new ClientDisconnectedException(); }
+            
             try
             {
                 NetworkStream stream = this.client.GetStream();
@@ -131,31 +156,28 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleException(e, this.client);
+                this.HandleException(e);
                 throw;
             }
         }
 
-        public void CloseClient(TcpClient client)
+        private void CloseClient()
         {
             try
             {
-                client.Close();
+                this.client.Close();
             }
             catch (SocketException e)
             {
-                this.HandleException(e);
+                Console.WriteLine("SocketException: {0}", e);
             }
             Console.WriteLine("Game Deleted");
         }
 
-        private void HandleException(SocketException e, TcpClient client = null)
+        private void HandleException(SocketException e)
         {
             Console.WriteLine("SocketException: {0}", e);
-            if (client is TcpClient)
-            {
-                this.CloseClient(client);
-            }
+            this.CloseClient();
         }
 
         private void ValidateMessageCategory(Message message, string category)
@@ -163,12 +185,12 @@ namespace Communication
             if (message.Category != category) throw new MessageCategoryException(category, message.Category);
         }
 
-        static List<object> LocationToList((char, int) location)
+        private static List<object> LocationToList((char, int) location)
         {
             return new List<object>(){location.Item1, location.Item2};
         }
 
-        static List<object> LocationsToList(List<(char, int)> locations)
+        private static List<object> LocationsToList(List<(char, int)> locations)
         {
             List<object> list = new List<object>();
             foreach ((char, int) location in locations)
@@ -297,5 +319,11 @@ namespace Communication
     {
         public BadNicknameException() : base() { }
         public BadNicknameException(string expectedNickname, string actualNickname) : base($"expected {expectedNickname} but got {actualNickname}") { }
+    }
+
+    public class ClientDisconnectedException : Exception
+    {
+        public ClientDisconnectedException() : base() { }
+        public ClientDisconnectedException(string message) : base(message) { }
     }
 }
