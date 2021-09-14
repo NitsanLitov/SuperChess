@@ -20,14 +20,11 @@ namespace ChessTests
             ChessPiece wKing = firstPieces[(int)FirstPiecesNumber.King];
             ChessPiece wRightRook = firstPieces[(int)FirstPiecesNumber.RightRook];
 
-            ChessPiece wRightBishop = firstPieces[(int)FirstPiecesNumber.RightBishop];
-            ChessPiece wRightKnight = firstPieces[(int)FirstPiecesNumber.RightKnight];
-
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "");
 
-            wRightKnight.Dispose();
-            wRightBishop.Dispose();
+            firstPieces[(int)FirstPiecesNumber.RightBishop].Dispose();
+            firstPieces[(int)FirstPiecesNumber.RightKnight].Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "f1 g1");
@@ -48,19 +45,14 @@ namespace ChessTests
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
-            ChessPiece bQueen = secondPieces[(int)SecondPiecesNumber.Queen];
-
             ChessPiece bRightRook = secondPieces[(int)SecondPiecesNumber.RightRook];
-            ChessPiece bRightBishop = secondPieces[(int)SecondPiecesNumber.RightBishop];
-            ChessPiece bRightKnight = secondPieces[(int)SecondPiecesNumber.RightKnight];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
-            TestHelper.ValidateMovementResults(bQueen, "");
 
-            bRightBishop.Dispose();
-            bRightKnight.Dispose();
-            bQueen.Dispose();
+            secondPieces[(int)SecondPiecesNumber.Queen].Dispose();
+            secondPieces[(int)SecondPiecesNumber.RightBishop].Dispose();
+            secondPieces[(int)SecondPiecesNumber.RightKnight].Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "d8 c8");
@@ -120,14 +112,14 @@ namespace ChessTests
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
-            ChessPiece bLeftRook = secondPieces[(int)SecondPiecesNumber.RightRook];
+            ChessPiece bRightRook = secondPieces[(int)SecondPiecesNumber.RightRook];
             ChessPiece bPawn6 = secondPieces[(int)SecondPiecesNumber.Pawn6];
 
             ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
-            TestHelper.ValidateMovementResults(bLeftRook, "");
+            TestHelper.ValidateMovementResults(bRightRook, "");
             TestHelper.ValidateMovementResults(wQueen, "");
 
             secondPieces[(int)SecondPiecesNumber.Queen].Dispose();
@@ -137,25 +129,25 @@ namespace ChessTests
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "d8 c8");
-            TestHelper.ValidateMovementResults(bLeftRook, "b8 c8 d8");
+            TestHelper.ValidateMovementResults(bRightRook, "b8 c8 d8");
             TestHelper.ValidateMovementResults(wQueen, "c2 b3 a4");
 
             board.Move(('d', 1), ('b', 3));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "d8 c8");
-            TestHelper.ValidateMovementResults(bLeftRook, "b8 c8 d8");
+            TestHelper.ValidateMovementResults(bRightRook, "b8 c8 d8");
             TestHelper.ValidateMovementResults(wQueen, "a3 a4 b4 b5 b6 b7 c4 d5 e6 f7 c3 d3 e3 f3 g3 h3 c2 d1");
 
             board.Move(('b', 7), ('b', 6));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "d8 c8");
-            TestHelper.ValidateMovementResults(bLeftRook, "b8 c8 d8");
+            TestHelper.ValidateMovementResults(bRightRook, "b8 c8 d8");
             TestHelper.ValidateMovementResults(wQueen, "a3 a4 b4 b5 b6 c4 d5 e6 f7 c3 d3 e3 f3 g3 h3 c2 d1");
 
             board.Move(('b', 3), ('b', 6));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "d8 c8");
-            TestHelper.ValidateMovementResults(bLeftRook, "b8 c8 d8");
+            TestHelper.ValidateMovementResults(bRightRook, "b8 c8 d8");
             TestHelper.ValidateMovementResults(wQueen, "a5 a6 a7 b7 b8 c7 c6 d6 e6 f6 g6 h6 c5 d4 e3 b5 b4 b3");
             TestHelper.ValidateMovementResults(bPawn6, "c6 c5 b6");
 
@@ -163,7 +155,7 @@ namespace ChessTests
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
             TestHelper.ValidateMovementResults(bPawn6, "c5");
-            TestHelper.ValidateMovementResults(bLeftRook, "b8 c8 d8");
+            TestHelper.ValidateMovementResults(bRightRook, "b8 c8 d8");
             TestHelper.ValidateMovementResults(wQueen, "a5 a6 a7 b7 b8 c7 d8 c6 c5 d4 e3 b5 b4 b3");
         }
 
@@ -199,13 +191,13 @@ namespace ChessTests
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
-            ChessPiece bRightRook = secondPieces[(int)SecondPiecesNumber.LeftRook];
+            ChessPiece bLeftRook = secondPieces[(int)SecondPiecesNumber.LeftRook];
             ChessPiece bPawn5 = secondPieces[(int)SecondPiecesNumber.Pawn5];
             ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
-            TestHelper.ValidateMovementResults(bRightRook, "");
+            TestHelper.ValidateMovementResults(bLeftRook, "");
             TestHelper.ValidateMovementResults(wQueen, "");
             TestHelper.ValidateMovementResults(bPawn5, "d6 d5");
 
@@ -217,13 +209,13 @@ namespace ChessTests
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bPawn5, "d5");
             TestHelper.ValidateMovementResults(bKing, "d7 f8 g8");
-            TestHelper.ValidateMovementResults(bRightRook, "g8 f8");
+            TestHelper.ValidateMovementResults(bLeftRook, "g8 f8");
             TestHelper.ValidateMovementResults(wQueen, "c2 b3 a4");
 
             board.Move(('d', 1), ('a', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "f8");
-            TestHelper.ValidateMovementResults(bRightRook, "");
+            TestHelper.ValidateMovementResults(bLeftRook, "");
             TestHelper.ValidateMovementResults(wQueen, "a3 a5 a6 a7 b3 c2 d1 b4 c4 d4 e4 f4 g4 h4 b5 c6 d7 e8");
         }
 
@@ -270,28 +262,28 @@ namespace ChessTests
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
-            ChessPiece bRightRook = secondPieces[(int)SecondPiecesNumber.LeftRook];
+            ChessPiece bLeftRook = secondPieces[(int)SecondPiecesNumber.LeftRook];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
-            TestHelper.ValidateMovementResults(bRightRook, "");
+            TestHelper.ValidateMovementResults(bLeftRook, "");
 
             secondPieces[(int)SecondPiecesNumber.LeftBishop].Dispose();
             secondPieces[(int)SecondPiecesNumber.LeftKnight].Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "f8 g8");
-            TestHelper.ValidateMovementResults(bRightRook, "f8 g8");
+            TestHelper.ValidateMovementResults(bLeftRook, "f8 g8");
 
             board.Move(('h', 8), ('g', 8));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "f8");
-            TestHelper.ValidateMovementResults(bRightRook, "f8 h8");
+            TestHelper.ValidateMovementResults(bLeftRook, "f8 h8");
 
             board.Move(('g', 8), ('h', 8));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "f8");
-            TestHelper.ValidateMovementResults(bRightRook, "g8 f8");
+            TestHelper.ValidateMovementResults(bLeftRook, "g8 f8");
         }
     }
 }
