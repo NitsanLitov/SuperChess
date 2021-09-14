@@ -10,7 +10,7 @@ namespace ChessTests
     [TestClass]
     public class TakingTest
     {
-        [TestMethod, TestCategory("Taking")]
+        [TestMethod, TestCategory("Movement"), TestCategory("Taking")]
         public void TestBlackDeadPieceCantMove()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
@@ -44,7 +44,7 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(bRightBishop, "");
         }
         
-        [TestMethod, TestCategory("Taking")]
+        [TestMethod, TestCategory("Movement"), TestCategory("Taking")]
         public void TestWhiteDeadPieceCantMove()
         {
             Board board = TestHelper.CreateTwoPlayerBoard();
