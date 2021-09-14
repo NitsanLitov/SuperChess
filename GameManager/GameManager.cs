@@ -31,9 +31,18 @@ namespace GameManager
             this.EndGameOptions = new Dictionary<string, Player>();
         }
 
-        void StartGame()
+        public void StartGame()
         {
             bool gameInProgress = true;
+            List<(ChessPiece, (char, int), (char, int))> startingLocations = new List<(ChessPiece, (char, int), (char, int))>();
+            foreach (ChessColor color in this.board.chessPiecesByColor.Keys)
+            {
+                foreach (ChessPiece piece in this.board.chessPiecesByColor[color])
+                {
+                    startingLocations.Add((piece, piece.location, piece.location));
+                }
+            }
+            this.server.NotifyMovementToAll(startingLocations);
 
             while (gameInProgress)
             {
