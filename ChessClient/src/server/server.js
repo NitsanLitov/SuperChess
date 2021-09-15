@@ -5,9 +5,8 @@ const sessions = require('express-session');
 const uuidv4 = require("uuid").v4
 
 const app = express()
-const port = 80
 
-app.use(express.static('src/client'))
+app.use(express.static('dist'));
 
 const cookieAgeMs = 1000 * 10
 
@@ -71,4 +70,14 @@ app.get('/api/send', (req, res) => {
     res.end()
 })
 
-app.listen(port, () => {})
+let listenPort = process.env.PORT || 80
+
+const server = app.listen(listenPort, function() {
+    printListening(server)
+})
+
+function printListening(server) {
+    let host = server.address().address;
+    let port = server.address().port;
+    console.log("Listening at http://%s:%s", host, port);
+}

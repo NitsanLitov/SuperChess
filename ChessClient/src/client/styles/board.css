@@ -1,6 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    background: #444;
+}
+
 .gameBoard {
     background: white;
     display: grid;
+    width: 90vmin;
+    height: 90vmin;
 }
 
 .gameData {
