@@ -247,6 +247,15 @@ namespace ChessTests
             AssertEnPassantPawn(('c', 6), true, board);
             TestHelper.ValidateMovementResults(wPawn4, "d6 c6");
             TestHelper.ValidateMovementResults(queen, "a3 a5 a6 a7 b4 b3 c2 d1 b5 c6 d7");
+            
+            board.Move(('a', 4), ('c', 6));
+            TestHelper.PrintAll(board);
+            Assert.IsTrue(board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)].Contains(bPawn6),"Black pawn 6 is not on board");
+            TestHelper.ValidateMovementResults(wPawn3, "");
+            TestHelper.ValidateMovementResults(bPawn6, "");
+            AssertEnPassantPawn(('c', 6), false, board);
+            TestHelper.ValidateMovementResults(wPawn4, "d6");
+            TestHelper.ValidateMovementResults(queen, "b7 c7 c8 d7 a6 b6 d6 e6 f6 g6 h6 b5 a4 c5");
         }
 
         private void AssertEnPassantPawn((char, int) location, bool shouldExist, Board board)

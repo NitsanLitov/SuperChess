@@ -46,7 +46,7 @@ namespace ChessBoard
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
             if (piece != null)
-                piece.Dispose();
+                this.TakePiece(piece);
 
             this.MovePieceOnBoardLocation(newLocation, newChessPieceType);
 
@@ -68,6 +68,11 @@ namespace ChessBoard
 
             if (this.isFirstMove)
                 this.isFirstMove = false;
+        }
+
+        protected virtual void TakePiece(ChessPiece piece)
+        {
+            piece.Dispose();
         }
 
         protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canPieceTakeOpponentKing, bool canTake = true, bool canOnlyTake = false)
