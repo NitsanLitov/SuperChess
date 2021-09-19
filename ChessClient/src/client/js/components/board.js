@@ -74,7 +74,7 @@ export function Board(props) {
         }
 
         setWaitingForMovingAck(true)
-        socket.emit('move', { oldLocation: movingLocation, newLocation: `${newLetter.toLowerCase()}${newNumber}` }, response => {
+        client.movePiece(socket, movingLocation, `${newLetter.toLowerCase()}${newNumber}`, response => {
             if (response === true) {
                 setMovementOptions([])
                 unColorSquares();
