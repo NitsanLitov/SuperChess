@@ -24,7 +24,6 @@ namespace ChessBoard
 
         public override void Dispose()
         {
-            this.originalPawn.Dispose();
             this.board.SetPieceByLocation(null, this.location);
             this.board.enPassantPawn = null;
         }
