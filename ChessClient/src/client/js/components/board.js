@@ -8,25 +8,32 @@ const client = require('../web_client');
 export function Board(props) {
     const [players, setPlayers] = useState([])
     const [player, setPlayer] = useState({})
+    const [nickname, setNickname] = useState("Nitsan")
     const [piecesByLocation, setPiecesByLocation] = useState({})
     const [movementOptions, setMovementOptions] = useState([])
     const [movementSquares, setMovementSquares] = useState([])
     const [movingLocation, setMovingLocation] = useState("")
     const [lastMove, setLastMove] = useState([])
-
-    const [testingNumber, setTestingNumber] = useState(1)
+    const [waitingForMovingAck, setWaitingForMovingAck] = useState(false)
+    const [socket, setSocket] = useState()
 
     useEffect(() => {
-        const game = client.startGame()
-        const startingPieces = game.startingPieces
-        setPlayers(game.players)
-
-        setPlayer(game.players[0])
-
-        updatePiecesByLocation(startingPieces);
-
-        getUpdates()
+        setSocket(client.connectSocketIo(nickname, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange))
     }, [])
+
+    function handleStartGame(players) {
+        setPlayers(players)
+        setPlayer(players[0])
+    }
+
+    function handleMovedPiecesChange(movedPieces) {
+        updatePiecesByLocation(movedPieces);
+        setLastMove(movedPieces.at(-1))
+    }
+
+    function handleMovementOptionsChange(movementOptions) {
+        setMovementOptions(movementOptions);
+    }
 
     function updatePiecesByLocation(movedPieces) {
         setPiecesByLocation(prevPiecesByLocation => {
@@ -36,11 +43,6 @@ export function Board(props) {
             });
             return prevPiecesByLocation
         })
-    }
-
-    function getMovementOptionsByLocationString(locationString) {
-        if (locationString in movementOptions) return movementOptions[locationString];
-        return [];
     }
 
     function handleSquareClick(letter, number, isMovementSquare, isMovingSquare) {
@@ -55,7 +57,7 @@ export function Board(props) {
 
         // Color movement squares
         const localMovingLocation = `${letter.toLowerCase()}${number}`
-        const localMovementSquares = getMovementOptionsByLocationString(localMovingLocation)
+        const localMovementSquares = locationString in movementOptions ? movementOptions[localMovingLocation] : []
         setMovementSquares(localMovementSquares);
         setMovingLocation(localMovementSquares.length !== 0 ? localMovingLocation : "");
     }
@@ -66,41 +68,25 @@ export function Board(props) {
     }
 
     function movePiece(newLetter, newNumber) {
-        const newLocation = `${newLetter.toLowerCase()}${newNumber}`
-
-        if (client.movePiece(movingLocation, newLocation)) {
-            setMovementOptions([])
-            unColorSquares();
-
-            getUpdates()
+        if (waitingForMovingAck) {
+            console.log("Waiting for moving ack")
+            return
         }
-        else {
-            console.log("illegal move");
-        }
+
+        setWaitingForMovingAck(true)
+        socket.emit('move', { oldLocation: movingLocation, newLocation: `${newLetter.toLowerCase()}${newNumber}` }, response => {
+            if (response === true) {
+                setMovementOptions([])
+                unColorSquares();
+            }
+            else {
+                console.log("illegal move");
+            }
+            setWaitingForMovingAck(false)
+        });
     }
 
-    async function getUpdates() {
-        let test = testingNumber
-
-        while (true) {
-            console.log("waiting for results")
-            const result = await client.getMovementOptions(test);
-            test += 1
-            console.log("got results")
-
-            if (result.movedPieces.length !== 0) {
-                updatePiecesByLocation(result.movedPieces);
-                setLastMove(result.movedPieces.at(-1))
-            }
-            if (Object.keys(result.movementOptions).length !== 0) {
-                setMovementOptions(result.movementOptions);
-                setTestingNumber(test)
-                return;
-            }
-        }
-    }
-
-    if (!player) return <div></div>
+    if (players.length === 0) return <div></div>
     return (
         <div className="gameBoard">
             <GameData player={player} lastMove={lastMove} isPlayerTurn={Object.keys(movementOptions).length !== 0} />
