@@ -19,6 +19,7 @@ namespace Communication
         private GameManager.GameManager gameManager;
 
         const string START_GAME_CATEGORY = "Start";
+        const string UPDATE_PLAYERS_CATEGORY = "Players";
         const string UPDATE_MOVEMENT_CATEGORY = "UpdateMovementOptions";
         const string END_GAME_CATEGORY = "EndGame";
         const string MOVED_PIECE_CATEGORY = "MovedPiece";
@@ -38,6 +39,8 @@ namespace Communication
 
             this.gameManager = new GameManager.GameManager(this, startData.Nicknames);
 
+            this.UpdatePlayers();
+
             this.gameManager.StartGame();
         }
 
@@ -55,6 +58,23 @@ namespace Communication
             TcpState state = connection != null ? connection.State : TcpState.Unknown;
 
             return state == TcpState.Established;
+        }
+
+        public void UpdatePlayers()
+        {
+            List<Dictionary<string, string>> playersData = new List<Dictionary<string, string>>();
+            foreach (Player p in this.gameManager.players)
+            {
+                playersData.Add(new Dictionary<string, string>()
+                {
+                    ["color"] = ChessColorToString(p.Color),
+                    ["nickname"] = p.Nickname
+                });
+            }
+
+            PlayersData data = new PlayersData(playersData);
+            UpdatePlayersMessage message = new UpdatePlayersMessage(UPDATE_PLAYERS_CATEGORY, data);
+            this.Send(message);
         }
 
         public void UpdateMovementOptions(string nickname, Dictionary<ChessPiece, List<(char, int)>> movementOptions)
@@ -123,30 +143,20 @@ namespace Communication
             }
         }
 
-        private void Send(Message message)
-        {
-            this.Send(JsonSerializer.Serialize(message));
-        }
+        private void Send(Message message) { this.Send(JsonSerializer.Serialize(message)); }
 
-        private void Send(EndGameMessage message)
-        {
-            this.Send(JsonSerializer.Serialize(message));
-        }
+        private void Send(EndGameMessage message) { this.Send(JsonSerializer.Serialize(message)); }
 
-        private void Send(NotifyMovementMessage message)
-        {
-            this.Send(JsonSerializer.Serialize(message));
-        }
+        private void Send(UpdatePlayersMessage message) { this.Send(JsonSerializer.Serialize(message)); }
 
-        private void Send(MovementOptionsMessage message)
-        {
-            this.Send(JsonSerializer.Serialize(message));
-        }
+        private void Send(NotifyMovementMessage message) { this.Send(JsonSerializer.Serialize(message)); }
+
+        private void Send(MovementOptionsMessage message) { this.Send(JsonSerializer.Serialize(message)); }
 
         private void Send(string data)
         {
             if (!this.ClientConnected(this.client)) { this.Stop(); throw new ClientDisconnectedException(); }
-            
+
             try
             {
                 NetworkStream stream = this.client.GetStream();
@@ -185,9 +195,34 @@ namespace Communication
             if (message.Category != category) throw new MessageCategoryException(category, message.Category);
         }
 
+        private static string ChessColorToString(ChessColor color)
+        {
+            switch (color)
+            {
+                case ChessColor.White: return "w";
+                case ChessColor.Black: return "b";
+                case ChessColor.Green: return "g";
+                default: return "";
+            }
+        }
+
+        private static string ChessPieceToString(ChessPiece piece)
+        {
+            switch (piece)
+            {
+                case Pawn p: return "pawn";
+                case King p: return "king";
+                case Queen p: return "queen";
+                case Bishop p: return "bishop";
+                case Rook p: return "rook";
+                case Knight p: return "knight";
+                default: return "";
+            }
+        }
+
         private static List<object> LocationToList((char, int) location)
         {
-            return new List<object>(){location.Item1, location.Item2};
+            return new List<object>() { location.Item1, location.Item2 };
         }
 
         private static List<object> LocationsToList(List<(char, int)> locations)
@@ -201,6 +236,7 @@ namespace Communication
         }
 
         record StartData(List<string> Nicknames);
+        record PlayersData(List<Dictionary<string, string>> Nicknames);
         record EndGameData(string Nickname, string Reason);
 
         class MovedPieceData
@@ -208,8 +244,8 @@ namespace Communication
             public string Nickname { get; set; }
             public List<JsonElement> oldLocation;
             public List<JsonElement> newLocation;
-            public List<JsonElement> OldLocation { get {return this.oldLocation;} set {this.oldLocation = value; this.OldLocationTuple = (value[0].GetString()[0], value[1].GetInt32());} }
-            public List<JsonElement> NewLocation { get {return this.newLocation;} set {this.newLocation = value; this.NewLocationTuple = (value[0].GetString()[0], value[1].GetInt32());} }
+            public List<JsonElement> OldLocation { get { return this.oldLocation; } set { this.oldLocation = value; this.OldLocationTuple = (value[0].GetString()[0], value[1].GetInt32()); } }
+            public List<JsonElement> NewLocation { get { return this.newLocation; } set { this.newLocation = value; this.NewLocationTuple = (value[0].GetString()[0], value[1].GetInt32()); } }
             public (char, int) OldLocationTuple { get; set; }
             public (char, int) NewLocationTuple { get; set; }
             public MovedPieceData(string nickname, List<JsonElement> oldLocation, List<JsonElement> newLocation)
@@ -259,24 +295,8 @@ namespace Communication
             public string Type { get; set; }
             public PieceData(ChessPiece piece)
             {
-                switch (piece.color)
-                {
-                    case ChessColor.White: this.Color = "w"; break;
-                    case ChessColor.Black: this.Color = "b"; break;
-                    case ChessColor.Green: this.Color = "g"; break;
-                    default: this.Type = ""; break;
-                }
-
-                switch (piece)
-                {
-                    case Pawn p: this.Type = "pawn"; break;
-                    case King p: this.Type = "king"; break;
-                    case Queen p: this.Type = "queen"; break;
-                    case Bishop p: this.Type = "bishop"; break;
-                    case Rook p: this.Type = "rook"; break;
-                    case Knight p: this.Type = "knight"; break;
-                    default: this.Type = ""; break;
-                }
+                this.Color = ChessColorToString(piece.color);
+                this.Type = ChessPieceToString(piece);
             }
         }
 
@@ -291,6 +311,11 @@ namespace Communication
             private JsonElement data;
             public JsonElement Data { get { return this.data; } set { this.data = value; this.DataStr = JsonSerializer.Serialize(value); } }
             public RecievedMessage(string Category, JsonElement Data) : base(Category) { this.Data = Data; }
+        }
+        class UpdatePlayersMessage : Message
+        {
+            public PlayersData Data { get; set; }
+            public UpdatePlayersMessage(string Category, PlayersData Data) : base(Category) { this.Data = Data; }
         }
         class MovementOptionsMessage : Message
         {
