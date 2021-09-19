@@ -1,6 +1,7 @@
 var net = require('net');
 
 const START_GAME_CATEGORY = "Start";
+const UPDATE_PLAYERS_CATEGORY = "Players";
 const UPDATE_MOVEMENT_CATEGORY = "UpdateMovementOptions";
 const END_GAME_CATEGORY = "EndGame";
 const MOVED_PIECE_CATEGORY = "MovedPiece";
@@ -33,7 +34,7 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
 
 function handleData(data, updatePlayersInfo, notifyMovementToAll, updateMovementOptions) {
     switch (data.Category) {
-        case START_GAME_CATEGORY:
+        case UPDATE_PLAYERS_CATEGORY:
             updatePlayersInfo(data.Players);
             break;
         case UPDATE_MOVEMENT_CATEGORY:
