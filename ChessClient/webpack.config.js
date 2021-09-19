@@ -57,10 +57,9 @@ module.exports = env => {
         plugins,
         devServer: {
             port: process.env.WEBPACK_PORT,
-            inline: true,
             historyApiFallback: true,
             hot: true,
-            contentBase: resolve(__dirname, 'dist'),
+            static: resolve(__dirname, 'dist'),
             proxy: {
                 '/api': {
                     target: `http://localhost:${process.env.PORT}`
