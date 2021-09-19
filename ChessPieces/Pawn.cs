@@ -31,6 +31,13 @@ namespace ChessBoard
             return movementOptions;
         }
 
+        protected override void TakePiece(ChessPiece piece)
+        {
+            if (piece is EnPassantPawn)
+                ((EnPassantPawn)piece).OriginalPawn.Dispose();
+            base.TakePiece(piece);
+        }
+
         protected internal override List<(ChessPiece, (char, int), (char, int))> MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {
             // If there's no up option then the pawn reached top row
