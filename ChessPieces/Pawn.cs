@@ -38,7 +38,7 @@ namespace ChessBoard
             base.TakePiece(piece);
         }
 
-        protected internal override void MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
+        protected internal override List<(ChessPiece, (char, int), (char, int))> MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {
             // If there's no up option then the pawn reached top row
             bool topRow = this.movementBoard.Up(newLocation).Count == 0;
@@ -60,17 +60,21 @@ namespace ChessBoard
                     ChessPiece newChessPiece = Activator.CreateInstance(newChessPieceType, new object[] { newLocation, this.color, this.board, this.movementBoard }) as ChessPiece;
                     newChessPiece.isFirstMove = false;
                     this.board.chessPiecesByColor[this.color].Add(newChessPiece);
-                    return;
+                    
+                    return new List<(ChessPiece, (char, int), (char, int))>(){(this, this.location, newLocation), (newChessPiece, this.location, newLocation)};
                 }
             }
 
-            base.MovePieceOnBoardLocation(newLocation);
+            List<(ChessPiece, (char, int), (char, int))> movedPieces = base.MovePieceOnBoardLocation(newLocation);
 
-            if (newLocation != this.enPassantMove.Item2) return;
+            if (newLocation == this.enPassantMove.Item2)
+            {
+                EnPassantPawn enPassantPawn = new EnPassantPawn(this.enPassantMove.Item1, this);
+                this.board.enPassantPawn = enPassantPawn;
+                this.enPassantMove = default;
+            }
 
-            EnPassantPawn enPassantPawn = new EnPassantPawn(this.enPassantMove.Item1, this);
-            this.board.enPassantPawn = enPassantPawn;
-            this.enPassantMove = default;
+            return movedPieces;
         }
     }
 
