@@ -14,7 +14,7 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
     var client = new net.Socket();
     client.connect(3030, '127.0.0.1', function() {
         console.log('Connected');
-        sendJson(client, { 'Category': START_GAME_CATEGORY, 'Nicknames': nicknames })
+        sendJson(client, { 'category': START_GAME_CATEGORY, 'data': { 'nicknames': nicknames } })
 
         games[gameId] = client
     });
@@ -26,25 +26,27 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
 
     client.on('data', function(data) {
         console.log('Received: ' + data);
-        handleData(JSON.parse(data), updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
+        handleMessage(JSON.parse(data), updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
     });
 
     return client
 }
 
-function handleData(data, updatePlayersInfo, notifyMovementToAll, updateMovementOptions) {
-    switch (data.Category) {
+function handleMessage(message, updatePlayersInfo, notifyMovementToAll, updateMovementOptions) {
+    const data = message.data
+
+    switch (message.category) {
         case UPDATE_PLAYERS_CATEGORY:
-            updatePlayersInfo(data.Players);
+            updatePlayersInfo(data.players);
             break;
         case UPDATE_MOVEMENT_CATEGORY:
-            updateMovementOptions(data.Nickname, data.MovementOptions);
+            updateMovementOptions(data.nickname, data.movementOptions);
             break;
         case END_GAME_CATEGORY:
             console.log("game ended")
             break;
         case NOTIFY_MOVEMENT_CATEGORY:
-            notifyMovementToAll(data.MovedPieces)
+            notifyMovementToAll(data.movedPieces)
             break;
         default:
             console.log("unrecognized category")
@@ -60,7 +62,8 @@ function movePiece(gameId, nickname, movement) {
         console.log("game doesn't exists")
         return false
     }
-    sendJson(games[gameId], { 'Category': MOVED_PIECE_CATEGORY, 'nickname': nickname, 'oldLocation': movement.oldLocation, 'newLocation': movement.newLocation })
+    const data = { 'nickname': nickname, 'oldLocation': movement.oldLocation, 'newLocation': movement.newLocation }
+    sendJson(games[gameId], { 'category': MOVED_PIECE_CATEGORY, 'data': data })
 
     return true
 }

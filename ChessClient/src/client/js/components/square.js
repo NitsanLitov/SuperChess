@@ -13,20 +13,20 @@ export function Square(props) {
     const isMovementSquare = props.isMovementSquare;
     const [classes, setClasses] = useState("")
 
-    useEffect(() => {
+    function GetClasses() {
         let c = "square"
         if (isBlack) {c += " black"}
         if (isMovingSquare) {c += " moving"}
         if (isMovementSquare) {c += " movement"}
-        setClasses(c)
-    }, [isMovingSquare, isMovementSquare])
+        return c
+    }
 
     return (
-        <div className={classes} onClick={(e)=> props.handleSquareClick(letter, number, isMovementSquare, isMovingSquare)}>
+        <div className={GetClasses()} onClick={(e)=> props.handleSquareClick(letter, number, isMovementSquare, isMovingSquare)}>
             {piece && (<PieceImage color={piece.color} type={piece.type}/>)}
 
             {Math.floor(index / 8) === 7 && (
-                <span className="letter-label">{letter}</span>
+                <span className="letter-label">{letter.toUpperCase()}</span>
             )}
 
             {index % 8 === 0 && (

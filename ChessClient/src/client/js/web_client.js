@@ -9,17 +9,14 @@ export function connectSocketIo(nickname, handleStartGame, handleMovedPiecesChan
     });
 
     socket.on('game', players => {
-        console.log(`players: ${players}`);
         handleStartGame(players)
     });
 
     socket.on('movedPieces', movedPieces => {
-        console.log(`movedPieces: ${movedPieces}`);
         handleMovedPiecesChange(movedPieces)
     });
 
     socket.on('movementOptions', movementOptions => {
-        console.log(`movementOptions: ${movementOptions}`);
         handleMovementOptionsChange(movementOptions)
     });
 
@@ -27,6 +24,5 @@ export function connectSocketIo(nickname, handleStartGame, handleMovedPiecesChan
 }
 
 export function movePiece(socket, oldLocation, newLocation, callback) {
-    console.log("Moving ${oldLocation} to ${newLocation}")
     socket.emit('move', { oldLocation, newLocation }, callback);
 }

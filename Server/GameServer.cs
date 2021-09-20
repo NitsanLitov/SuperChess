@@ -35,9 +35,9 @@ namespace Communication
         {
             RecievedMessage message = this.Read();
             ValidateMessageCategory(message, START_GAME_CATEGORY);
-            StartData startData = JsonSerializer.Deserialize<StartData>(message.DataStr);
+            StartData startData = JsonSerializer.Deserialize<StartData>(message.dataStr);
 
-            this.gameManager = new GameManager.GameManager(this, startData.Nicknames);
+            this.gameManager = new GameManager.GameManager(this, startData.nicknames);
 
             this.UpdatePlayers();
 
@@ -107,12 +107,12 @@ namespace Communication
         {
             RecievedMessage message = this.Read();
             ValidateMessageCategory(message, MOVED_PIECE_CATEGORY);
-            MovedPieceData movedPieceData = JsonSerializer.Deserialize<MovedPieceData>(message.DataStr);
+            MovedPieceData movedPieceData = JsonSerializer.Deserialize<MovedPieceData>(message.dataStr);
 
             // instead while until nickname is the right choise... send error message containing the error
-            if (movedPieceData.Nickname != nickname) throw new BadNicknameException(nickname, movedPieceData.Nickname);
+            if (movedPieceData.nickname != nickname) throw new BadNicknameException(nickname, movedPieceData.nickname);
 
-            return (movedPieceData.OldLocationTuple, movedPieceData.NewLocationTuple);
+            return (movedPieceData.oldLocationTuple, movedPieceData.newLocationTuple);
         }
 
         private RecievedMessage Read()
@@ -192,7 +192,7 @@ namespace Communication
 
         private void ValidateMessageCategory(Message message, string category)
         {
-            if (message.Category != category) throw new MessageCategoryException(category, message.Category);
+            if (message.category != category) throw new MessageCategoryException(category, message.category);
         }
 
         private static string ChessColorToString(ChessColor color)
@@ -220,117 +220,114 @@ namespace Communication
             }
         }
 
-        private static List<object> LocationToList((char, int) location)
+        private static string LocationToStr((char, int) location)
         {
-            return new List<object>() { location.Item1, location.Item2 };
+            return $"{location.Item1}{location.Item2}";
         }
 
-        private static List<object> LocationsToList(List<(char, int)> locations)
+        private static List<string> LocationsToStrList(List<(char, int)> locations)
         {
-            List<object> list = new List<object>();
+            List<string> list = new List<string>();
             foreach ((char, int) location in locations)
             {
-                list.Add(LocationToList(location));
+                list.Add(LocationToStr(location));
             }
             return list;
         }
 
-        record StartData(List<string> Nicknames);
-        record PlayersData(List<Dictionary<string, string>> Nicknames);
-        record EndGameData(string Nickname, string Reason);
+        record StartData(List<string> nicknames);
+        record PlayersData(List<Dictionary<string, string>> players);
+        record EndGameData(string nickname, string reason);
 
         class MovedPieceData
         {
-            public string Nickname { get; set; }
-            public List<JsonElement> oldLocation;
-            public List<JsonElement> newLocation;
-            public List<JsonElement> OldLocation { get { return this.oldLocation; } set { this.oldLocation = value; this.OldLocationTuple = (value[0].GetString()[0], value[1].GetInt32()); } }
-            public List<JsonElement> NewLocation { get { return this.newLocation; } set { this.newLocation = value; this.NewLocationTuple = (value[0].GetString()[0], value[1].GetInt32()); } }
-            public (char, int) OldLocationTuple { get; set; }
-            public (char, int) NewLocationTuple { get; set; }
-            public MovedPieceData(string nickname, List<JsonElement> oldLocation, List<JsonElement> newLocation)
+            public string nickname { get; set; }
+            public JsonElement internalOldLocation;
+            public JsonElement internalNewLocation;
+            public JsonElement oldLocation { get { return this.internalOldLocation; } set { this.internalOldLocation = value; this.oldLocationTuple = (value.GetString()[0], value.GetString()[1] - '0'); } }
+            public JsonElement newLocation { get { return this.internalNewLocation; } set { this.internalNewLocation = value; this.newLocationTuple = (value.GetString()[0], value.GetString()[1] - '0'); } }
+            public (char, int) oldLocationTuple { get; set; }
+            public (char, int) newLocationTuple { get; set; }
+            public MovedPieceData(string nickname, JsonElement oldLocation, JsonElement newLocation)
             {
-                this.Nickname = nickname;
-                this.OldLocation = oldLocation;
-                this.NewLocation = newLocation;
+                this.nickname = nickname;
+                this.oldLocation = oldLocation;
+                this.newLocation = newLocation;
             }
         }
 
         class NotifyMovementData
         {
-            public List<object> MovedPieces { get; set; }
+            public List<object> movedPieces { get; set; }
             public NotifyMovementData(List<(ChessPiece piece, (char, int), (char, int))> movedPieces)
             {
                 List<object> newMovedPieces = new List<object>();
                 foreach ((ChessPiece piece, (char, int) oldLocation, (char, int) newLocation) in movedPieces)
                 {
-                    newMovedPieces.Add(new List<object>() { new PieceData(piece), LocationToList(oldLocation), LocationToList(newLocation) });
+                    newMovedPieces.Add(new List<object>() { new PieceData(piece), LocationToStr(oldLocation), LocationToStr(newLocation) });
                 }
-                this.MovedPieces = newMovedPieces;
+                this.movedPieces = newMovedPieces;
             }
         }
 
         class MovementOptionsData
         {
-            public string Nickname { get; set; }
-            public List<Dictionary<string, List<object>>> MovementOptions { get; set; }
+            public string nickname { get; set; }
+            public Dictionary<string, List<string>> movementOptions { get; set; }
             public MovementOptionsData(string nickname, Dictionary<(char, int), List<(char, int)>> movementOptions)
             {
-                List<Dictionary<string, List<object>>> newMovementOptions = new List<Dictionary<string, List<object>>>();
+                Dictionary<string, List<string>> newMovementOptions = new Dictionary<string, List<string>>();
                 foreach ((char, int) location in movementOptions.Keys)
                 {
-                    Dictionary<string, List<object>> movement = new Dictionary<string, List<object>>();
-                    movement["from"] = LocationToList(location);
-                    movement["to"] = LocationsToList(movementOptions[location]);
-                    newMovementOptions.Add(movement);
+                    newMovementOptions[LocationToStr(location)] = LocationsToStrList(movementOptions[location]);
                 }
-                this.MovementOptions = newMovementOptions;
-                this.Nickname = nickname;
+                this.movementOptions = newMovementOptions;
+                this.nickname = nickname;
             }
         }
 
         class PieceData
         {
-            public string Color { get; set; }
-            public string Type { get; set; }
+            public string color { get; set; }
+            public string type { get; set; }
             public PieceData(ChessPiece piece)
             {
-                this.Color = ChessColorToString(piece.color);
-                this.Type = ChessPieceToString(piece);
+                this.color = ChessColorToString(piece.color);
+                this.type = ChessPieceToString(piece);
             }
         }
 
         class Message
         {
-            public string Category { get; set; }
-            public Message(string Category) { this.Category = Category; }
+            public string category { get; set; }
+            public Message(string category) { this.category = category; }
         }
         class RecievedMessage : Message
         {
-            public string DataStr { get; set; }
-            private JsonElement data;
-            public JsonElement Data { get { return this.data; } set { this.data = value; this.DataStr = JsonSerializer.Serialize(value); } }
-            public RecievedMessage(string Category, JsonElement Data) : base(Category) { this.Data = Data; }
+            public string dataStr { get; set; }
+            private JsonElement internalData;
+            public JsonElement data { get { return this.internalData; } set { this.internalData = value; this.dataStr = JsonSerializer.Serialize(value); } }
+            public RecievedMessage(string category, JsonElement data) : base(category) { this.data = data; }
         }
         class UpdatePlayersMessage : Message
         {
-            public PlayersData Data { get; set; }
-            public UpdatePlayersMessage(string Category, PlayersData Data) : base(Category) { this.Data = Data; }
+            public PlayersData data { get; set; }
+            public UpdatePlayersMessage(string category, PlayersData data) : base(category) { this.data = data; }
         }
         class MovementOptionsMessage : Message
         {
-            public MovementOptionsData Data { get; set; }
-            public MovementOptionsMessage(string Category, MovementOptionsData Data) : base(Category) { this.Data = Data; }
+            public MovementOptionsData data { get; set; }
+            public MovementOptionsMessage(string category, MovementOptionsData data) : base(category) { this.data = data; }
         }
         class EndGameMessage : Message
         {
-            public EndGameData Data { get; set; }
-            public EndGameMessage(string Category, EndGameData Data) : base(Category) { this.Data = Data; }
+            public EndGameData data { get; set; }
+            public EndGameMessage(string category, EndGameData data) : base(category) { this.data = data; }
         }
         class NotifyMovementMessage : Message
         {
-            public NotifyMovementData Data { get; set; }
-            public NotifyMovementMessage(string Category, NotifyMovementData Data) : base(Category) { this.Data = Data; }
+            public NotifyMovementData data { get; set; }
+            public NotifyMovementMessage(string category, NotifyMovementData data) : base(category) { this.data = data; }
         }
     }
 

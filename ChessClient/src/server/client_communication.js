@@ -1,4 +1,5 @@
 const socketIo = require("socket.io");
+const uuidv4 = require("uuid").v4
 
 const chess_communication = require('./chess_communication')
 
@@ -17,7 +18,16 @@ function startSocketIo(server) {
         console.log("New client connected");
         socket.emit('connection', null);
 
+        socket.on("disconnect", asd => {
+            const nickname = nicknameBySocket[socket.id]
+            console.log(`CLOSING ${nickname}!!!!!!!`)
+
+            delete socketByNickname[nickname]
+            delete nicknameBySocket[socket.id]
+        })
+
         socket.on("game", nickname => {
+            nickname = uuidv4()
             console.log(`nickname: ${nickname}`);
             nicknameBySocket[socket.id] = nickname
             socketByNickname[nickname] = socket
@@ -25,7 +35,7 @@ function startSocketIo(server) {
             const nicknames = getNicknames()
             const gameId = "thisIsTheGameId"
 
-            if (nicknames.length === 1) {
+            if (nicknames.length === 2) {
                 games[gameId] = nicknames
 
                 updatePlayersInfo = players => emitNicknames(nicknames, "game", players);
@@ -45,6 +55,10 @@ function startSocketIo(server) {
 }
 
 function emitNickname(nickname, eventName, data) {
+    console.log(getNicknames())
+    console.log(nickname)
+    console.log(eventName)
+    console.log(data)
     socketByNickname[nickname].emit(eventName, data);
 }
 

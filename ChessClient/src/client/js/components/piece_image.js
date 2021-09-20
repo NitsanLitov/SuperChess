@@ -20,5 +20,5 @@ export function PieceImage(props) {
     if (pieceUrl) {
         return <img src={pieceUrl} />
     }
-    return props.type
+    return <span>{props.type}</span>
 }
