@@ -18,31 +18,36 @@ function startSocketIo(server) {
         console.log("New client connected");
         socket.emit('connection', null);
 
-        socket.on("disconnect", asd => {
+        socket.on("disconnect", () => {
             const nickname = nicknameBySocket[socket.id]
-            console.log(`CLOSING ${nickname}!!!!!!!`)
+            console.log(`CLOSING ${nickname} ws!!!!!!!`)
 
             delete socketByNickname[nickname]
             delete nicknameBySocket[socket.id]
         })
 
-        socket.on("game", nickname => {
-            nickname = uuidv4()
-            console.log(`nickname: ${nickname}`);
+        socket.on("game", userData => {
+            const nickname = userData.nickname
+            const gameId = userData.gameId
+
+            // console.log(`nickname: [${nickname}] gameId: [${gameId}]`);
             nicknameBySocket[socket.id] = nickname
             socketByNickname[nickname] = socket
 
-            const nicknames = getNicknames()
-            const gameId = "thisIsTheGameId"
+            if (!(gameId in games)) games[gameId] = []
 
-            if (nicknames.length === 2) {
-                games[gameId] = nicknames
+            if (!(games[gameId].includes(nickname))) games[gameId].push(nickname)
 
-                updatePlayersInfo = players => emitNicknames(nicknames, "game", players);
-                notifyMovementToAll = movedPieces => emitNicknames(nicknames, "movedPieces", movedPieces);
+            console.log(games)
+
+            if (games[gameId].length === 2) {
+                const playingNicknames = games[gameId]
+
+                updatePlayersInfo = players => emitNicknames(playingNicknames, "game", players);
+                notifyMovementToAll = movedPieces => emitNicknames(playingNicknames, "movedPieces", movedPieces);
                 updateMovementOptions = (nickname, movementOptions) => emitNickname(nickname, "movementOptions", movementOptions);
 
-                chess_communication.startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
+                chess_communication.startGame(gameId, playingNicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
 
                 socket.on("move", (movement, ack) => {
                     console.log(`${nicknameBySocket[socket.id]} movement: ${movement}`);

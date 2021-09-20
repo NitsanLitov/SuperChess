@@ -8,7 +8,8 @@ const client = require('../web_client');
 export function Board(props) {
     const [players, setPlayers] = useState([])
     const [player, setPlayer] = useState({})
-    const [nickname, setNickname] = useState("Nitsan")
+    const [nickname, setNickname] = useState("")
+    const [gameId, setGameId] = useState("")
     const [piecesByLocation, setPiecesByLocation] = useState({})
     const [movementOptions, setMovementOptions] = useState([])
     const [movementSquares, setMovementSquares] = useState([])
@@ -17,13 +18,13 @@ export function Board(props) {
     const [waitingForMovingAck, setWaitingForMovingAck] = useState(false)
     const [socket, setSocket] = useState()
 
-    useEffect(() => {
-        setSocket(client.connectSocketIo(nickname, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange))
-    }, [])
+    function startGame() {
+        setSocket(client.connectSocketIo(nickname, gameId, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange))
+    }
 
     function handleStartGame(players) {
         setPlayers(players)
-        setPlayer(players[0])
+        setPlayer(players.find(p => p.nickname === nickname))
     }
 
     function handleMovedPiecesChange(movedPieces) {
@@ -86,7 +87,19 @@ export function Board(props) {
         });
     }
 
-    if (players.length === 0) return <div></div>
+    if (players.length === 0) return (
+        <div>
+            <label>
+                Nickname:
+                <input type="text" value={nickname} onChange={e => setNickname(e.target.value)} />
+            </label>
+            <label>
+                GameId:
+                <input type="text" value={gameId} onChange={e => setGameId(e.target.value)} />
+            </label>
+            <button disabled={nickname === "" || gameId === ""} onClick={(e) => startGame()}>Start Game</button>
+        </div>
+    )
     return (
         <div className="gameBoard">
             <GameData player={player} lastMove={lastMove} isPlayerTurn={Object.keys(movementOptions).length !== 0} />
