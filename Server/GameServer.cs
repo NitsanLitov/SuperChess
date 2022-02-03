@@ -222,7 +222,7 @@ namespace Communication
 
         private static string LocationToStr((char, int) location)
         {
-            return $"{location.Item1}{location.Item2}";
+            return location != default ? $"{location.Item1}{location.Item2}" : "";
         }
 
         private static List<string> LocationsToStrList(List<(char, int)> locations)

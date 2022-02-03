@@ -42,7 +42,7 @@ export function Board(props) {
         setPiecesByLocation(prevPiecesByLocation => {
             movedPieces.forEach(movedPiece => {
                 prevPiecesByLocation[movedPiece[1]] = null
-                prevPiecesByLocation[movedPiece[2]] = movedPiece[0]
+                if (movedPiece[2] !== '') prevPiecesByLocation[movedPiece[2]] = movedPiece[0]
             });
             return prevPiecesByLocation
         })
@@ -59,8 +59,9 @@ export function Board(props) {
         }
 
         // Color movement squares
-        const localMovingLocation = `${letter.toLowerCase()}${number}`
-        if (!(localMovingLocation in movementOptions) && movementOptions[localMovingLocation].length !== 0) {
+        const localMovingLocation = `${letter.toLowerCase()}${number}`;
+
+        if (!(localMovingLocation in movementOptions) || movementOptions[localMovingLocation].length === 0) {
             unColorSquares();
             return;
         }

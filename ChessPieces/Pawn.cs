@@ -32,23 +32,26 @@ namespace ChessBoard
             return movementOptions;
         }
 
-        protected override void TakePiece(ChessPiece piece)
+        protected override List<(ChessPiece, (char, int), (char, int))> TakePiece(ChessPiece piece)
         {
+            List<(ChessPiece, (char, int), (char, int))> movedPieces = new List<(ChessPiece, (char, int), (char, int))>();
+
             if (piece is EnPassantPawn)
-                ((EnPassantPawn)piece).OriginalPawn.Dispose();
-            base.TakePiece(piece);
+                movedPieces.AddRange(((EnPassantPawn)piece).OriginalPawn.Dispose());
+            movedPieces.AddRange(base.TakePiece(piece));
+
+            return movedPieces;
         }
 
         protected internal override List<(ChessPiece, (char, int), (char, int))> MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {
+            List<(ChessPiece, (char, int), (char, int))> movedPieces = new List<(ChessPiece, (char, int), (char, int))>();
+
             // If there's no up option then the pawn reached top row
             bool topRow = this.movementBoard.Up(newLocation).Count == 0;
 
             if (this.movementOptions.Contains(newLocation))
             {
-                if (!topRow && newChessPieceType != null)
-                    throw new PawnPromotionException("Pawn haven't reached top row and can't perform promotion");
-
                 if (topRow)
                 {
                     if (newChessPieceType == null)
@@ -57,16 +60,21 @@ namespace ChessBoard
                     if (newChessPieceType != typeof(Queen) && newChessPieceType != typeof(Knight) && newChessPieceType != typeof(Bishop) && newChessPieceType != typeof(Rook))
                         throw new PawnPromotionException("promotion piece type must be either Queen, Knight, Bishop or Rook");
 
-                    this.Dispose();
+                    movedPieces.AddRange(this.Dispose());
+                    
                     ChessPiece newChessPiece = Activator.CreateInstance(newChessPieceType, new object[] { newLocation, this.color, this.board, this.movementBoard }) as ChessPiece;
                     newChessPiece.isFirstMove = false;
                     this.board.chessPiecesByColor[this.color].Add(newChessPiece);
+                    movedPieces.Add((newChessPiece, this.location, newLocation));
                     
-                    return new List<(ChessPiece, (char, int), (char, int))>(){(this, this.location, newLocation), (newChessPiece, this.location, newLocation)};
+                    return movedPieces;
                 }
+
+                if (newChessPieceType != null)
+                    throw new PawnPromotionException("Pawn haven't reached top row and can't perform promotion");
             }
 
-            List<(ChessPiece, (char, int), (char, int))> movedPieces = base.MovePieceOnBoardLocation(newLocation);
+            movedPieces.AddRange(base.MovePieceOnBoardLocation(newLocation));
 
             if (newLocation == this.enPassantMove.Item2)
             {

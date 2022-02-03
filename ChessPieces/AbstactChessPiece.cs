@@ -45,10 +45,12 @@ namespace ChessBoard
         {
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
+            List<(ChessPiece, (char, int), (char, int))> movedPieces = new List<(ChessPiece, (char, int), (char, int))>();
+            
             if (piece != null)
-                this.TakePiece(piece);
+                movedPieces.AddRange(this.TakePiece(piece));
 
-            List<(ChessPiece, (char, int), (char, int))> movedPieces = this.MovePieceOnBoardLocation(newLocation, newChessPieceType);
+            movedPieces.AddRange(this.MovePieceOnBoardLocation(newLocation, newChessPieceType));
 
             this.movementOptions.Clear();
 
@@ -76,9 +78,16 @@ namespace ChessBoard
             return new List<(ChessPiece, (char, int), (char, int))>(){(this, oldLocation, newLocation)};
         }
 
-        protected virtual void TakePiece(ChessPiece piece)
+        protected virtual List<(ChessPiece, (char, int), (char, int))> TakePiece(ChessPiece piece)
         {
-            piece.Dispose();
+            return piece.Dispose();
+        }
+
+        public virtual List<(ChessPiece, (char, int), (char, int))> Dispose()
+        {
+            this.board.chessPiecesByColor[this.color].Remove(this);
+            this.board.SetPieceByLocation(null, this.location);
+            return new List<(ChessPiece, (char, int), (char, int))>(){(this, location, default)};
         }
 
         protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canPieceTakeOpponentKing, bool canTake = true, bool canOnlyTake = false)
@@ -103,12 +112,6 @@ namespace ChessBoard
                     finalMovementOptions.Add(movement);
             }
             return finalMovementOptions;
-        }
-
-        public virtual void Dispose()
-        {
-            this.board.chessPiecesByColor[this.color].Remove(this);
-            this.board.SetPieceByLocation(null, this.location);
         }
     }
 
