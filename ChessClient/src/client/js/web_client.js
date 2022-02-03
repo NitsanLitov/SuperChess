@@ -1,7 +1,6 @@
 import socketClient from "socket.io-client";
 
 export function connectSocketIo(nickname, gameId, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange) {
-    // var socket = socketClient(SERVER);
     var socket = socketClient();
     socket.on('connection', () => {
         console.log(`connected with the back-end`);
@@ -20,6 +19,7 @@ export function connectSocketIo(nickname, gameId, handleStartGame, handleMovedPi
         handleMovementOptionsChange(movementOptions)
     });
 
+    console.log(socket.id)
     return socket;
 }
 

@@ -14,7 +14,8 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
     var client = new net.Socket();
     client.connect(3030, '127.0.0.1', function() {
         console.log('Connected');
-        sendJson(client, { 'category': START_GAME_CATEGORY, 'data': { 'nicknames': nicknames } })
+        const data = { 'nicknames': nicknames }
+        sendJson(client, { 'category': START_GAME_CATEGORY, 'data': data })
 
         games[gameId] = client
     });
@@ -54,7 +55,9 @@ function handleMessage(message, updatePlayersInfo, notifyMovementToAll, updateMo
 }
 
 function sendJson(client, json) {
-    return client.write(JSON.stringify(json));
+    const data = JSON.stringify(json)
+    console.log(`Sending: ${data}`);
+    return client.write(data);
 }
 
 function movePiece(gameId, nickname, movement) {
@@ -62,9 +65,10 @@ function movePiece(gameId, nickname, movement) {
         console.log("game doesn't exists")
         return false
     }
-    const data = { 'nickname': nickname, 'oldLocation': movement.oldLocation, 'newLocation': movement.newLocation }
-    sendJson(games[gameId], { 'category': MOVED_PIECE_CATEGORY, 'data': data })
 
+    const data = { 'nickname': nickname, 'oldLocation': movement.oldLocation, 'newLocation': movement.newLocation }
+
+    sendJson(games[gameId], { 'category': MOVED_PIECE_CATEGORY, 'data': data })
     return true
 }
 

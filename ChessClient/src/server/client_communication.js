@@ -8,6 +8,7 @@ let io
 let nicknameBySocket = {}
 let socketByNickname = {}
 let games = {}
+let gameIdByNickname = {}
 
 function getNicknames() { return Object.keys(socketByNickname) }
 
@@ -24,13 +25,16 @@ function startSocketIo(server) {
 
             delete socketByNickname[nickname]
             delete nicknameBySocket[socket.id]
+            delete games[gameIdByNickname[nickname]]
+            delete gameIdByNickname[nickname]
         })
 
         socket.on("game", userData => {
             const nickname = userData.nickname
             const gameId = userData.gameId
+            gameIdByNickname[nickname] = gameId
 
-            // console.log(`nickname: [${nickname}] gameId: [${gameId}]`);
+            // console.log(`nickname: [${nickname}] gameId: [${gameId}] socketId: [${socket.id}]`);
             nicknameBySocket[socket.id] = nickname
             socketByNickname[nickname] = socket
 
@@ -49,10 +53,11 @@ function startSocketIo(server) {
 
                 chess_communication.startGame(gameId, playingNicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
 
-                socket.on("move", (movement, ack) => {
-                    console.log(`${nicknameBySocket[socket.id]} movement: ${movement}`);
-                    const result = chess_communication.movePiece(gameId, nickname, movement)
-                    ack(result)
+                playingNicknames.forEach(n => {
+                    socketByNickname[n].on('move', (movement, ack) => {
+                        const result = chess_communication.movePiece(gameId, n, movement)
+                        ack(result)
+                    });
                 });
             }
         });
@@ -60,10 +65,6 @@ function startSocketIo(server) {
 }
 
 function emitNickname(nickname, eventName, data) {
-    console.log(getNicknames())
-    console.log(nickname)
-    console.log(eventName)
-    console.log(data)
     socketByNickname[nickname].emit(eventName, data);
 }
 

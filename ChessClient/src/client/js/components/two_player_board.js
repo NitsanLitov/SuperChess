@@ -35,7 +35,8 @@ export function TwoPlayerBoard(props) {
                     const number = player.color === PlayerColors.WHITE ? 8 - Math.floor(index / 8) : Math.floor(index / 8) + 1;
                     const column = index % 8;
                     const letter = String.fromCharCode(player.color === PlayerColors.WHITE ? ('a'.charCodeAt(0) + column) : ('h'.charCodeAt(0) - column));
-                    const isBlack = !(number % 2 === column % 2);
+                    let isBlack = !(number % 2 === column % 2);
+                    isBlack = player.color === PlayerColors.WHITE ? isBlack : !isBlack
                     const square = (<Square key={index} number={number} letter={letter} index={index} isBlack={isBlack}
                         piece={getPieceByLocationTuple(letter, number)} 
                         isMovingSquare={isMovingSquare(letter, number)}
