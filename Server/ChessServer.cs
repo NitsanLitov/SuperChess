@@ -72,7 +72,7 @@ namespace Communication
 
         private void StartGame(object clientObj)
         {
-            if (clientObj is not TcpClient) throw new ArgumentException("expected TcpClient as asn argument");
+            if (clientObj is not TcpClient) throw new ArgumentException("expected TcpClient as argument");
 
             TcpClient client = clientObj as TcpClient;
             GameServer game = new GameServer(this, client);

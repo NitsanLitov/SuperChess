@@ -20,12 +20,12 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
         games[gameId] = client
     });
 
-    client.on('error', function(e) {
+    client.on('error', e => {
         console.log("handled error");
         console.log(e);
     });
 
-    client.on('data', function(data) {
+    client.on('data', data => {
         console.log('Received: ' + data);
         handleMessage(JSON.parse(data), updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
     });
@@ -45,6 +45,7 @@ function handleMessage(message, updatePlayersInfo, notifyMovementToAll, updateMo
             break;
         case END_GAME_CATEGORY:
             console.log("game ended")
+                // ToDo: update clients game ended
             break;
         case NOTIFY_MOVEMENT_CATEGORY:
             notifyMovementToAll(data.movedPieces)

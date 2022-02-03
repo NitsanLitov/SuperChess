@@ -6,17 +6,19 @@ const { GameData } = require('./game_data');
 const client = require('../web_client');
 
 export function Board(props) {
-    const [players, setPlayers] = useState([])
-    const [player, setPlayer] = useState({})
+    const [socket, setSocket] = useState()
+
     const [nickname, setNickname] = useState("")
     const [gameId, setGameId] = useState("")
+    const [players, setPlayers] = useState([])
+    const [player, setPlayer] = useState({})
+
     const [piecesByLocation, setPiecesByLocation] = useState({})
     const [movementOptions, setMovementOptions] = useState([])
     const [movementSquares, setMovementSquares] = useState([])
     const [movingLocation, setMovingLocation] = useState("")
     const [lastMove, setLastMove] = useState([])
     const [waitingForMovingAck, setWaitingForMovingAck] = useState(false)
-    const [socket, setSocket] = useState()
 
     function startGame() {
         setSocket(client.connectSocketIo(nickname, gameId, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange))
@@ -58,9 +60,13 @@ export function Board(props) {
 
         // Color movement squares
         const localMovingLocation = `${letter.toLowerCase()}${number}`
-        const localMovementSquares = localMovingLocation in movementOptions ? movementOptions[localMovingLocation] : []
+        if (!(localMovingLocation in movementOptions) && movementOptions[localMovingLocation].length !== 0) {
+            unColorSquares();
+            return;
+        }
+        const localMovementSquares = movementOptions[localMovingLocation]
         setMovementSquares(localMovementSquares);
-        setMovingLocation(localMovementSquares.length !== 0 ? localMovingLocation : "");
+        setMovingLocation(localMovingLocation);
     }
 
     function unColorSquares() {

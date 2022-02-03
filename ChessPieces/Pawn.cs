@@ -8,6 +8,7 @@ namespace ChessBoard
 {
     public class Pawn : ChessPiece
     {
+        // First value represent the enPassant location. Second value represent the real pawn location.
         private ((char, int), (char, int)) enPassantMove;
 
         public Pawn((char, int) location, ChessColor color, Board board, MovementBoard movementBoard) : base(location, color, board, movementBoard) { }
