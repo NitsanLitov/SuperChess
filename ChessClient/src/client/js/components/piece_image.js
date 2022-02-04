@@ -18,7 +18,7 @@ export function PieceImage(props) {
     const pieceUrl = pieces[`${props.color}${props.type}`];
 
     if (pieceUrl) {
-        return <img src={pieceUrl} />
+        return (<img src={pieceUrl} />)
     }
-    return <span>{props.type}</span>
+    return (<span>{props.type}</span>)
 }

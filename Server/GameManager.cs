@@ -59,7 +59,6 @@ namespace Communication
                     this.server.UpdateMovementOptions(p.Nickname, movements);
 
                     ((char, int) oldLocation, (char, int) newLocation) = this.server.GetMovedPiece(p.Nickname);
-                    // ToDo: DONT CRASH, SEND SERVER MESSAGES!!!!
                     List<(ChessPiece, (char, int), (char, int))> movedPieces = this.board.Move(oldLocation, newLocation);
 
                     this.server.NotifyMovementToAll(movedPieces);

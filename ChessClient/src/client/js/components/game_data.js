@@ -7,7 +7,7 @@ export function GameData(props) {
     const lastMove = props.lastMove;
     const isPlayerTurn = props.isPlayerTurn;
 
-    let moveData = <div className="moveData"></div>
+    let moveData = (<div className="moveData"></div>)
     if (lastMove.length !== 0) {
         moveData = (
             <div className="moveData">

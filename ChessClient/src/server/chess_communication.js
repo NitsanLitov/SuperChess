@@ -24,6 +24,7 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
         console.log("handled error");
         console.log(e);
         endGame({ "reason": "Server connection has terminated, the game is finished", "nickname": "" })
+        client.destroy();
     });
 
     client.on('data', data => {

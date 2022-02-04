@@ -34,7 +34,6 @@ function startSocketIo(server) {
             const gameId = userData.gameId
             gameIdByNickname[nickname] = gameId
 
-            // console.log(`nickname: [${nickname}] gameId: [${gameId}] socketId: [${socket.id}]`);
             nicknameBySocket[socket.id] = nickname
             socketByNickname[nickname] = socket
 
