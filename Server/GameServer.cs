@@ -183,7 +183,6 @@ namespace Communication
             {
                 Console.WriteLine("SocketException: {0}", e);
             }
-            Console.WriteLine("Game Deleted");
         }
 
         private void ValidateMessageCategory(Message message, string category)
@@ -327,6 +326,12 @@ namespace Communication
         }
     }
 
+    public class ClientDisconnectedException : Exception
+    {
+        public ClientDisconnectedException() : base("The Client unexpectedly disconnected") { }
+        public ClientDisconnectedException(string message) : base(message) { }
+    }
+
     public class GameException : Exception
     {
         public GameException() : base() { }
@@ -343,11 +348,5 @@ namespace Communication
     {
         public BadNicknameException() : base() { }
         public BadNicknameException(string expectedNickname, string actualNickname) : base($"expected {expectedNickname} but got {actualNickname}") { }
-    }
-
-    public class ClientDisconnectedException : GameException
-    {
-        public ClientDisconnectedException() : base("The Client unexpectedly disconnected") { }
-        public ClientDisconnectedException(string message) : base(message) { }
     }
 }

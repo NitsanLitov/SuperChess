@@ -71,6 +71,8 @@ namespace Communication
             this.games.Add(game);
             Console.WriteLine("Starting Game, may the odds be in your favor!");
             game.Start();
+            this.games.Remove(game);
+            Console.WriteLine("Game Deleted");
         }
 
         public void Close()
