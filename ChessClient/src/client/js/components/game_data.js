@@ -6,6 +6,8 @@ export function GameData(props) {
     const player = props.player;
     const lastMove = props.lastMove;
     const isPlayerTurn = props.isPlayerTurn;
+    const gameEnded = props.gameEnded;
+    const gameResult = props.gameResult;
 
     let moveData = (<div className="moveData"></div>)
     if (lastMove.length !== 0) {
@@ -16,16 +18,37 @@ export function GameData(props) {
             </div>
         )
     }
-    
-    
+
+    let message;
+    let positive;
+    if (gameEnded) {
+        positive = false;
+        message = `${gameResult.reason}`;
+
+        if (gameResult.nickname) {
+            message += `: ${gameResult.nickname} lost`;
+            positive = gameResult.nickname !== player.nickname;
+        }
+    }
+    else {
+        if (isPlayerTurn) {
+            positive = true;
+            message = 'Your turn';
+        }
+        else {
+            positive = false;
+            message = 'Please wait for your turn';
+        }
+    }
+
+    let turnData = (
+        <div className={`turnData ${positive ? 'positive' : 'negative'}`}>{message}</div>
+    );
+
     return (
         <div className="gameData">
             {moveData}
-
-            {isPlayerTurn
-                && (<div className="turnData positive">Your turn</div>)
-                || (<div className="turnData negative">Please wait for your turn</div>)
-            }
+            {turnData}
         </div>
     )
 }

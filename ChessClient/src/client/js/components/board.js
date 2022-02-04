@@ -124,15 +124,10 @@ export function Board(props) {
             <button disabled={nickname === "" || gameId === ""} onClick={(e) => startGame()}>Start Game</button>
         </div>
     )
-    if (gameEnded) return (
-        <div>
-            {`the result is a "${gameResult.reason}"`}
-            {gameResult.nickname && `: "${gameResult.nickname}" lost`}
-        </div>
-    )
+    
     return (
         <div className="gameBoard">
-            <GameData player={player} lastMove={lastMove} isPlayerTurn={Object.keys(movementOptions).length !== 0} />
+            <GameData player={player} lastMove={lastMove} isPlayerTurn={Object.keys(movementOptions).length !== 0} gameEnded={gameEnded} gameResult={gameResult} />
             {players.length === 2 && (
                 <TwoPlayerBoard players={players} player={player} piecesByLocation={piecesByLocation}
                     movementOptions={movementOptions} movementSquares={movementSquares} movingLocation={movingLocation} handleSquareClick={handleSquareClick} />
