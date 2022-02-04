@@ -84,22 +84,7 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                Console.WriteLine("SocketException: {0}", e);
-                if (game != null) game.Stop();
-            }
-            catch (System.IO.IOException e)
-            {
-                Console.WriteLine("IOException: {0}", e);
-                if (game != null) game.Stop();
-            }
-            catch (GameException e)
-            {
-                Console.WriteLine("GameException: {0}", e);
-
-                if (game != null) {
-                    game.EndGame("Server error has occured, the game is finished");
-                    game.Stop();
-                }
+                HandleSocketException(e);
             }
         }
 

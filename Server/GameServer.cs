@@ -33,15 +33,27 @@ namespace Communication
 
         public void Start()
         {
-            RecievedMessage message = this.Read();
-            ValidateMessageCategory(message, START_GAME_CATEGORY);
-            StartData startData = JsonSerializer.Deserialize<StartData>(message.dataStr);
+            try
+            {
+                RecievedMessage message = this.Read();
+                ValidateMessageCategory(message, START_GAME_CATEGORY);
+                StartData startData = JsonSerializer.Deserialize<StartData>(message.dataStr);
 
-            this.gameManager = new GameManager(this, startData.nicknames);
+                this.gameManager = new GameManager(this, startData.nicknames);
 
-            this.UpdatePlayers();
+                this.UpdatePlayers();
 
-            this.gameManager.StartGame();
+                this.gameManager.StartGame();
+            }
+            catch (Exception e)
+            {
+                if (e is GameException) { this.EndGame($"Server error of type ({e.GetType()}) has occured, the game is finished"); }
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                this.Stop();
+            }
         }
 
         public void Stop()
@@ -122,30 +134,23 @@ namespace Communication
 
         private RecievedMessage Read()
         {
-            if (!this.ClientConnected(this.client)) { this.Stop(); throw new SocketException(); }
+            if (!this.ClientConnected(this.client)) throw new ClientDisconnectedException();
 
             Console.WriteLine("Reading");
-            try
-            {
-                Byte[] bytes = new Byte[1024];
-                string json = "";
 
-                NetworkStream stream = this.client.GetStream();
-                int i;
+            Byte[] bytes = new Byte[1024];
+            string json = "";
 
-                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                {
-                    json += System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                    break;
-                }
-                Console.WriteLine(json);
-                return JsonSerializer.Deserialize<RecievedMessage>(json);
-            }
-            catch (SocketException e)
+            NetworkStream stream = this.client.GetStream();
+            int i;
+
+            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
-                this.HandleException(e);
-                throw;
+                json += System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                break;
             }
+            Console.WriteLine(json);
+            return JsonSerializer.Deserialize<RecievedMessage>(json);
         }
 
         private void Send(Message message) { this.Send(JsonSerializer.Serialize(message)); }
@@ -160,20 +165,12 @@ namespace Communication
 
         private void Send(string data)
         {
-            if (!this.ClientConnected(this.client)) { this.Stop(); throw new SocketException(); }
+            if (!this.ClientConnected(this.client)) throw new ClientDisconnectedException();
 
-            try
-            {
-                NetworkStream stream = this.client.GetStream();
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+            NetworkStream stream = this.client.GetStream();
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
-                stream.Write(msg, 0, msg.Length);
-            }
-            catch (SocketException e)
-            {
-                this.HandleException(e);
-                throw;
-            }
+            stream.Write(msg, 0, msg.Length);
         }
 
         private void CloseClient()
@@ -187,11 +184,6 @@ namespace Communication
                 Console.WriteLine("SocketException: {0}", e);
             }
             Console.WriteLine("Game Deleted");
-        }
-
-        private void HandleException(SocketException e)
-        {
-            Console.WriteLine("THIS IS INNER EXCEPTION");
         }
 
         private void ValidateMessageCategory(Message message, string category)
@@ -335,7 +327,8 @@ namespace Communication
         }
     }
 
-    public class GameException : Exception {
+    public class GameException : Exception
+    {
         public GameException() : base() { }
         public GameException(string message) : base(message) { }
     }
@@ -354,7 +347,7 @@ namespace Communication
 
     public class ClientDisconnectedException : GameException
     {
-        public ClientDisconnectedException() : base() { }
+        public ClientDisconnectedException() : base("The Client unexpectedly disconnected") { }
         public ClientDisconnectedException(string message) : base(message) { }
     }
 }
