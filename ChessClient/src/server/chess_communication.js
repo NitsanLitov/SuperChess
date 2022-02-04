@@ -24,19 +24,23 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
         console.log("handled error");
         console.log(e);
         endGame({ "reason": "Server connection has terminated, the game is finished", "nickname": "" })
-        client.destroy();
+        finishGame(gameId)
     });
 
     client.on('data', data => {
         console.log('Received: ' + data);
         gameContinues = handleMessage(JSON.parse(data), updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame)
         if (!gameContinues) {
-            delete games[gameId];
-            client.destroy();
+            finishGame(gameId)
         }
     });
 
     return client
+}
+
+function finishGame(gameId) {
+    games[gameId].destroy();
+    delete games[gameId];
 }
 
 function handleMessage(message, updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame) {

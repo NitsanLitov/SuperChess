@@ -7,6 +7,10 @@ export function connectSocketIo(nickname, gameId, handleStartGame, handleMovedPi
         socket.emit("game", { nickname, gameId })
     });
 
+    socket.on('disconnect', () => {
+        console.log(`disconnected from the back-end`);
+    });
+
     socket.on('game', players => {
         handleStartGame(players)
     });

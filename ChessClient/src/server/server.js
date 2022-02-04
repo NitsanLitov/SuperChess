@@ -3,8 +3,6 @@ const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 const uuidv4 = require("uuid").v4
 
-// const communication = require('./communication')
-const chess_communication = require('./chess_communication');
 const client_communication = require('./client_communication');
 
 const app = express()
