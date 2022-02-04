@@ -96,11 +96,6 @@ body {
     background: #56bc5865;
 }
 
-.square img {
-    width: 85%;
-    z-index: 999;
-}
-
 .square .letter-label {
     position: absolute;
     bottom: 0.1rem;

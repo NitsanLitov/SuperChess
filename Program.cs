@@ -8,9 +8,9 @@ namespace SuperChess
     {
         static void Main(string[] args)
         {
-            ChessServer asd = new ChessServer(3030, "127.0.0.1");
-            asd.Listen();
-            asd.AcceptGames();
+            ChessLobbyServer chessLobbyServer = new ChessLobbyServer(3030, "127.0.0.1");
+            chessLobbyServer.Listen();
+            chessLobbyServer.AcceptGames();
         }
     }
 }

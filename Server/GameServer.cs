@@ -14,9 +14,9 @@ namespace Communication
 {
     public class GameServer
     {
-        private ChessServer server;
+        private ChessLobbyServer server;
         public TcpClient client;
-        private GameManager.GameManager gameManager;
+        private GameManager gameManager;
 
         const string START_GAME_CATEGORY = "Start";
         const string UPDATE_PLAYERS_CATEGORY = "Players";
@@ -25,7 +25,7 @@ namespace Communication
         const string MOVED_PIECE_CATEGORY = "MovedPiece";
         const string NOTIFY_MOVEMENT_CATEGORY = "NotifyMovementToAll";
 
-        public GameServer(ChessServer server, TcpClient client)
+        public GameServer(ChessLobbyServer server, TcpClient client)
         {
             this.server = server;
             this.client = client;
@@ -37,7 +37,7 @@ namespace Communication
             ValidateMessageCategory(message, START_GAME_CATEGORY);
             StartData startData = JsonSerializer.Deserialize<StartData>(message.dataStr);
 
-            this.gameManager = new GameManager.GameManager(this, startData.nicknames);
+            this.gameManager = new GameManager(this, startData.nicknames);
 
             this.UpdatePlayers();
 
@@ -89,9 +89,14 @@ namespace Communication
             this.Send(message);
         }
 
-        public void EndGame(string nickname, string reason)
+        public void EndGame(string reason)
         {
-            EndGameData data = new EndGameData(nickname, reason);
+            this.EndGame(reason, "");
+        }
+
+        public void EndGame(string reason, string nickname)
+        {
+            EndGameData data = new EndGameData(reason, nickname);
             EndGameMessage message = new EndGameMessage(END_GAME_CATEGORY, data);
             this.Send(message);
         }
@@ -117,7 +122,7 @@ namespace Communication
 
         private RecievedMessage Read()
         {
-            if (!this.ClientConnected(this.client)) { this.Stop(); throw new ClientDisconnectedException(); }
+            if (!this.ClientConnected(this.client)) { this.Stop(); throw new SocketException(); }
 
             Console.WriteLine("Reading");
             try
@@ -155,7 +160,7 @@ namespace Communication
 
         private void Send(string data)
         {
-            if (!this.ClientConnected(this.client)) { this.Stop(); throw new ClientDisconnectedException(); }
+            if (!this.ClientConnected(this.client)) { this.Stop(); throw new SocketException(); }
 
             try
             {
@@ -186,8 +191,7 @@ namespace Communication
 
         private void HandleException(SocketException e)
         {
-            Console.WriteLine("SocketException: {0}", e);
-            this.CloseClient();
+            Console.WriteLine("THIS IS INNER EXCEPTION");
         }
 
         private void ValidateMessageCategory(Message message, string category)
@@ -237,7 +241,7 @@ namespace Communication
 
         record StartData(List<string> nicknames);
         record PlayersData(List<Dictionary<string, string>> players);
-        record EndGameData(string nickname, string reason);
+        record EndGameData(string reason, string nickname);
 
         class MovedPieceData
         {
@@ -331,19 +335,24 @@ namespace Communication
         }
     }
 
-    public class MessageCategoryException : Exception
+    public class GameException : Exception {
+        public GameException() : base() { }
+        public GameException(string message) : base(message) { }
+    }
+
+    public class MessageCategoryException : GameException
     {
         public MessageCategoryException() : base() { }
         public MessageCategoryException(string expectedCategory, string actualCategory) : base($"expected {expectedCategory} but got {actualCategory}") { }
     }
 
-    public class BadNicknameException : Exception
+    public class BadNicknameException : GameException
     {
         public BadNicknameException() : base() { }
         public BadNicknameException(string expectedNickname, string actualNickname) : base($"expected {expectedNickname} but got {actualNickname}") { }
     }
 
-    public class ClientDisconnectedException : Exception
+    public class ClientDisconnectedException : GameException
     {
         public ClientDisconnectedException() : base() { }
         public ClientDisconnectedException(string message) : base(message) { }

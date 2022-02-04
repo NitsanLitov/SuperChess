@@ -7,12 +7,12 @@ using System.Net.Sockets;
 
 namespace Communication
 {
-    public class ChessServer
+    public class ChessLobbyServer
     {
         private List<GameServer> games;
         private TcpListener server;
 
-        public ChessServer(int port, string ip)
+        public ChessLobbyServer(int port, string ip)
         {
             this.games = new List<GameServer>();
             try
@@ -21,7 +21,7 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleException(e);
+                this.HandleSocketException(e);
                 throw;
             }
         }
@@ -35,7 +35,7 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleException(e);
+                this.HandleSocketException(e);
                 throw;
             }
         }
@@ -48,7 +48,7 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleException(e);
+                this.HandleSocketException(e);
             }
         }
 
@@ -58,27 +58,49 @@ namespace Communication
             {
                 Console.WriteLine("Waiting for new client...");
                 TcpClient client = this.server.AcceptTcpClient();
+                Console.WriteLine("Connected!");
+
                 Thread game = new Thread(this.StartGame);
                 game.Start(client);
-
-                Console.WriteLine("Connected!");
             }
             catch (SocketException e)
             {
-                this.HandleException(e);
-                throw;
+                this.HandleSocketException(e);
             }
         }
 
         private void StartGame(object clientObj)
         {
-            if (clientObj is not TcpClient) throw new ArgumentException("expected TcpClient as argument");
+            GameServer game = null;
+            try
+            {
+                if (clientObj is not TcpClient) throw new ArgumentException("expected TcpClient as argument");
 
-            TcpClient client = clientObj as TcpClient;
-            GameServer game = new GameServer(this, client);
-            this.games.Add(game);
-            Console.WriteLine("Starting Game, may the odds be in your favor!");
-            game.Start();
+                TcpClient client = clientObj as TcpClient;
+                game = new GameServer(this, client);
+                this.games.Add(game);
+                Console.WriteLine("Starting Game, may the odds be in your favor!");
+                game.Start();
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException: {0}", e);
+                if (game != null) game.Stop();
+            }
+            catch (System.IO.IOException e)
+            {
+                Console.WriteLine("IOException: {0}", e);
+                if (game != null) game.Stop();
+            }
+            catch (GameException e)
+            {
+                Console.WriteLine("GameException: {0}", e);
+
+                if (game != null) {
+                    game.EndGame("Server error has occured, the game is finished");
+                    game.Stop();
+                }
+            }
         }
 
         public void Close()
@@ -91,13 +113,13 @@ namespace Communication
                 }
                 catch (SocketException e)
                 {
-                    this.HandleException(e);
+                    this.HandleSocketException(e);
                 }
             }
             this.server.Stop();
         }
 
-        private void HandleException(SocketException e)
+        private void HandleSocketException(SocketException e)
         {
             Console.WriteLine("SocketException: {0}", e);
         }

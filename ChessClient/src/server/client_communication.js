@@ -50,8 +50,15 @@ function startSocketIo(server) {
                 updatePlayersInfo = players => emitNicknames(playingNicknames, "game", players);
                 notifyMovementToAll = movedPieces => emitNicknames(playingNicknames, "movedPieces", movedPieces);
                 updateMovementOptions = (nickname, movementOptions) => emitNickname(nickname, "movementOptions", movementOptions);
+                endGame = result => {
+                    emitNicknames(playingNicknames, "endGame", result);
+                    delete games[gameId]
+                    playingNicknames.forEach(n => {
+                        delete gameIdByNickname[n]
+                    });
+                }
 
-                chess_communication.startGame(gameId, playingNicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
+                chess_communication.startGame(gameId, playingNicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame)
 
                 playingNicknames.forEach(n => {
                     socketByNickname[n].on('move', (movement, ack) => {

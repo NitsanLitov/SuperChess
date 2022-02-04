@@ -7,6 +7,8 @@ const client = require('../web_client');
 
 export function Board(props) {
     const [socket, setSocket] = useState()
+    const [gameEnded, setGameEnded] = useState(false)
+    const [gameResult, setGameResult] = useState({})
 
     const [nickname, setNickname] = useState("")
     const [gameId, setGameId] = useState("")
@@ -21,7 +23,7 @@ export function Board(props) {
     const [waitingForMovingAck, setWaitingForMovingAck] = useState(false)
 
     function startGame() {
-        setSocket(client.connectSocketIo(nickname, gameId, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange))
+        setSocket(client.connectSocketIo(nickname, gameId, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame))
     }
 
     function handleStartGame(players) {
@@ -30,12 +32,23 @@ export function Board(props) {
     }
 
     function handleMovedPiecesChange(movedPieces) {
+        if (gameEnded) return;
+
         updatePiecesByLocation(movedPieces);
         setLastMove(movedPieces.at(-1))
     }
 
     function handleMovementOptionsChange(movementOptions) {
+        if (gameEnded) return;
+
         setMovementOptions(movementOptions);
+    }
+
+    function handleEndGame(result) {
+        setGameEnded(true);
+        unColorSquares();
+        setMovementOptions([]);
+        setGameResult(result);
     }
 
     function updatePiecesByLocation(movedPieces) {
@@ -49,6 +62,8 @@ export function Board(props) {
     }
 
     function handleSquareClick(letter, number, isMovementSquare, isMovingSquare) {
+        if (gameEnded) return;
+
         if (isMovementSquare) {
             movePiece(letter, number)
             return;
@@ -76,6 +91,8 @@ export function Board(props) {
     }
 
     function movePiece(newLetter, newNumber) {
+        if (gameEnded) return;
+
         if (waitingForMovingAck) {
             console.log("Waiting for moving ack")
             return
@@ -105,6 +122,12 @@ export function Board(props) {
                 <input type="text" value={gameId} onChange={e => setGameId(e.target.value)} />
             </label>
             <button disabled={nickname === "" || gameId === ""} onClick={(e) => startGame()}>Start Game</button>
+        </div>
+    )
+    if (gameEnded) return (
+        <div>
+            {`the result is a "${gameResult.reason}"`}
+            {gameResult.nickname && `: "${gameResult.nickname}" lost`}
         </div>
     )
     return (

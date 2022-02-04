@@ -60,7 +60,7 @@ namespace ChessBoard
         protected internal virtual List<(ChessPiece, (char, int), (char, int))> MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {
             if (newChessPieceType != null)
-                throw new PawnPromotionException("Can't promote a piece");
+                throw new PawnPromotionException("Can't promote this piece");
 
             if (this.board.GetPieceByLocation(newLocation) != null)
                 throw new IllegalMoveException("new location isn't empty");

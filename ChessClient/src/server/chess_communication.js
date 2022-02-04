@@ -9,7 +9,7 @@ const NOTIFY_MOVEMENT_CATEGORY = "NotifyMovementToAll";
 
 let games = {}
 
-function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions) {
+function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame) {
     console.log(`Connecting to chess server: ${gameId}-${nicknames}`)
     var client = new net.Socket();
     client.connect(3030, '127.0.0.1', function() {
@@ -23,35 +23,42 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
     client.on('error', e => {
         console.log("handled error");
         console.log(e);
+        endGame({ "reason": "Server connection has terminated, the game is finished", "nickname": "" })
     });
 
     client.on('data', data => {
         console.log('Received: ' + data);
-        handleMessage(JSON.parse(data), updatePlayersInfo, notifyMovementToAll, updateMovementOptions)
+        gameContinues = handleMessage(JSON.parse(data), updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame)
+        if (!gameContinues) {
+            delete games[gameId];
+            client.destroy();
+        }
     });
 
     return client
 }
 
-function handleMessage(message, updatePlayersInfo, notifyMovementToAll, updateMovementOptions) {
+function handleMessage(message, updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame) {
     const data = message.data
 
     switch (message.category) {
         case UPDATE_PLAYERS_CATEGORY:
             updatePlayersInfo(data.players);
-            break;
+            return true;
         case UPDATE_MOVEMENT_CATEGORY:
             updateMovementOptions(data.nickname, data.movementOptions);
-            break;
+            return true;
         case END_GAME_CATEGORY:
             console.log("game ended")
-                // ToDo: update clients game ended
-            break;
+            endGame(data)
+            return false;
         case NOTIFY_MOVEMENT_CATEGORY:
             notifyMovementToAll(data.movedPieces)
-            break;
+            return true;
         default:
             console.log("unrecognized category")
+            endGame({ "reason": "Bad communication with the server, the game is finished", "nickname": "" })
+            return false;
     }
 }
 

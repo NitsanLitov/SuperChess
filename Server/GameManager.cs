@@ -2,9 +2,8 @@ using System.Collections.Generic;
 
 using Players;
 using ChessBoard;
-using Communication;
 
-namespace GameManager
+namespace Communication
 {
     public class GameManager
     {
@@ -14,7 +13,6 @@ namespace GameManager
         public Player[] players;
         private Board board;
         private GameServer server;
-        private Dictionary<string, Player> EndGameOptions;
 
         public GameManager(GameServer server, List<string> playersNicknames)
         {
@@ -27,8 +25,6 @@ namespace GameManager
             {
                 this.players[i] = new Player(playersNicknames[i], playerNumbers[i]);
             }
-
-            this.EndGameOptions = new Dictionary<string, Player>();
         }
 
         public void StartGame()
@@ -53,9 +49,9 @@ namespace GameManager
                     {
                         // ToDo: when there is more then 2 players state which player won
                         if (this.board.IsKingThreatened(p.Color))
-                            this.server.EndGame(p.Nickname, CHECKMATE);
+                            this.server.EndGame(CHECKMATE, p.Nickname);
                         else
-                            this.server.EndGame(p.Nickname, PAT);
+                            this.server.EndGame(PAT);
 
                         gameInProgress = false;
                         break;
