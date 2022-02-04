@@ -11,6 +11,7 @@ namespace SuperChess
             ChessLobbyServer chessLobbyServer = new ChessLobbyServer(3030, "127.0.0.1");
             chessLobbyServer.Listen();
             chessLobbyServer.AcceptGames();
+            chessLobbyServer.Close();
         }
     }
 }

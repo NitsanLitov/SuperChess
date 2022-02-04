@@ -21,7 +21,7 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleSocketException(e);
+                Console.WriteLine(e);
                 throw;
             }
         }
@@ -35,21 +35,14 @@ namespace Communication
             }
             catch (SocketException e)
             {
-                this.HandleSocketException(e);
+                Console.WriteLine(e);
                 throw;
             }
         }
 
         public void AcceptGames()
         {
-            try
-            {
-                while (true) { this.AcceptGame(); }
-            }
-            catch (SocketException e)
-            {
-                this.HandleSocketException(e);
-            }
+            while (true) this.AcceptGame();
         }
 
         private void AcceptGame()
@@ -63,29 +56,21 @@ namespace Communication
                 Thread game = new Thread(this.StartGame);
                 game.Start(client);
             }
-            catch (SocketException e)
+            catch (Exception e)
             {
-                this.HandleSocketException(e);
+                Console.WriteLine(e);
             }
         }
 
         private void StartGame(object clientObj)
         {
-            GameServer game = null;
-            try
-            {
-                if (clientObj is not TcpClient) throw new ArgumentException("expected TcpClient as argument");
+            if (clientObj is not TcpClient) throw new ArgumentException("expected TcpClient as argument");
 
-                TcpClient client = clientObj as TcpClient;
-                game = new GameServer(this, client);
-                this.games.Add(game);
-                Console.WriteLine("Starting Game, may the odds be in your favor!");
-                game.Start();
-            }
-            catch (SocketException e)
-            {
-                HandleSocketException(e);
-            }
+            TcpClient client = clientObj as TcpClient;
+            GameServer game = new GameServer(this, client);
+            this.games.Add(game);
+            Console.WriteLine("Starting Game, may the odds be in your favor!");
+            game.Start();
         }
 
         public void Close()
@@ -96,17 +81,12 @@ namespace Communication
                 {
                     game.Stop();
                 }
-                catch (SocketException e)
+                catch (Exception e)
                 {
-                    this.HandleSocketException(e);
+                    Console.WriteLine(e);
                 }
             }
             this.server.Stop();
-        }
-
-        private void HandleSocketException(SocketException e)
-        {
-            Console.WriteLine("SocketException: {0}", e);
         }
     }
 }
