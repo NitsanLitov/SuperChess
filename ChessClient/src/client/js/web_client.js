@@ -1,10 +1,9 @@
 import socketClient from "socket.io-client";
 
-export function connectSocketIo(nickname, gameId, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame) {
+export function connectSocketIo(handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame, handleRefreshGame) {
     var socket = socketClient();
     socket.on('connection', () => {
         console.log(`connected with the back-end`);
-        socket.emit("game", { nickname, gameId })
     });
 
     socket.on('disconnect', () => {
@@ -13,6 +12,10 @@ export function connectSocketIo(nickname, gameId, handleStartGame, handleMovedPi
 
     socket.on('game', players => {
         handleStartGame(players)
+    });
+
+    socket.on('refreshGame', data => {
+        handleRefreshGame(data)
     });
 
     socket.on('movedPieces', movedPieces => {
@@ -27,10 +30,13 @@ export function connectSocketIo(nickname, gameId, handleStartGame, handleMovedPi
         handleEndGame(result)
     });
 
-    console.log(socket.id)
     return socket;
 }
 
 export function movePiece(socket, oldLocation, newLocation, callback) {
     socket.emit('move', { oldLocation, newLocation }, callback);
+}
+
+export function startGame(socket, nickname, gameId) {
+    socket.emit('game', { nickname, gameId })
 }

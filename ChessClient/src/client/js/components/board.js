@@ -22,13 +22,22 @@ export function Board(props) {
     const [lastMove, setLastMove] = useState([])
     const [waitingForMovingAck, setWaitingForMovingAck] = useState(false)
 
-    function startGame() {
-        setSocket(client.connectSocketIo(nickname, gameId, handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame))
+    useEffect(() => { connectSocket(); }, []);
+
+    function connectSocket() {
+        setSocket(client.connectSocketIo(handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame, handleRefreshGame))
     }
 
-    function handleStartGame(players) {
-        setPlayers(players)
-        setPlayer(players.find(p => p.nickname === nickname))
+    function startGame() {
+        client.startGame(socket, nickname, gameId)
+    }
+
+    function handleStartGame(playingPlayers) {
+        console.log(`nickname: ${nickname}`);
+        console.log(`gameId: ${gameId}`);
+        console.log(`socket: ${socket}`);
+        setPlayer(playingPlayers.find(p => p.nickname === nickname))
+        setPlayers(playingPlayers)
     }
 
     function handleMovedPiecesChange(movedPieces) {
@@ -49,6 +58,13 @@ export function Board(props) {
         unColorSquares();
         setMovementOptions([]);
         setGameResult(result);
+    }
+
+    function handleRefreshGame(data) {
+        console.log("Refreshing")
+        setNickname(data.nickname)
+        setGameId(data.gameId)
+        handleStartGame(data.players)
     }
 
     function updatePiecesByLocation(movedPieces) {
@@ -124,7 +140,7 @@ export function Board(props) {
             <button disabled={nickname === "" || gameId === ""} onClick={(e) => startGame()}>Start Game</button>
         </div>
     )
-    
+
     return (
         <div className="gameBoard">
             <GameData player={player} lastMove={lastMove} isPlayerTurn={Object.keys(movementOptions).length !== 0} gameEnded={gameEnded} gameResult={gameResult} />

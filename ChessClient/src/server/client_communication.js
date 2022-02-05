@@ -7,11 +7,15 @@ let io
 
 let socketByNickname = {}
 let games = {}
+let gamesHistory = {}
 
-function startSocketIo(server) {
+function startSocketIo(server, sessionMiddleware) {
     io = socketIo(server);
 
+    io.use((socket, next) => { sessionMiddleware(socket.request, {}, next); });
+
     io.on("connection", (socket) => {
+        const session = socket.request.session;
         console.log("New client connected");
         socket.emit('connection', null);
 
@@ -22,17 +26,35 @@ function startSocketIo(server) {
             delete socketByNickname[nickname]
         })
 
+        if (session.nickname) {
+            const nickname = session.nickname;
+            const gameId = session.gameId;
+            socketByNickname[nickname] = socket;
+            updateRefreshedPlayer(nickname, gameId);
+        }
+
         socket.on("game", userData => {
             const nickname = userData.nickname
             const gameId = userData.gameId
 
-            if (hasActiveSocket(nickname)) {
-                console.log("nickname already taken");
+            if (nickname in socketByNickname) {
+                console.log("Nickname already taken");
                 return;
             }
+
+            session.nickname = nickname;
+            session.gameId = gameId;
+            session.save();
+
             socketByNickname[nickname] = socket
 
             if (!(gameId in games)) games[gameId] = []
+
+            if (games[gameId].length === 2) {
+                console.log("Game already started");
+                return;
+            }
+
             if (!(games[gameId].includes(nickname))) games[gameId].push(nickname)
 
             console.log(games)
@@ -42,26 +64,14 @@ function startSocketIo(server) {
     });
 }
 
-function emitNickname(nickname, eventName, data) {
-    if (hasActiveSocket(nickname)) {
-        socketByNickname[nickname].emit(eventName, data);
-    }
-}
-
-function emitNicknames(nicknames, eventName, data) {
-    nicknames.forEach(nickname => {
-        emitNickname(nickname, eventName, data)
-    });
-}
-
-function hasActiveSocket(nickname) {
-    return nickname in socketByNickname && socketByNickname[nickname] !== undefined
-}
-
 function startTwoPlayersGame(gameId) {
     const playingNicknames = games[gameId]
+    gamesHistory[gameId] = {}
 
-    updatePlayersInfo = players => emitNicknames(playingNicknames, "game", players);
+    updatePlayersInfo = players => {
+        gamesHistory[gameId]['players'] = players;
+        emitNicknames(playingNicknames, "game", players);
+    }
     notifyMovementToAll = movedPieces => emitNicknames(playingNicknames, "movedPieces", movedPieces);
     updateMovementOptions = (nickname, movementOptions) => emitNickname(nickname, "movementOptions", movementOptions);
     endGame = result => {
@@ -83,6 +93,32 @@ function startTwoPlayersGame(gameId) {
             });
         }
     });
+}
+
+function hasActiveSocket(nickname) {
+    return nickname in socketByNickname && socketByNickname[nickname] !== undefined
+}
+
+function emitNickname(nickname, eventName, data) {
+    if (hasActiveSocket(nickname)) {
+        socketByNickname[nickname].emit(eventName, data);
+    }
+}
+
+function emitNicknames(nicknames, eventName, data) {
+    nicknames.forEach(nickname => {
+        emitNickname(nickname, eventName, data)
+    });
+}
+
+function updateRefreshedPlayer(nickname, gameId) {
+    console.log("Refreshing player");
+    data = {
+        nickname: nickname,
+        gameId: gameId,
+        players: gamesHistory[gameId]['players'],
+    }
+    socketByNickname[nickname].emit("refreshGame", data);
 }
 
 module.exports = { startSocketIo }
