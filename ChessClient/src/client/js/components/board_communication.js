@@ -1,7 +1,7 @@
 const React = require('react');
 const { useState, useRef } = React
 
-const { Board } = require('./board');
+const { Board } = require('./game_board');
 
 import socketClient from "socket.io-client";
 
