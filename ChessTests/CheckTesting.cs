@@ -70,12 +70,14 @@ namespace ChessTests
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
             ChessPiece bPawn4 = secondPieces[(int)SecondPiecesNumber.Pawn4];
+            ChessPiece bPawn5 = secondPieces[(int)SecondPiecesNumber.Pawn5];
 
             ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
             TestHelper.ValidateMovementResults(wQueen, "");
+            TestHelper.ValidateMovementResults(bPawn5, "d6 d5");
 
             wQueen.ForceMove(('d', 6));
             TestHelper.PrintAll(board);
@@ -88,6 +90,14 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(bKing, "");
             TestHelper.ValidateMovementResults(wQueen, "c7 d7 e7 f8 a6 b6 c6 e6 f6 g6 h6 a3 b4 c5 e5 d5 d4 d3");
             TestHelper.ValidateMovementResults(bPawn4, "e4");
+            TestHelper.ValidateMovementResults(bPawn5, "");
+
+            board.Move(('d', 6), ('c', 6));
+            TestHelper.PrintAll(board);
+            TestHelper.ValidateMovementResults(bKing, "e7");
+            TestHelper.ValidateMovementResults(wQueen, "b7 c7 d7 a6 b6 d6 e6 f6 g6 h6 c5 c4 c3 b5 a4 d5 e4 f3");
+            TestHelper.ValidateMovementResults(bPawn4, "e4");
+            TestHelper.ValidateMovementResults(bPawn5, "c6");
         }
 
         [TestMethod, TestCategory("Movement"), TestCategory("Check")]
@@ -144,11 +154,8 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(bQueen, "h3 h2 g3 f2 e1 g4 g5 f6 e7 d8 h5 h6");
             TestHelper.ValidateMovementResults(bPawn4, "e5");
 
-            if (board.GetColorMovementOptions(wKing.color).Keys.Count == 0)
-                if (board.IsKingThreatened(wKing.color))
-                    System.Console.WriteLine("Black wins - Chackmate");
-                else
-                    System.Console.WriteLine("Tie - PAT");
+            Assert.IsTrue(board.GetColorMovementOptions(wKing.color).Keys.Count == 0, "White shouldn't have movement options but does");
+            Assert.IsTrue(board.IsKingThreatened(wKing.color), "White King should be threatened but isn't");
         }
 
         [TestMethod, TestCategory("Movement"), TestCategory("Check")]
@@ -201,11 +208,8 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(wQueen, "a7 b7 b8 c8 d8 d7 e7 f7 g7 h7 b6 a5 c6 c5 c4 c3 c2 c1 d6 e5 f4 g3 h2");
             TestHelper.ValidateMovementResults(bKing, "");
 
-            if (board.GetColorMovementOptions(bKing.color).Keys.Count == 0)
-                if (board.IsKingThreatened(bKing.color))
-                    System.Console.WriteLine("Black wins - Chackmate");
-                else
-                    System.Console.WriteLine("Tie - PAT");
+            Assert.IsTrue(board.GetColorMovementOptions(bKing.color).Keys.Count == 0, "Black shouldn't have movement options but does");
+            Assert.IsFalse(board.IsKingThreatened(bKing.color), "Black King shouldn't be threatened but is");
         }
     }
 }
