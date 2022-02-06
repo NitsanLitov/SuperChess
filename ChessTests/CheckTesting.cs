@@ -25,15 +25,17 @@ namespace ChessTests
             ChessPiece wRightBishop = firstPieces[(int)FirstPiecesNumber.RightBishop];
             ChessPiece wLeftBishop = firstPieces[(int)FirstPiecesNumber.LeftBishop];
             ChessPiece wPawn1 = firstPieces[(int)FirstPiecesNumber.Pawn1];
+            ChessPiece wPawn5 = firstPieces[(int)FirstPiecesNumber.Pawn5];
 
             ChessPiece bQueen = secondPieces[(int)SecondPiecesNumber.Queen];
+            ChessPiece bPawn4 = secondPieces[(int)SecondPiecesNumber.Pawn4];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "");
             TestHelper.ValidateMovementResults(bQueen, "");
 
-            firstPieces[(int)FirstPiecesNumber.Pawn5].Dispose();
-            secondPieces[(int)SecondPiecesNumber.Pawn3].Dispose();
+            wPawn5.Dispose();
+            bPawn4.Dispose();
             wLeftBishop.ForceMove(('g', 5));
 
             TestHelper.PrintAll(board);
@@ -175,9 +177,6 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(wKing, "");
             TestHelper.ValidateMovementResults(wQueen, "");
             TestHelper.ValidateMovementResults(bKing, "");
-            //ToDo Delete
-            firstPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.FirstPlayer)];
-            secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             foreach (ChessPiece piece in new List<ChessPiece>(firstPieces))
             {
