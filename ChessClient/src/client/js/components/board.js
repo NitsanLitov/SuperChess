@@ -8,11 +8,6 @@ export function Board(props) {
     const [gameEnded, setGameEnded] = useState(false)
     const [gameResult, setGameResult] = useState({})
 
-    const [nickname, setNickname] = useState("")
-    const [gameId, setGameId] = useState("")
-    const [players, setPlayers] = useState([])
-    const [player, setPlayer] = useState({})
-
     const [piecesByLocation, setPiecesByLocation] = useState({})
     const [movementOptions, setMovementOptions] = useState([])
     const [movementSquares, setMovementSquares] = useState([])
@@ -20,27 +15,18 @@ export function Board(props) {
     const [lastMove, setLastMove] = useState([])
     const [waitingForMovingAck, setWaitingForMovingAck] = useState(false)
 
-    const nicknameRef = useRef();
-    nicknameRef.current = nickname;
+    const players = props.players
+    const player = props.player
+
     const gameEndedRef = useRef();
     gameEndedRef.current = gameEnded;
 
     const connectToServer = props.connectToServer;
     const movePieceOnServer = props.movePiece;
-    const startGameOnServer = props.startGame;
 
     useEffect(() => {
-        connectToServer(handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame, handleRefreshGame)
+        connectToServer(handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame)
     }, []);
-
-    function startGame() {
-        startGameOnServer(nickname, gameId);
-    }
-
-    function handleStartGame(playingPlayers) {
-        setPlayer(playingPlayers.find(p => p.nickname === nicknameRef.current))
-        setPlayers(playingPlayers)
-    }
 
     function handleMovedPiecesChange(movedPieces) {
         if (gameEndedRef.current) return;
@@ -62,13 +48,6 @@ export function Board(props) {
         setGameResult(result);
     }
 
-    function handleRefreshGame(data) {
-        console.log("Refreshing")
-        setNickname(data.nickname)
-        setGameId(data.gameId)
-        handleStartGame(data.players)
-    }
-
     function updatePiecesByLocation(movedPieces) {
         setPiecesByLocation(prevPiecesByLocation => {
             movedPieces.forEach(movedPiece => {
@@ -80,7 +59,7 @@ export function Board(props) {
     }
 
     function handleSquareClick(letter, number, isMovementSquare, isMovingSquare) {
-        if (gameEnded) return;
+        if (gameEndedRef.current) return;
 
         if (isMovementSquare) {
             movePiece(letter, number)
@@ -109,7 +88,7 @@ export function Board(props) {
     }
 
     function movePiece(newLetter, newNumber) {
-        if (gameEnded) return;
+        if (gameEndedRef.current) return;
 
         if (waitingForMovingAck) {
             console.log("Waiting for moving ack")
@@ -129,19 +108,7 @@ export function Board(props) {
         });
     }
 
-    if (players.length === 0) return (
-        <div>
-            <label>
-                Nickname:
-                <input type="text" value={nickname} onChange={e => setNickname(e.target.value)} />
-            </label>
-            <label>
-                GameId:
-                <input type="text" value={gameId} onChange={e => setGameId(e.target.value)} />
-            </label>
-            <button disabled={nickname === "" || gameId === ""} onClick={(e) => startGame()}>Start Game</button>
-        </div>
-    )
+    if (players.length === 0) return (<div></div>)
 
     return (
         <div className="gameBoard">

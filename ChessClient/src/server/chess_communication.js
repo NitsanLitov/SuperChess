@@ -39,7 +39,8 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
 }
 
 function finishGame(gameId) {
-    games[gameId].destroy();
+    if (games[gameId])
+        games[gameId].destroy();
     delete games[gameId];
 }
 
