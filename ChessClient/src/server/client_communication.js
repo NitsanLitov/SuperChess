@@ -27,11 +27,21 @@ function startSocketIo(server, sessionMiddleware) {
         })
 
         if (session.nickname) {
+            console.log(`${session.nickname} reconnected`);
             const nickname = session.nickname;
             const gameId = session.gameId;
-            if (gameId in gamesPlayers && gamesPlayers[gameId].length === 2) {
-                socketByNickname[nickname] = socket;
-                updateRefreshedPlayer(nickname, gameId);
+            if (gameId in gamesPlayers) {
+                if (gamesPlayers[gameId].length === 2) {
+                    if (gamesPlayers[gameId].includes(nickname)) {
+                        socketByNickname[nickname] = socket;
+                        updateRefreshedPlayer(nickname, gameId);
+                    }
+                } else {
+                    const index = gamesPlayers[gameId].indexOf(nickname);
+                    if (index > -1) {
+                        gamesPlayers[gameId].splice(index, 1);
+                    }
+                }
             }
         }
 
