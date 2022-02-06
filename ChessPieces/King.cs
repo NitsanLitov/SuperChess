@@ -38,12 +38,12 @@ namespace ChessBoard
             return movementOptions;
         }
 
-        protected internal override void MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
+        protected internal override List<(ChessPiece, (char, int), (char, int))> MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {            
-            base.MovePieceOnBoardLocation(newLocation);
+            List<(ChessPiece, (char, int), (char, int))> movedPieces = base.MovePieceOnBoardLocation(newLocation);
             
             if (this.castlingMovementOptions == null || !this.castlingMovementOptions.Keys.Contains(newLocation))
-                return;
+                return movedPieces;
 
             (Rook rook, string kingDirection) = this.castlingMovementOptions[newLocation];
 
@@ -53,9 +53,11 @@ namespace ChessBoard
             else
                 rookNewLocation = this.movementBoard.Right(newLocation, 1)[0];
             
-            rook.MovePieceOnBoardLocation(rookNewLocation);
+            movedPieces.AddRange(rook.MovePieceOnBoardLocation(rookNewLocation));
 
             this.castlingMovementOptions.Clear();
+
+            return movedPieces;
         }
 
         private void AddCastlingMovement(List<(char, int)> movementOptions, string direction)
@@ -82,8 +84,8 @@ namespace ChessBoard
             // add step 2 movement (before the second KingWillBeThreatened so the castling move will be possible at move function)
             this.castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
 
-            // if king will be threatened after castling, remove option
-            if (this.board.KingWillBeThreatened(this, movementOptions[1])) this.castlingMovementOptions.Remove(movementOptions[1]);
+            // if king will not be threatened after castling, readd option
+            if (!this.board.KingWillBeThreatened(this, movementOptions[1])) this.castlingMovementOptions[movementOptions[1]] = ((Rook)otherPiece, direction);
         }
     }
 }
