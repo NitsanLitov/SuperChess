@@ -61,8 +61,12 @@ namespace ChessBoard
                 }
             }
             this.board.LocationBoard = this.locationBoard;
-            this.board.chessPiecesByColor = this.chessPiecesByColor;
             this.board.enPassantPawn = this.enPassantPawn;
+            foreach (ChessColor color in this.chessPiecesByColor.Keys)
+            {
+                this.board.chessPiecesByColor[color].Clear();
+                this.board.chessPiecesByColor[color].AddRange(this.chessPiecesByColor[color]);
+            }
 
             this.SetSavedState(false);
         }
