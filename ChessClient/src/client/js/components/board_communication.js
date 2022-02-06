@@ -1,24 +1,29 @@
 const React = require('react');
-const { useState, useRef } = React
+const { useState, useRef, useEffect } = React
 
-const { Board } = require('./game_board');
+const { GameBoard } = require('./game_board');
 
 import socketClient from "socket.io-client";
 
-export function ChessBoard(props) {
+export function BoardCommunication(props) {
     const [socket, setSocket] = useState()
-
     const [nickname, setNickname] = useState("")
     const [gameId, setGameId] = useState("")
+
     const [players, setPlayers] = useState([])
     const [player, setPlayer] = useState({})
 
     const nicknameRef = useRef();
     nicknameRef.current = nickname;
 
+    useEffect(() => {
+        connectSocketIo(props.handleMovedPiecesChange, props.handleMovementOptionsChange, props.handleEndGame)
+    }, []);
+
     function connectSocketIo(handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame) {
         var client = socketClient();
         setSocket(client)
+
         client.on('connection', () => {
             console.log(`connected with the back-end`);
         });
@@ -48,14 +53,6 @@ export function ChessBoard(props) {
         });
     }
 
-    function movePiece(oldLocation, newLocation, callback) {
-        socket.emit('move', { oldLocation, newLocation }, callback);
-    }
-
-    function startGame() {
-        socket.emit('game', { nickname, gameId })
-    }
-
     function handleStartGame(playingPlayers) {
         setPlayer(playingPlayers.find(p => p.nickname === nicknameRef.current))
         setPlayers(playingPlayers)
@@ -66,6 +63,14 @@ export function ChessBoard(props) {
         setNickname(data.nickname)
         setGameId(data.gameId)
         handleStartGame(data.players)
+    }
+
+    function movePiece(oldLocation, newLocation, callback) {
+        socket.emit('move', { oldLocation, newLocation }, callback);
+    }
+
+    function startGame() {
+        socket.emit('game', { nickname, gameId })
     }
 
     const loginForum = (
@@ -84,8 +89,19 @@ export function ChessBoard(props) {
 
     return (
         <div>
-            <Board connectToServer={connectSocketIo} movePiece={movePiece} player={player} players={players} />
-            {players.length === 0 && loginForum}
+            {players.length === 0
+                && loginForum
+                || (
+                    <GameBoard movePiece={movePiece} player={player} players={players}
+                        gameEnded={props.gameEnded}
+                        gameResult={props.gameResult}
+                        piecesByLocation={props.piecesByLocation}
+                        movementOptions={props.movementOptions}
+                        lastMove={props.lastMove}
+                        clearMovementOptions={props.clearMovementOptions}
+                    />
+                )
+            }
         </div>
     )
 }
