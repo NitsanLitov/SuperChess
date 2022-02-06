@@ -6,7 +6,7 @@ const chess_communication = require('./chess_communication')
 let io
 
 let socketByNickname = {}
-let games = {}
+let gamesPlayers = {}
 let gamesHistory = {}
 
 function startSocketIo(server, sessionMiddleware) {
@@ -29,8 +29,10 @@ function startSocketIo(server, sessionMiddleware) {
         if (session.nickname) {
             const nickname = session.nickname;
             const gameId = session.gameId;
-            socketByNickname[nickname] = socket;
-            updateRefreshedPlayer(nickname, gameId);
+            if (gameId in gamesPlayers && gamesPlayers[gameId].length === 2) {
+                socketByNickname[nickname] = socket;
+                updateRefreshedPlayer(nickname, gameId);
+            }
         }
 
         socket.on("game", userData => {
@@ -48,39 +50,47 @@ function startSocketIo(server, sessionMiddleware) {
 
             socketByNickname[nickname] = socket
 
-            if (!(gameId in games)) games[gameId] = []
+            if (!(gameId in gamesPlayers)) gamesPlayers[gameId] = []
 
-            if (games[gameId].length === 2) {
+            if (gamesPlayers[gameId].length === 2) {
                 console.log("Game already started");
                 return;
             }
 
-            if (!(games[gameId].includes(nickname))) games[gameId].push(nickname)
+            if (!(gamesPlayers[gameId].includes(nickname))) gamesPlayers[gameId].push(nickname)
 
-            console.log(games)
+            console.log(gamesPlayers)
 
-            if (games[gameId].length === 2) { startTwoPlayersGame(gameId); }
+            if (gamesPlayers[gameId].length === 2) { startTwoPlayersGame(gameId); }
         });
     });
 }
 
 function startTwoPlayersGame(gameId) {
-    const playingNicknames = games[gameId]
+    const playingNicknames = gamesPlayers[gameId]
     gamesHistory[gameId] = {}
 
     updatePlayersInfo = players => {
         gamesHistory[gameId]['players'] = players;
         emitNicknames(playingNicknames, "game", players);
     }
-    notifyMovementToAll = movedPieces => emitNicknames(playingNicknames, "movedPieces", movedPieces);
-    updateMovementOptions = (nickname, movementOptions) => emitNickname(nickname, "movementOptions", movementOptions);
+    notifyMovementToAll = movedPieces => {
+        if (!('movedPieces' in gamesHistory[gameId])) gamesHistory[gameId]['movedPieces'] = []
+        gamesHistory[gameId]['movedPieces'] = [...gamesHistory[gameId]['movedPieces'], ...movedPieces];
+        emitNicknames(playingNicknames, "movedPieces", movedPieces);
+    }
+    updateMovementOptions = (nickname, movementOptions) => {
+        gamesHistory[gameId]['movementOptions'] = [nickname, movementOptions];
+        emitNickname(nickname, "movementOptions", movementOptions);
+    }
     endGame = result => {
         emitNicknames(playingNicknames, "endGame", result);
         playingNicknames.forEach(n => {
             if (hasActiveSocket(n)) { socketByNickname[n].disconnect(); }
             delete socketByNickname[n];
         });
-        delete games[gameId]
+        delete gamesPlayers[gameId]
+        delete gamesHistory[gameId]
     }
 
     chess_communication.startGame(gameId, playingNicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame)
@@ -115,9 +125,28 @@ function updateRefreshedPlayer(nickname, gameId) {
     console.log("Refreshing player");
     data = {
         nickname: nickname,
-        gameId: gameId,
-        players: gamesHistory[gameId]['players'],
+        gameId: gameId
     }
+
+    if (gameId in gamesHistory && 'players' in gamesHistory[gameId] && gamesHistory[gameId]['players'] !== undefined) {
+        data['players'] = gamesHistory[gameId]['players']
+
+        if ('movedPieces' in gamesHistory[gameId]) {
+            data['movedPieces'] = gamesHistory[gameId]['movedPieces']
+        }
+
+        if ('movementOptions' in gamesHistory[gameId] && gamesHistory[gameId]['movementOptions'][0] === nickname) {
+            data['movementOptions'] = gamesHistory[gameId]['movementOptions'][1]
+        }
+
+        if (hasActiveSocket(nickname)) {
+            socketByNickname[nickname].on('move', (movement, ack) => {
+                const result = chess_communication.movePiece(gameId, nickname, movement)
+                ack(result)
+            });
+        }
+    }
+
     socketByNickname[nickname].emit("refreshGame", data);
 }
 

@@ -1,5 +1,5 @@
 const React = require('react');
-const { useState, useRef, useEffect } = React
+const { useState, useEffect } = React
 
 const { GameBoard } = require('./game_board');
 
@@ -10,17 +10,17 @@ export function BoardCommunication(props) {
     const [nickname, setNickname] = useState("")
     const [gameId, setGameId] = useState("")
 
-    const [players, setPlayers] = useState([])
-    const [player, setPlayer] = useState({})
-
-    const nicknameRef = useRef();
-    nicknameRef.current = nickname;
+    const [waitingForGameStart, setWaitingForGameStart] = useState(false)
 
     useEffect(() => {
-        connectSocketIo(props.handleMovedPiecesChange, props.handleMovementOptionsChange, props.handleEndGame)
+        connectSocketIo(props.handleStartGame, props.handleMovedPiecesChange, props.handleMovementOptionsChange, props.handleRefreshGame, props.handleEndGame)
     }, []);
 
-    function connectSocketIo(handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame) {
+    useEffect(() => {
+        setNickname(props.finalNickname)
+    }, [props.finalNickname]);
+
+    function connectSocketIo(handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleRefreshGame, handleEndGame) {
         var client = socketClient();
         setSocket(client)
 
@@ -53,23 +53,13 @@ export function BoardCommunication(props) {
         });
     }
 
-    function handleStartGame(playingPlayers) {
-        setPlayer(playingPlayers.find(p => p.nickname === nicknameRef.current))
-        setPlayers(playingPlayers)
-    }
-
-    function handleRefreshGame(data) {
-        console.log("Refreshing")
-        setNickname(data.nickname)
-        setGameId(data.gameId)
-        handleStartGame(data.players)
-    }
-
     function movePiece(oldLocation, newLocation, callback) {
         socket.emit('move', { oldLocation, newLocation }, callback);
     }
 
     function startGame() {
+        setWaitingForGameStart(true);
+        props.setFinalNickname(nickname)
         socket.emit('game', { nickname, gameId })
     }
 
@@ -83,16 +73,16 @@ export function BoardCommunication(props) {
                 GameId:
                 <input type="text" value={gameId} onChange={e => setGameId(e.target.value)} />
             </label>
-            <button disabled={nickname === "" || gameId === ""} onClick={(e) => startGame()}>Start Game</button>
+            <button disabled={nickname === "" || gameId === "" || waitingForGameStart} onClick={(e) => startGame()}>Start Game</button>
         </div>
     )
 
     return (
         <div>
-            {players.length === 0
-                && loginForum
+            {props.players.length === 0
+                && (loginForum)
                 || (
-                    <GameBoard movePiece={movePiece} player={player} players={players}
+                    <GameBoard movePiece={movePiece} player={props.player} players={props.players}
                         gameEnded={props.gameEnded}
                         gameResult={props.gameResult}
                         piecesByLocation={props.piecesByLocation}

@@ -14,7 +14,7 @@ const sessionMiddleware = session({
     secret: "a9s8dasdn89auyv9n3y5v3y5bvh8945u6j",
     saveUninitialized: true,
     cookie: { maxAge: cookieAgeMs },
-    resave: true
+    resave: false
 });
 app.use(sessionMiddleware);
 

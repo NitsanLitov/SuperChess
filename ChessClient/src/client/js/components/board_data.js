@@ -10,8 +10,20 @@ export function BoardData(props) {
     const [movementOptions, setMovementOptions] = useState([])
     const [lastMove, setLastMove] = useState([])
 
+    const [players, setPlayers] = useState([])
+    const [player, setPlayer] = useState({})
+    const [finalNickname, setFinalNickname] = useState("")
+    
+    const nicknameRef = useRef();
+    nicknameRef.current = finalNickname;
+
     const gameEndedRef = useRef();
     gameEndedRef.current = gameEnded;
+
+    function handleStartGame(playingPlayers) {
+        setPlayer(playingPlayers.find(p => p.nickname === nicknameRef.current))
+        setPlayers(playingPlayers)
+    }
 
     function handleMovedPiecesChange(movedPieces) {
         if (gameEndedRef.current) return;
@@ -24,6 +36,17 @@ export function BoardData(props) {
         if (gameEndedRef.current) return;
 
         setMovementOptions(movementOptions);
+    }
+
+    function handleRefreshGame(data) {
+        console.log("Refreshing")
+        setFinalNickname(data['nickname'])
+        // setGameId(data['gameId'])
+        if ('players' in data) {
+            handleStartGame(data['players'], data['nickname'])
+            if ('movedPieces' in data) handleMovedPiecesChange(data['movedPieces'])
+            if ('movementOptions' in data) handleMovementOptionsChange(data['movementOptions'])
+        }
     }
 
     function handleEndGame(result) {
@@ -44,15 +67,21 @@ export function BoardData(props) {
 
     return (
         <BoardCommunication
+            players={players}
+            player={player}
+            finalNickname={finalNickname}
+            setFinalNickname={setFinalNickname}
+            handleStartGame={handleStartGame}
             handleMovedPiecesChange={handleMovedPiecesChange}
             handleMovementOptionsChange={handleMovementOptionsChange}
+            handleRefreshGame={handleRefreshGame}
             handleEndGame={handleEndGame}
             gameEnded={gameEnded}
             gameResult={gameResult}
             piecesByLocation={piecesByLocation}
             movementOptions={movementOptions}
             lastMove={lastMove}
-            clearMovementOptions={()=>setMovementOptions([])}
+            clearMovementOptions={() => setMovementOptions([])}
         />
     )
 }

@@ -7,7 +7,7 @@ const END_GAME_CATEGORY = "EndGame";
 const MOVED_PIECE_CATEGORY = "MovedPiece";
 const NOTIFY_MOVEMENT_CATEGORY = "NotifyMovementToAll";
 
-let games = {}
+let gamesClient = {}
 
 function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame) {
     console.log(`Connecting to chess server: ${gameId}-${nicknames}`)
@@ -17,7 +17,7 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
         const data = { 'nicknames': nicknames }
         sendJson(client, { 'category': START_GAME_CATEGORY, 'data': data })
 
-        games[gameId] = client
+        gamesClient[gameId] = client
     });
 
     client.on('error', e => {
@@ -39,9 +39,9 @@ function startGame(gameId, nicknames, updatePlayersInfo, notifyMovementToAll, up
 }
 
 function finishGame(gameId) {
-    if (games[gameId])
-        games[gameId].destroy();
-    delete games[gameId];
+    if (gamesClient[gameId])
+        gamesClient[gameId].destroy();
+    delete gamesClient[gameId];
 }
 
 function handleMessage(message, updatePlayersInfo, notifyMovementToAll, updateMovementOptions, endGame) {
@@ -75,14 +75,14 @@ function sendJson(client, json) {
 }
 
 function movePiece(gameId, nickname, movement) {
-    if (!(gameId in games)) {
+    if (!(gameId in gamesClient)) {
         console.log("game doesn't exists")
         return false
     }
 
     const data = { 'nickname': nickname, 'oldLocation': movement.oldLocation, 'newLocation': movement.newLocation }
 
-    sendJson(games[gameId], { 'category': MOVED_PIECE_CATEGORY, 'data': data })
+    sendJson(gamesClient[gameId], { 'category': MOVED_PIECE_CATEGORY, 'data': data })
     return true
 }
 

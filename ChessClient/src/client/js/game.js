@@ -3,4 +3,4 @@ const reactDom = require('react-dom');
 
 const { BoardData } = require('./components/board_data');
 import '../styles/board.css'
-reactDom.render( <BoardData /> , document.getElementById("root"))
+reactDom.render(<BoardData />, document.getElementById("root"))

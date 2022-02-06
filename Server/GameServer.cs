@@ -47,7 +47,7 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is GameException) { this.EndGame($"Server error of type ({e.GetType()}) has occured, the game is finished"); }
+                if (this.ClientConnected(this.client)) { this.EndGame($"Server error of type ({e.GetType()}) has occured, the game is finished"); }
                 Console.WriteLine(e);
             }
             finally
@@ -332,19 +332,13 @@ namespace Communication
         public ClientDisconnectedException(string message) : base(message) { }
     }
 
-    public class GameException : Exception
-    {
-        public GameException() : base() { }
-        public GameException(string message) : base(message) { }
-    }
-
-    public class MessageCategoryException : GameException
+    public class MessageCategoryException : Exception
     {
         public MessageCategoryException() : base() { }
         public MessageCategoryException(string expectedCategory, string actualCategory) : base($"expected {expectedCategory} but got {actualCategory}") { }
     }
 
-    public class BadNicknameException : GameException
+    public class BadNicknameException : Exception
     {
         public BadNicknameException() : base() { }
         public BadNicknameException(string expectedNickname, string actualNickname) : base($"expected {expectedNickname} but got {actualNickname}") { }
