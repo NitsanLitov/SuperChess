@@ -32,35 +32,41 @@ namespace ChessBoard
 
         public abstract List<(char, int)> GetMovementOptions(bool canPieceTakeOpponentKing);
 
-        public void Move((char, int) newLocation, Type newChessPieceType = null)
+        public List<(ChessPiece, (char, int), (char, int))> Move((char, int) newLocation, Type newChessPieceType = null)
         {
             if (!this.movementOptions.Contains(newLocation))
                 throw new IllegalMoveException("This move is illegal");
 
-            this.ForceMove(newLocation, newChessPieceType);
+            return this.ForceMove(newLocation, newChessPieceType);
         }
 
         // For KingWillBeThreatened usuge only
-        public void ForceMove((char, int) newLocation, Type newChessPieceType = null)
+        public List<(ChessPiece, (char, int), (char, int))> ForceMove((char, int) newLocation, Type newChessPieceType = null)
         {
             ChessPiece piece = this.board.GetPieceByLocation(newLocation);
 
+            List<(ChessPiece, (char, int), (char, int))> movedPieces = new List<(ChessPiece, (char, int), (char, int))>();
+            
             if (piece != null)
-                piece.Dispose();
+                movedPieces.AddRange(this.TakePiece(piece));
 
-            this.MovePieceOnBoardLocation(newLocation, newChessPieceType);
+            movedPieces.AddRange(this.MovePieceOnBoardLocation(newLocation, newChessPieceType));
 
             this.movementOptions.Clear();
+
+            return movedPieces;
         }
 
-        protected internal virtual void MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
+        protected internal virtual List<(ChessPiece, (char, int), (char, int))> MovePieceOnBoardLocation((char, int) newLocation, Type newChessPieceType = null)
         {
             if (newChessPieceType != null)
-                throw new PawnPromotionException("Can't promote a piece");
+                throw new PawnPromotionException("Can't promote this piece");
 
             if (this.board.GetPieceByLocation(newLocation) != null)
                 throw new IllegalMoveException("new location isn't empty");
 
+            (char, int) oldLocation = this.location;
+            
             this.board.SetPieceByLocation(null, this.location);
             this.board.SetPieceByLocation(this, newLocation);
 
@@ -68,6 +74,20 @@ namespace ChessBoard
 
             if (this.isFirstMove)
                 this.isFirstMove = false;
+            
+            return new List<(ChessPiece, (char, int), (char, int))>(){(this, oldLocation, newLocation)};
+        }
+
+        protected virtual List<(ChessPiece, (char, int), (char, int))> TakePiece(ChessPiece piece)
+        {
+            return piece.Dispose();
+        }
+
+        public virtual List<(ChessPiece, (char, int), (char, int))> Dispose()
+        {
+            this.board.chessPiecesByColor[this.color].Remove(this);
+            this.board.SetPieceByLocation(null, this.location);
+            return new List<(ChessPiece, (char, int), (char, int))>(){(this, location, default)};
         }
 
         protected List<(char, int)> ProcessMoves(List<(char, int)> movementOptions, bool canPieceTakeOpponentKing, bool canTake = true, bool canOnlyTake = false)
@@ -92,12 +112,6 @@ namespace ChessBoard
                     finalMovementOptions.Add(movement);
             }
             return finalMovementOptions;
-        }
-
-        public virtual void Dispose()
-        {
-            this.board.chessPiecesByColor[this.color].Remove(this);
-            this.board.SetPieceByLocation(null, this.location);
         }
     }
 

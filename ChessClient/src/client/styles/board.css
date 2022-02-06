@@ -1,0 +1,113 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    background: #444;
+}
+
+.gameBoard {
+    background: white;
+    display: grid;
+    width: 90vmin;
+    height: 90vmin;
+}
+
+.gameData {
+    border: 0.75vmin solid black;
+    font-size: 3vmin;
+    background: rgb(231, 231, 231);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.turnData {
+    font-size: 3vmin;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 5%;
+}
+
+.turnData.positive {
+    color: #56BC58;
+}
+
+.turnData.negative {
+    color: #f04501;
+}
+
+.moveData {
+    font-size: 3vmin;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 5%;
+}
+
+.square img {
+    width: 85%;
+    z-index: 999;
+}
+
+.board {
+    border: 0.75vmin solid black;
+    background: white;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.square {
+    font-size: 3vmin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.square.black {
+    background: #56BC58;
+    color: white;
+}
+
+.square.movement {
+    background: #ee916c;
+}
+
+.square.black.movement {
+    background: #f04501;
+}
+
+.square.moving {
+    background: #fff8cf;
+}
+
+.square.black.moving {
+    background: #56bc5865;
+}
+
+.square .letter-label {
+    position: absolute;
+    bottom: 0.1rem;
+    right: 0.25rem;
+    color: #444;
+    font-size: 2vmin;
+}
+
+.square .number-label {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.1rem;
+    color: #444;
+    font-size: 2vmin;
+}
