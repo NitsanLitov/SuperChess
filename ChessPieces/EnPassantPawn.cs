@@ -22,10 +22,11 @@ namespace ChessBoard
             return new List<(char, int)>();
         }
 
-        public override void Dispose()
+        public override List<(ChessPiece, (char, int), (char, int))> Dispose()
         {
             this.board.SetPieceByLocation(null, this.location);
             this.board.enPassantPawn = null;
+            return new List<(ChessPiece, (char, int), (char, int))>();
         }
     }
 }
