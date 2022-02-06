@@ -19,6 +19,10 @@ namespace ChessTests
             List<ChessPiece> secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             ChessPiece queen = firstPieces[(int)FirstPiecesNumber.Queen];
+            ChessPiece wRightBishop = firstPieces[(int)FirstPiecesNumber.RightBishop];
+            
+            ChessPiece bRightBishop = secondPieces[(int)SecondPiecesNumber.RightBishop];
+            
             string movementOptions = "d5 d6 d7 d3 c4 b4 a4 e4 f4 e5 c5 b6 a7 e3 c3 ";
             
             TestHelper.PrintAll(board);
@@ -28,11 +32,11 @@ namespace ChessTests
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(queen, movementOptions + "f6 g7 g4 h4");
             
-            firstPieces[(int)FirstPiecesNumber.RightBishop].ForceMove(('g', 4));
+            wRightBishop.ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(queen, movementOptions + "f6 g7");
             
-            secondPieces[(int)SecondPiecesNumber.RightBishop].ForceMove(('g', 4));
+            bRightBishop.ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(queen, movementOptions + "f6 g7 g4");
 
@@ -55,6 +59,11 @@ namespace ChessTests
             
             ChessPiece queen = secondPieces[(int)SecondPiecesNumber.Queen];
             string movementOptions = "d5 d6 d2 d3 c4 b4 a4 e4 e5 c5 b6 f6 e3 c3 b2 ";
+
+            ChessPiece bRightBishop = secondPieces[(int)SecondPiecesNumber.RightBishop];
+            
+            ChessPiece wRightBishop = firstPieces[(int)FirstPiecesNumber.RightBishop];
+
             
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(queen, "");
@@ -63,11 +72,11 @@ namespace ChessTests
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(queen, movementOptions + "f4 f2 g4 h4");
             
-            secondPieces[(int)SecondPiecesNumber.RightBishop].ForceMove(('g', 4));
+            bRightBishop.ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(queen, movementOptions + "f4 f2");
             
-            firstPieces[(int)FirstPiecesNumber.RightBishop].ForceMove(('g', 4));
+            wRightBishop.ForceMove(('g', 4));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(queen, movementOptions + "f4 f2 g4");
 

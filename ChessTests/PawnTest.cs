@@ -129,7 +129,7 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(wPawn2, "a8 b8 c8");
         }
         
-        [DataTestMethod]
+        [DataTestMethod, TestCategory("Movement"), TestCategory("Pawn")]
         [DataRow(typeof(Queen), 1, true)]
         [DataRow(typeof(Bishop), 2, true)]
         [DataRow(typeof(Knight), 2, true)]
@@ -151,15 +151,11 @@ namespace ChessTests
                 catch (PawnPromotionException) { return; }
             }
 
-            // Update player pieces
             List<ChessPiece> firstPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.FirstPlayer)];
             ChessPiece wPawn2 = firstPieces[(int)FirstPiecesNumber.Pawn2];
 
             board.Move(('b', 7), ('b', 8), newPieceType);
             TestHelper.PrintAll(board);
-
-            // Update player pieces
-            firstPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.FirstPlayer)];
 
             Assert.IsTrue(firstPieces.FindAll(p => p.GetType() == newPieceType).Count == startingNumber + 1, $"First player should have {startingNumber + 1} {newPieceType}");
             Assert.IsFalse(TestHelper.PieceExists(wPawn2, PlayerNumber.FirstPlayer, board), $"First player pawn2 shouldn't be on board");
@@ -169,7 +165,7 @@ namespace ChessTests
             Assert.IsTrue(TestHelper.PieceExists(newPiece, PlayerNumber.FirstPlayer, board), $"First player new {newPieceType} should be on board");
         }
         
-        [DataTestMethod]
+        [DataTestMethod, TestCategory("Movement"), TestCategory("Pawn")]
         [DataRow(typeof(Queen), 1)]
         [DataRow(typeof(Bishop), 2)]
         [DataRow(typeof(Knight), 2)]
@@ -206,9 +202,6 @@ namespace ChessTests
 
             board.Move(('d', 2), ('c', 1), newPieceType);
             TestHelper.PrintAll(board);
-
-            // Update player pieces
-            secondPieces = board.chessPiecesByColor[PlayerColor.GetColor(PlayerNumber.SecondPlayer)];
 
             Assert.IsTrue(secondPieces.FindAll(p => p.GetType() == newPieceType).Count == startingNumber + 1, $"Second player should have {startingNumber + 1} {newPieceType}");
             Assert.IsFalse(TestHelper.PieceExists(bPawn4, PlayerNumber.SecondPlayer, board), $"Second player pawn4 shouldn't be on board");
