@@ -1,6 +1,6 @@
 const React = require('react');
 const reactDom = require('react-dom');
 
-const { Board } = require('./components/board');
+const { ChessBoard } = require('./components/chess_board');
 import '../styles/board.css'
-reactDom.render(<Board />, document.getElementById("root"))
+reactDom.render(<ChessBoard />, document.getElementById("root"))

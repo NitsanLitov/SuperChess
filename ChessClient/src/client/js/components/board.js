@@ -1,12 +1,10 @@
 const React = require('react');
-const { useState, useEffect } = React
+const { useState, useEffect, useRef } = React
 
 const { TwoPlayerBoard } = require('./two_player_board');
 const { GameData } = require('./game_data');
-const client = require('../web_client');
 
 export function Board(props) {
-    const [socket, setSocket] = useState()
     const [gameEnded, setGameEnded] = useState(false)
     const [gameResult, setGameResult] = useState({})
 
@@ -22,33 +20,37 @@ export function Board(props) {
     const [lastMove, setLastMove] = useState([])
     const [waitingForMovingAck, setWaitingForMovingAck] = useState(false)
 
-    useEffect(() => { connectSocket(); }, []);
+    const nicknameRef = useRef();
+    nicknameRef.current = nickname;
+    const gameEndedRef = useRef();
+    gameEndedRef.current = gameEnded;
 
-    function connectSocket() {
-        setSocket(client.connectSocketIo(handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame, handleRefreshGame))
-    }
+    const connectToServer = props.connectToServer;
+    const movePieceOnServer = props.movePiece;
+    const startGameOnServer = props.startGame;
+
+    useEffect(() => {
+        connectToServer(handleStartGame, handleMovedPiecesChange, handleMovementOptionsChange, handleEndGame, handleRefreshGame)
+    }, []);
 
     function startGame() {
-        client.startGame(socket, nickname, gameId)
+        startGameOnServer(nickname, gameId);
     }
 
     function handleStartGame(playingPlayers) {
-        console.log(`nickname: ${nickname}`);
-        console.log(`gameId: ${gameId}`);
-        console.log(`socket: ${socket}`);
-        setPlayer(playingPlayers.find(p => p.nickname === nickname))
+        setPlayer(playingPlayers.find(p => p.nickname === nicknameRef.current))
         setPlayers(playingPlayers)
     }
 
     function handleMovedPiecesChange(movedPieces) {
-        if (gameEnded) return;
+        if (gameEndedRef.current) return;
 
         updatePiecesByLocation(movedPieces);
         setLastMove(movedPieces.at(-1))
     }
 
     function handleMovementOptionsChange(movementOptions) {
-        if (gameEnded) return;
+        if (gameEndedRef.current) return;
 
         setMovementOptions(movementOptions);
     }
@@ -115,7 +117,7 @@ export function Board(props) {
         }
 
         setWaitingForMovingAck(true)
-        client.movePiece(socket, movingLocation, `${newLetter.toLowerCase()}${newNumber}`, response => {
+        movePieceOnServer(movingLocation, `${newLetter.toLowerCase()}${newNumber}`, response => {
             if (response === true) {
                 setMovementOptions([])
                 unColorSquares();
