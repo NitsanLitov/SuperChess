@@ -19,12 +19,14 @@ namespace ChessTests
 
             ChessPiece wKing = firstPieces[(int)FirstPiecesNumber.King];
             ChessPiece wRightRook = firstPieces[(int)FirstPiecesNumber.RightRook];
+            ChessPiece wRightBishop = firstPieces[(int)FirstPiecesNumber.RightBishop];
+            ChessPiece wRightKnight = firstPieces[(int)FirstPiecesNumber.RightKnight];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "");
 
-            firstPieces[(int)FirstPiecesNumber.RightBishop].Dispose();
-            firstPieces[(int)FirstPiecesNumber.RightKnight].Dispose();
+            wRightBishop.Dispose();
+            wRightKnight.Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "f1 g1");
@@ -46,13 +48,16 @@ namespace ChessTests
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
             ChessPiece bRightRook = secondPieces[(int)SecondPiecesNumber.RightRook];
+            ChessPiece bQueen = secondPieces[(int)SecondPiecesNumber.Queen];
+            ChessPiece bRightBishop = secondPieces[(int)SecondPiecesNumber.RightBishop];
+            ChessPiece bRightKnight = secondPieces[(int)SecondPiecesNumber.RightKnight];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
 
-            secondPieces[(int)SecondPiecesNumber.Queen].Dispose();
-            secondPieces[(int)SecondPiecesNumber.RightBishop].Dispose();
-            secondPieces[(int)SecondPiecesNumber.RightKnight].Dispose();
+            bQueen.Dispose();
+            bRightBishop.Dispose();
+            bRightKnight.Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "d8 c8");
@@ -75,21 +80,25 @@ namespace ChessTests
 
             ChessPiece wKing = firstPieces[(int)FirstPiecesNumber.King];
             ChessPiece wLeftRook = firstPieces[(int)FirstPiecesNumber.LeftRook];
+            ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
+            ChessPiece wLeftBishop = firstPieces[(int)FirstPiecesNumber.LeftBishop];
+            ChessPiece wLeftKnight = firstPieces[(int)FirstPiecesNumber.LeftKnight];
 
             ChessPiece bLeftBishop = secondPieces[(int)SecondPiecesNumber.LeftBishop];
+            ChessPiece bPawn2 = secondPieces[(int)SecondPiecesNumber.Pawn2];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "");
-            firstPieces[(int)FirstPiecesNumber.Queen].Dispose();
-            firstPieces[(int)FirstPiecesNumber.LeftBishop].Dispose();
-            firstPieces[(int)FirstPiecesNumber.LeftKnight].Dispose();
-            secondPieces[(int)SecondPiecesNumber.Pawn1].Dispose();
+            wQueen.Dispose();
+            wLeftBishop.Dispose();
+            wLeftKnight.Dispose();
+            bPawn2.Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "d1 c1");
             TestHelper.ValidateMovementResults(bLeftBishop, "g7 h6");
 
-            //threat the space between the king and the rook
+            //threat the castling space
             board.Move(('f', 8), ('h', 6));
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "d1 c1");
@@ -114,18 +123,22 @@ namespace ChessTests
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
             ChessPiece bRightRook = secondPieces[(int)SecondPiecesNumber.RightRook];
             ChessPiece bPawn6 = secondPieces[(int)SecondPiecesNumber.Pawn6];
+            ChessPiece bQueen = secondPieces[(int)SecondPiecesNumber.Queen];
+            ChessPiece bRightBishop = secondPieces[(int)SecondPiecesNumber.RightBishop];
+            ChessPiece bRightKnight = secondPieces[(int)SecondPiecesNumber.RightKnight];
 
             ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
+            ChessPiece wPawn3 = firstPieces[(int)FirstPiecesNumber.Pawn3];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
             TestHelper.ValidateMovementResults(bRightRook, "");
             TestHelper.ValidateMovementResults(wQueen, "");
 
-            secondPieces[(int)SecondPiecesNumber.Queen].Dispose();
-            secondPieces[(int)SecondPiecesNumber.RightBishop].Dispose();
-            secondPieces[(int)SecondPiecesNumber.RightKnight].Dispose();
-            firstPieces[(int)FirstPiecesNumber.Pawn3].Dispose();
+            bQueen.Dispose();
+            bRightBishop.Dispose();
+            bRightKnight.Dispose();
+            wPawn3.Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "d8 c8");
@@ -169,13 +182,15 @@ namespace ChessTests
 
             ChessPiece wKing = firstPieces[(int)FirstPiecesNumber.King];
             ChessPiece wLeftRook = firstPieces[(int)FirstPiecesNumber.LeftRook];
+            ChessPiece wLeftBishop = firstPieces[(int)FirstPiecesNumber.LeftBishop];
+            ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "");
             TestHelper.ValidateMovementResults(wLeftRook, "");
 
-            firstPieces[(int)FirstPiecesNumber.Queen].Dispose();
-            firstPieces[(int)FirstPiecesNumber.LeftBishop].Dispose();
+            wLeftBishop.Dispose();
+            wQueen.Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "d1");
@@ -193,7 +208,11 @@ namespace ChessTests
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
             ChessPiece bLeftRook = secondPieces[(int)SecondPiecesNumber.LeftRook];
             ChessPiece bPawn5 = secondPieces[(int)SecondPiecesNumber.Pawn5];
+            ChessPiece bLeftKnight = secondPieces[(int)SecondPiecesNumber.LeftKnight];
+            ChessPiece bLeftBishop = secondPieces[(int)SecondPiecesNumber.LeftBishop];
+
             ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
+            ChessPiece wPawn3 = firstPieces[(int)FirstPiecesNumber.Pawn3];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
@@ -201,9 +220,9 @@ namespace ChessTests
             TestHelper.ValidateMovementResults(wQueen, "");
             TestHelper.ValidateMovementResults(bPawn5, "d6 d5");
 
-            firstPieces[(int)FirstPiecesNumber.Pawn3].Dispose();
-            secondPieces[(int)SecondPiecesNumber.LeftKnight].Dispose();
-            secondPieces[(int)SecondPiecesNumber.LeftBishop].Dispose();
+            wPawn3.Dispose();
+            bLeftKnight.Dispose();
+            bLeftBishop.Dispose();
 
             board.Move(('d', 7), ('d', 6));
             TestHelper.PrintAll(board);
@@ -229,14 +248,17 @@ namespace ChessTests
 
             ChessPiece wKing = firstPieces[(int)FirstPiecesNumber.King];
             ChessPiece wLeftRook = firstPieces[(int)FirstPiecesNumber.LeftRook];
+            ChessPiece wLeftBishop = firstPieces[(int)FirstPiecesNumber.LeftBishop];
+            ChessPiece wLeftKnight = firstPieces[(int)FirstPiecesNumber.LeftKnight];
+            ChessPiece wQueen = firstPieces[(int)FirstPiecesNumber.Queen];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "");
             TestHelper.ValidateMovementResults(wLeftRook, "");
 
-            firstPieces[(int)FirstPiecesNumber.Queen].Dispose();
-            firstPieces[(int)FirstPiecesNumber.LeftBishop].Dispose();
-            firstPieces[(int)FirstPiecesNumber.LeftKnight].Dispose();
+            wLeftBishop.Dispose();
+            wLeftKnight.Dispose();
+            wQueen.Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(wKing, "d1 c1");
@@ -263,13 +285,15 @@ namespace ChessTests
 
             ChessPiece bKing = secondPieces[(int)SecondPiecesNumber.King];
             ChessPiece bLeftRook = secondPieces[(int)SecondPiecesNumber.LeftRook];
+            ChessPiece bLeftKnight = secondPieces[(int)SecondPiecesNumber.LeftKnight];
+            ChessPiece bLeftBishop = secondPieces[(int)SecondPiecesNumber.LeftBishop];
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "");
             TestHelper.ValidateMovementResults(bLeftRook, "");
 
-            secondPieces[(int)SecondPiecesNumber.LeftBishop].Dispose();
-            secondPieces[(int)SecondPiecesNumber.LeftKnight].Dispose();
+            bLeftKnight.Dispose();
+            bLeftBishop.Dispose();
 
             TestHelper.PrintAll(board);
             TestHelper.ValidateMovementResults(bKing, "f8 g8");
